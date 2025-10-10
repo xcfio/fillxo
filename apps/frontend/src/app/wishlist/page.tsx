@@ -1,0 +1,267 @@
+"use client"
+
+import { useState } from "react"
+import { ArrowRight, CheckCircle2, Sparkles, ArrowLeft, AlertCircle } from "lucide-react"
+import { useRouter } from "next/navigation"
+
+export default function WishlistPage() {
+    const router = useRouter()
+    const [formData, setFormData] = useState({ fullName: "", email: "" })
+    const [isSubmitting, setIsSubmitting] = useState(false)
+    const [isSuccess, setIsSuccess] = useState(false)
+    const [errors, setErrors] = useState({ fullName: "", email: "", general: "" })
+
+    const validateEmail = (email: string) => {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+        return emailRegex.test(email)
+    }
+
+    const validateForm = () => {
+        const newErrors = { fullName: "", email: "", general: "" }
+        let isValid = true
+
+        // Validate full name
+        if (!formData.fullName.trim()) {
+            newErrors.fullName = "Full name is required"
+            isValid = false
+        } else if (formData.fullName.trim().length < 2) {
+            newErrors.fullName = "Name must be at least 2 characters"
+            isValid = false
+        }
+
+        // Validate email
+        if (!formData.email.trim()) {
+            newErrors.email = "Email is required"
+            isValid = false
+        } else if (!validateEmail(formData.email)) {
+            newErrors.email = "Please enter a valid email address"
+            isValid = false
+        }
+
+        setErrors(newErrors)
+        return isValid
+    }
+
+    const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault()
+
+        // Clear previous errors
+        setErrors({ fullName: "", email: "", general: "" })
+
+        // Validate form
+        if (!validateForm()) {
+            return
+        }
+
+        setIsSubmitting(true)
+
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/wishlist`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify(formData)
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                throw new Error(errorData.message || "Failed to join wishlist")
+            }
+
+            setIsSuccess(true)
+            setFormData({ fullName: "", email: "" })
+
+            // Redirect to home after 3 seconds
+            setTimeout(() => {
+                router.push("/")
+            }, 3000)
+        } catch (err) {
+            setErrors({
+                ...errors,
+                general: err instanceof Error ? err.message : "Something went wrong. Please try again."
+            })
+        } finally {
+            setIsSubmitting(false)
+        }
+    }
+
+    return (
+        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
+            {/* Navigation */}
+            <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
+                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
+                    <button
+                        onClick={() => router.push("/")}
+                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
+                    >
+                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <Sparkles className="w-5 h-5" />
+                        </div>
+                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                            fillxo
+                        </span>
+                    </button>
+                    <button
+                        onClick={() => router.push("/")}
+                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
+                    >
+                        <ArrowLeft className="w-4 h-4" />
+                        Back to Home
+                    </button>
+                </div>
+            </nav>
+
+            {/* Main Content */}
+            <section className="pt-32 pb-20 px-6">
+                <div className="max-w-lg mx-auto">
+                    {isSuccess ? (
+                        <div className="text-center">
+                            <div className="w-20 h-20 bg-green-600/20 rounded-full flex items-center justify-center mx-auto mb-6">
+                                <CheckCircle2 className="w-10 h-10 text-green-400" />
+                            </div>
+                            <h1 className="text-4xl font-bold mb-4">You're on the list!</h1>
+                            <p className="text-xl text-gray-400 mb-8">
+                                We'll notify you as soon as fillxo launches. Get ready to transform your freelance
+                                business!
+                            </p>
+                            <div className="bg-green-900/30 border border-green-700/50 rounded-xl p-6">
+                                <p className="text-green-300 font-medium mb-2">Welcome to the fillxo community 🎉</p>
+                                <p className="text-green-400/70 text-sm">Redirecting you back to home...</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <>
+                            <div className="text-center mb-12">
+                                <div className="inline-block mb-6 px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-blue-300 text-sm">
+                                    🚀 Be the First to Know
+                                </div>
+                                <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                                    Join the
+                                    <span className="text-blue-400"> Wishlist</span>
+                                </h1>
+                                <p className="text-lg text-gray-400">
+                                    Get early access and exclusive updates when we launch fillxo.
+                                </p>
+                            </div>
+
+                            <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                                {errors.general && (
+                                    <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
+                                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <p className="text-red-300 text-sm">{errors.general}</p>
+                                    </div>
+                                )}
+
+                                <div className="space-y-6">
+                                    <div>
+                                        <label
+                                            htmlFor="fullName"
+                                            className="block text-sm font-medium text-gray-300 mb-2"
+                                        >
+                                            Full Name
+                                        </label>
+                                        <input
+                                            id="fullName"
+                                            type="text"
+                                            placeholder="Enter your full name"
+                                            value={formData.fullName}
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, fullName: e.target.value })
+                                                if (errors.fullName) setErrors({ ...errors, fullName: "" })
+                                            }}
+                                            className={`w-full px-6 py-4 bg-gray-900/50 border ${
+                                                errors.fullName ? "border-red-500" : "border-blue-900/30"
+                                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
+                                        />
+                                        {errors.fullName && (
+                                            <p className="mt-2 text-sm text-red-400">{errors.fullName}</p>
+                                        )}
+                                    </div>
+
+                                    <div>
+                                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                                            Email Address
+                                        </label>
+                                        <input
+                                            id="email"
+                                            type="email"
+                                            placeholder="your@email.com"
+                                            value={formData.email}
+                                            onChange={(e) => {
+                                                setFormData({ ...formData, email: e.target.value })
+                                                if (errors.email) setErrors({ ...errors, email: "" })
+                                            }}
+                                            className={`w-full px-6 py-4 bg-gray-900/50 border ${
+                                                errors.email ? "border-red-500" : "border-blue-900/30"
+                                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
+                                        />
+                                        {errors.email && <p className="mt-2 text-sm text-red-400">{errors.email}</p>}
+                                    </div>
+
+                                    <button
+                                        onClick={handleSubmit}
+                                        disabled={isSubmitting}
+                                        className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                    >
+                                        {isSubmitting ? (
+                                            <>
+                                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                                Joining...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Join the Wishlist
+                                                <ArrowRight className="w-5 h-5" />
+                                            </>
+                                        )}
+                                    </button>
+
+                                    <p className="text-gray-500 text-sm text-center">
+                                        We respect your privacy. No spam, ever.
+                                        <br />
+                                        Unsubscribe anytime.
+                                    </p>
+                                </div>
+                            </div>
+
+                            {/* Benefits */}
+                            <div className="mt-12 space-y-4">
+                                <h3 className="text-lg font-semibold text-center mb-6">What you'll get:</h3>
+                                <div className="space-y-3">
+                                    {[
+                                        "Early access before public launch",
+                                        "Exclusive launch discounts and offers",
+                                        "Priority support during beta",
+                                        "Direct input on features and improvements"
+                                    ].map((benefit, index) => (
+                                        <div
+                                            key={index}
+                                            className="flex items-start gap-3 bg-gray-900/30 border border-blue-900/20 rounded-lg p-4"
+                                        >
+                                            <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                                            <span className="text-gray-300">{benefit}</span>
+                                        </div>
+                                    ))}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </section>
+
+            {/* Footer */}
+            <footer className="border-t border-blue-900/20 py-8 px-6">
+                <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+                    <div className="flex items-center gap-2">
+                        <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
+                            <Sparkles className="w-4 h-4" />
+                        </div>
+                        <span className="font-semibold text-blue-400">fillxo</span>
+                    </div>
+                    <p className="text-gray-500 text-sm">© 2025 fillxo. Built with ❤️ for Bangladeshi Freelancers</p>
+                </div>
+            </footer>
+        </div>
+    )
+}

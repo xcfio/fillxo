@@ -1,10 +1,14 @@
 // src/app/layout.tsx
+import "./globals.css"
+
 import type { Metadata } from "next"
 import { Comfortaa } from "next/font/google"
 
-import "./globals.css"
-
-const comfortaa = Comfortaa({ subsets: ["latin"] })
+const comfortaa = Comfortaa({
+    subsets: ["latin"],
+    weight: ["300", "400", "500", "600", "700"],
+    display: "swap"
+})
 
 export const metadata: Metadata = {
     title: "fillxo",
