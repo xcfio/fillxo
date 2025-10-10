@@ -1,5 +1,4 @@
 import { Type, Static } from "@sinclair/typebox"
-import { Server } from "socket.io"
 import { v7 } from "uuid"
 
 declare module "fastify" {
