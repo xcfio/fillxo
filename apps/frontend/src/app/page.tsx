@@ -11,7 +11,11 @@ import {
     Sparkles,
     FileText,
     DollarSign,
-    BarChart3
+    BarChart3,
+    Briefcase,
+    UserCheck,
+    CircleChevronDown,
+    Globe
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 
@@ -44,115 +48,204 @@ export default function LandingPage() {
             <section className="pt-32 pb-20 px-6">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="inline-block mb-6 px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-blue-300 text-sm">
-                        🇧🇩 Made for Bangladesh • Coming Soon • Free to Start
+                        🇧🇩 The Future of Freelancing in Bangladesh
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
-                        Your All-in-One
+                        Where Talent Meets
                         <br />
                         <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
-                            Freelance Platform
+                            Opportunity
                         </span>
                     </h1>
 
                     <p className="text-xl md:text-2xl text-gray-400 mb-12 max-w-3xl mx-auto leading-relaxed">
-                        Manage clients, track time, create invoices, and get paid — all in one beautiful platform. Built
-                        for Bangladeshi freelancers.
+                        Connect with top Bangladeshi talent or find your next project. A complete freelance marketplace
+                        built for local needs.
                     </p>
 
-                    <button
-                        onClick={() => router.push("/wishlist")}
-                        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
-                    >
-                        Join the Wishlist
-                        <ArrowRight className="w-5 h-5" />
-                    </button>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                        <button
+                            onClick={() => router.push("/wishlist")}
+                            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                        >
+                            Join as Freelancer
+                            <ArrowRight className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={() => router.push("/wishlist")}
+                            className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                        >
+                            I'm Hiring
+                            <Briefcase className="w-5 h-5" />
+                        </button>
+                    </div>
 
-                    <p className="text-gray-500 text-sm mt-4">Be the first to know when we launch. No spam, ever.</p>
+                    <p className="text-gray-500 text-sm mt-6">Free to join • Coming soon • Built for Bangladesh</p>
                 </div>
             </section>
 
-            {/* Features Grid */}
+            {/* For Freelancers / For Clients Toggle Section */}
             <section className="py-20 px-6 bg-gray-900/30">
                 <div className="max-w-6xl mx-auto">
                     <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
-                        Everything You Need in
-                        <span className="text-blue-400"> One Place</span>
+                        Everything You Need to
+                        <span className="text-blue-400"> Succeed</span>
                     </h2>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+                    <div className="grid md:grid-cols-2 gap-8 mb-12">
+                        {/* For Freelancers */}
+                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-2xl p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-12 h-12 bg-blue-600/20 rounded-xl flex items-center justify-center">
+                                    <Users className="w-6 h-6 text-blue-400" />
+                                </div>
+                                <h3 className="text-2xl font-bold">For Freelancers</h3>
+                            </div>
+                            <ul className="space-y-4">
+                                {[
+                                    "Find projects that match your skills",
+                                    "Build your professional portfolio",
+                                    "Get paid securely (bKash, Nagad, Bank)",
+                                    "Track time and manage projects",
+                                    "Professional invoicing & contracts",
+                                    "Connect with local and global clients"
+                                ].map((item, index) => (
+                                    <li key={index} className="flex items-start gap-3">
+                                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-gray-300">{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+
+                        {/* For Clients */}
+                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-2xl p-8">
+                            <div className="flex items-center gap-3 mb-6">
+                                <div className="w-12 h-12 bg-green-600/20 rounded-xl flex items-center justify-center">
+                                    <Briefcase className="w-6 h-6 text-green-400" />
+                                </div>
+                                <h3 className="text-2xl font-bold">For Clients</h3>
+                            </div>
+                            <ul className="space-y-4">
+                                {[
+                                    "Access top Bangladeshi talent",
+                                    "Post projects and get proposals",
+                                    "Review portfolios and ratings",
+                                    "Secure milestone-based payments",
+                                    "Real-time project tracking",
+                                    "Quality work, fair prices"
+                                ].map((item, index) => (
+                                    <li key={index} className="flex items-start gap-3">
+                                        <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                                        <span className="text-gray-300">{item}</span>
+                                    </li>
+                                ))}
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* How It Works */}
+            <section className="py-20 px-6">
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+                        How
+                        <span className="text-blue-400"> fillxo Works</span>
+                    </h2>
+
+                    <div className="grid md:grid-cols-3 gap-8">
                         {[
                             {
-                                icon: <Users className="w-8 h-8" />,
-                                title: "Client Management",
-                                description:
-                                    "Keep all your client information organized. Track projects and communication history."
+                                step: "1",
+                                icon: <UserCheck className="w-8 h-8" />,
+                                title: "Create Your Profile",
+                                desc: "Sign up in minutes. Build your profile, showcase your skills and portfolio."
                             },
                             {
-                                icon: <Clock className="w-8 h-8" />,
-                                title: "Time Tracking",
-                                description:
-                                    "Simple timer to track billable hours. Manual entry supported for flexibility."
+                                step: "2",
+                                icon: <Globe className="w-8 h-8" />,
+                                title: "Find Work or Talent",
+                                desc: "Freelancers: Browse projects. Clients: Post jobs and review proposals."
                             },
                             {
-                                icon: <FileText className="w-8 h-8" />,
-                                title: "Professional Invoices",
-                                description:
-                                    "Generate beautiful invoices in Bangla & English. Download as PDF instantly."
-                            },
-                            {
+                                step: "3",
                                 icon: <DollarSign className="w-8 h-8" />,
-                                title: "Payment Tracking",
-                                description: "Track payments from bKash, Nagad, Rocket, Payoneer, and more."
-                            },
-                            {
-                                icon: <BarChart3 className="w-8 h-8" />,
-                                title: "Expense Management",
-                                description: "Track your business expenses. Upload receipts and categorize spending."
-                            },
-                            {
-                                icon: <Shield className="w-8 h-8" />,
-                                title: "Client Portal",
-                                description: "Give clients access to view invoices, projects, and make payments."
+                                title: "Work & Get Paid",
+                                desc: "Complete projects with confidence. Secure payments through local methods."
                             }
-                        ].map((feature, index) => (
-                            <div
-                                key={index}
-                                className="bg-gray-900/50 border border-blue-900/20 rounded-2xl p-6 hover:border-blue-600/50 transition-all hover:transform hover:scale-105"
-                            >
-                                <div className="w-14 h-14 bg-blue-600/20 rounded-xl flex items-center justify-center text-blue-400 mb-4">
-                                    {feature.icon}
+                        ].map((item, index) => (
+                            <div key={index} className="text-center">
+                                <div className="relative mb-6">
+                                    <div className="w-16 h-16 bg-blue-600/20 rounded-2xl flex items-center justify-center text-blue-400 mx-auto">
+                                        {item.icon}
+                                    </div>
+                                    <div className="absolute -top-2 -right-2 w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center text-sm font-bold mx-auto transform translate-x-1/2">
+                                        {item.step}
+                                    </div>
                                 </div>
-                                <h3 className="text-xl font-semibold mb-2">{feature.title}</h3>
-                                <p className="text-gray-400">{feature.description}</p>
+                                <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
+                                <p className="text-gray-400">{item.desc}</p>
                             </div>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* Benefits Section */}
+            {/* Categories */}
+            <section className="py-20 px-6 bg-gray-900/30">
+                <div className="max-w-6xl mx-auto">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+                        Popular
+                        <span className="text-blue-400"> Categories</span>
+                    </h2>
+
+                    <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                        {[
+                            { name: "Web Development", icon: "💻" },
+                            { name: "Graphic Design", icon: "🎨" },
+                            { name: "Content Writing", icon: "✍️" },
+                            { name: "Digital Marketing", icon: "📱" },
+                            { name: "Video Editing", icon: "🎬" },
+                            { name: "UI/UX Design", icon: "🎯" },
+                            { name: "Data Entry", icon: "📊" },
+                            { name: "Virtual Assistant", icon: "💼" }
+                        ].map((category, index) => (
+                            <div
+                                key={index}
+                                className="bg-gray-900/50 border border-blue-900/20 rounded-xl p-6 hover:border-blue-600/50 transition-all hover:transform hover:scale-105 text-center cursor-pointer"
+                            >
+                                <div className="text-4xl mb-3">{category.icon}</div>
+                                <h3 className="font-semibold text-gray-200">{category.name}</h3>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* Why Choose fillxo */}
             <section className="py-20 px-6">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid md:grid-cols-2 gap-12 items-center">
                         <div>
                             <h2 className="text-4xl font-bold mb-6">
-                                Built for
-                                <span className="text-blue-400"> Bangladesh</span>
+                                Why Choose
+                                <span className="text-blue-400"> fillxo?</span>
                             </h2>
                             <p className="text-gray-400 text-lg mb-8">
-                                We understand the unique needs of Bangladeshi freelancers. That's why fillxo is designed
-                                with local features you actually need.
+                                We're not just another freelance platform. We understand the unique challenges and
+                                opportunities in Bangladesh's growing gig economy.
                             </p>
                             <ul className="space-y-4">
                                 {[
-                                    "bKash, Nagad & Rocket payment tracking",
-                                    "Dual language: Bangla & English",
-                                    "BDT and USD currency support",
-                                    "Mobile-optimized for on-the-go work",
-                                    "Works great on slow internet",
-                                    "GitHub authentication for developers",
-                                    "Free to start — upgrade as you grow"
+                                    "Local payment methods (bKash, Nagad, Rocket)",
+                                    "Dual language support (Bangla & English)",
+                                    "Lower fees than international platforms",
+                                    "Designed for Bangladesh market",
+                                    "Mobile-first, works on slow internet",
+                                    "Secure escrow payment system",
+                                    "Dedicated support team"
                                 ].map((benefit, index) => (
                                     <li key={index} className="flex items-start gap-3">
                                         <CheckCircle2 className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
@@ -175,30 +268,30 @@ export default function LandingPage() {
                                         </div>
                                         <div className="grid grid-cols-2 gap-3">
                                             <div className="bg-gray-900/50 rounded-lg p-3 text-center border border-blue-900/20">
-                                                <div className="text-xs text-gray-400 mb-1">New Invoice</div>
-                                                <div className="text-blue-400 font-semibold">Create</div>
+                                                <div className="text-xs text-gray-400 mb-1">Browse Jobs</div>
+                                                <div className="text-blue-400 font-semibold">Explore</div>
                                             </div>
                                             <div className="bg-gray-900/50 rounded-lg p-3 text-center border border-blue-900/20">
-                                                <div className="text-xs text-gray-400 mb-1">Track Time</div>
-                                                <div className="text-green-400 font-semibold">Start</div>
+                                                <div className="text-xs text-gray-400 mb-1">Post Project</div>
+                                                <div className="text-green-400 font-semibold">Create</div>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div className="bg-blue-600/10 border border-blue-700/30 rounded-xl p-6">
-                                        <div className="text-sm text-gray-400 mb-4">Recent Activity</div>
+                                        <div className="text-sm text-gray-400 mb-4">Platform Features</div>
                                         <div className="space-y-3">
                                             <div className="flex items-center gap-3 text-sm">
-                                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
-                                                <span className="text-gray-300">Invoice #1234 paid</span>
+                                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
+                                                <span className="text-gray-300">Secure escrow payments</span>
                                             </div>
                                             <div className="flex items-center gap-3 text-sm">
-                                                <div className="w-2 h-2 bg-blue-400 rounded-full"></div>
-                                                <span className="text-gray-300">New project created</span>
+                                                <div className="w-2 h-2 bg-green-400 rounded-full"></div>
+                                                <span className="text-gray-300">Real-time messaging</span>
                                             </div>
                                             <div className="flex items-center gap-3 text-sm">
                                                 <div className="w-2 h-2 bg-yellow-400 rounded-full"></div>
-                                                <span className="text-gray-300">Client meeting scheduled</span>
+                                                <span className="text-gray-300">Project milestones</span>
                                             </div>
                                         </div>
                                     </div>
@@ -209,58 +302,96 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Why Choose Section */}
+            {/* Stats Section */}
             <section className="py-20 px-6 bg-gray-900/30">
-                <div className="max-w-6xl mx-auto text-center">
-                    <h2 className="text-4xl font-bold mb-6">
-                        Why Freelancers
-                        <span className="text-blue-400"> Love fillxo</span>
-                    </h2>
-                    <p className="text-xl text-gray-400 mb-16 max-w-3xl mx-auto">
-                        Stop juggling between Excel sheets, WhatsApp, and email. Manage everything in one beautiful
-                        platform.
-                    </p>
-
-                    <div className="grid md:grid-cols-3 gap-8">
-                        <div className="text-center">
+                <div className="max-w-6xl mx-auto">
+                    <div className="grid md:grid-cols-4 gap-8 text-center">
+                        <div>
                             <div className="text-5xl font-bold text-blue-400 mb-2">Free</div>
                             <div className="text-gray-400">To Get Started</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-blue-400 mb-2">2x</div>
-                            <div className="text-gray-400">Faster Invoicing</div>
+                        <div>
+                            <div className="text-5xl font-bold text-blue-400 mb-2">24/7</div>
+                            <div className="text-gray-400">Platform Access</div>
                         </div>
-                        <div className="text-center">
-                            <div className="text-5xl font-bold text-blue-400 mb-2">0</div>
-                            <div className="text-gray-400">Technical Knowledge Needed</div>
+                        <div>
+                            <div className="text-5xl font-bold text-blue-400 mb-2">100%</div>
+                            <div className="text-gray-400">Secure Payments</div>
+                        </div>
+                        <div>
+                            <div className="text-5xl font-bold text-blue-400 mb-2">Fast</div>
+                            <div className="text-gray-400">Dispute Resolution</div>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Who Is This For */}
-            <section className="py-20 px-6">
-                <div className="max-w-6xl mx-auto">
-                    <h2 className="text-4xl font-bold text-center mb-16">
-                        Perfect For
-                        <span className="text-blue-400"> Every Freelancer</span>
+            {/* FAQ Section */}
+            <section className="py-20 px-6 bg-gray-900/30">
+                <div className="max-w-4xl mx-auto">
+                    <h2 className="text-3xl md:text-4xl font-bold text-center mb-16">
+                        Frequently Asked
+                        <span className="text-blue-400"> Questions</span>
                     </h2>
 
-                    <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div className="space-y-4">
                         {[
-                            { title: "Web Developers", desc: "Track projects and bill clients accurately" },
-                            { title: "Designers", desc: "Showcase work and get paid on time" },
-                            { title: "Writers", desc: "Manage articles and track word counts" },
-                            { title: "Consultants", desc: "Professional invoicing for your services" }
-                        ].map((item, index) => (
-                            <div
+                            {
+                                q: "When will fillxo launch?",
+                                a: "We're working hard to launch soon! Join our wishlist to be notified the moment we go live. Early members will get special perks and priority access."
+                            },
+                            {
+                                q: "Is fillxo really free to join?",
+                                a: "Yes! Signing up as a freelancer or client is completely free. We'll only charge a small service fee when you successfully complete a project."
+                            },
+                            {
+                                q: "What payment methods do you support?",
+                                a: "We support popular Bangladeshi payment methods including bKash, Nagad, Rocket, and bank transfers. We're also working on international payment options like Payoneer and wire transfers."
+                            },
+                            {
+                                q: "How is fillxo different from Upwork or Fiverr?",
+                                a: "fillxo is built specifically for the Bangladeshi market. We offer local payment methods, dual language support, lower fees, and understand the unique needs of local freelancers and businesses."
+                            },
+                            {
+                                q: "Do I need to be in Bangladesh to use fillxo?",
+                                a: "While we're optimized for Bangladesh, anyone can join! Clients from anywhere can hire Bangladeshi talent, and freelancers can work with global clients."
+                            },
+                            {
+                                q: "What categories of work are available?",
+                                a: "We support a wide range of categories including Web Development, Graphic Design, Content Writing, Digital Marketing, Video Editing, UI/UX Design, Data Entry, Virtual Assistance, and more!"
+                            },
+                            {
+                                q: "Can I use fillxo on my mobile phone?",
+                                a: "Absolutely! fillxo is designed mobile-first and works great even on slower internet connections. Manage your freelance business on the go."
+                            }
+                        ].map((faq, index) => (
+                            <details
                                 key={index}
-                                className="bg-gray-900/50 border border-blue-900/20 rounded-xl p-6 text-center"
+                                className="bg-gray-900/50 border border-blue-900/20 rounded-xl p-6 hover:border-blue-600/50 transition-all group"
                             >
-                                <h3 className="text-xl font-semibold mb-2 text-blue-400">{item.title}</h3>
-                                <p className="text-gray-400 text-sm">{item.desc}</p>
-                            </div>
+                                <summary className="cursor-pointer font-semibold text-lg text-gray-200 flex items-center justify-between">
+                                    {faq.q}
+                                    <span className="text-blue-400 group-open:rotate-180 transition-transform">
+                                        <CircleChevronDown />
+                                    </span>
+                                </summary>
+                                <p className="mt-4 text-gray-400 leading-relaxed">{faq.a}</p>
+                            </details>
                         ))}
+                    </div>
+
+                    <div className="mt-12 bg-blue-900/20 border border-blue-700/30 rounded-xl p-8 text-center">
+                        <h3 className="text-xl font-semibold mb-3">Still have questions?</h3>
+                        <p className="text-gray-400 mb-6">
+                            We're here to help! Join our wishlist and we'll keep you updated with all the details.
+                        </p>
+                        <button
+                            onClick={() => router.push("/wishlist")}
+                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                        >
+                            Join the Wishlist
+                            <ArrowRight className="w-5 h-5" />
+                        </button>
                     </div>
                 </div>
             </section>
@@ -269,22 +400,31 @@ export default function LandingPage() {
             <section className="py-20 px-6">
                 <div className="max-w-4xl mx-auto text-center">
                     <h2 className="text-4xl md:text-5xl font-bold mb-6">
-                        Ready to Simplify Your
+                        Ready to Start Your
                         <br />
-                        <span className="text-blue-400">Freelance Life?</span>
+                        <span className="text-blue-400">Freelance Journey?</span>
                     </h2>
                     <p className="text-xl text-gray-400 mb-8">
-                        Join the waitlist and be among the first to experience fillxo when we launch.
+                        Join thousands of Bangladeshi freelancers and clients waiting for launch.
                     </p>
-                    <button
-                        onClick={() => router.push("/wishlist")}
-                        className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
-                    >
-                        Join the Wishlist Now
-                        <ArrowRight className="w-5 h-5" />
-                    </button>
-                    <p className="text-gray-500 text-sm mt-4">
-                        No credit card required • Launching soon • Free to start
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <button
+                            onClick={() => router.push("/wishlist")}
+                            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                        >
+                            Join as Freelancer
+                            <ArrowRight className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={() => router.push("/wishlist")}
+                            className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
+                        >
+                            Join as Client
+                            <Briefcase className="w-5 h-5" />
+                        </button>
+                    </div>
+                    <p className="text-gray-500 text-sm mt-6">
+                        No credit card required • Launching soon • Built for Bangladesh 🇧🇩
                     </p>
                 </div>
             </section>
@@ -298,7 +438,7 @@ export default function LandingPage() {
                         </div>
                         <span className="font-semibold text-blue-400">fillxo</span>
                     </div>
-                    <p className="text-gray-500 text-sm">© 2025 fillxo. Built with ❤️ for Bangladeshi Freelancers</p>
+                    <p className="text-gray-500 text-sm">© 2025 fillxo. All rights reserved</p>
                 </div>
             </footer>
         </div>
