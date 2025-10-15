@@ -28,6 +28,7 @@ declare global {
 
             GITHUB_ID: string
             GITHUB_SECRET: string
+            RESEND_API_KEY: string
         }
     }
 }

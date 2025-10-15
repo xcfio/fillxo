@@ -781,3 +781,79 @@ export const SCSS = `
         display: none;
     }
 }`
+
+export const Email = (otp: string) => `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>fillxo Verification Code</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Comfortaa:wght@400;600;700&display=swap" rel="stylesheet">
+</head>
+<body style="margin: 0; padding: 0; font-family: 'Comfortaa', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif; background-color: #f5f5f5;">
+    <table width="100%" cellpadding="0" cellspacing="0" style="background-color: #f5f5f5; padding: 40px 20px;">
+        <tr>
+            <td align="center">
+                <table width="100%" cellpadding="0" cellspacing="0" style="max-width: 600px; background-color: #ffffff; border-radius: 12px; overflow: hidden; box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);">
+                    <!-- Header -->
+                    <tr>
+                        <td style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); padding: 40px 40px 30px; text-align: center;">
+                            <h1 style="margin: 0; color: #ffffff; font-size: 32px; font-weight: 700; letter-spacing: -0.5px; font-family: 'Comfortaa', sans-serif;">
+                                fillxo
+                            </h1>
+                        </td>
+                    </tr>
+                    
+                    <!-- Content -->
+                    <tr>
+                        <td style="padding: 40px;">
+                            <h2 style="margin: 0 0 16px; color: #1a1a1a; font-size: 24px; font-weight: 600; font-family: 'Comfortaa', sans-serif;">
+                                Verification Code
+                            </h2>
+                            
+                            <p style="margin: 0 0 32px; color: #666666; font-size: 16px; line-height: 1.6; font-family: 'Comfortaa', sans-serif;">
+                                Use the following code to complete your verification. This code will expire in <strong style="color: #1a1a1a;">10 minutes</strong>.
+                            </p>
+                            
+                            <!-- OTP Box -->
+                            <table width="100%" cellpadding="0" cellspacing="0">
+                                <tr>
+                                    <td align="center" style="padding: 24px 0;">
+                                        <div style="background: linear-gradient(135deg, #60a5fa 0%, #3b82f6 100%); border-radius: 12px; padding: 4px; display: inline-block;">
+                                            <div style="background-color: #ffffff; border-radius: 10px; padding: 20px 48px;">
+                                                <span style="font-size: 36px; font-weight: 700; letter-spacing: 8px; color: #3b82f6; font-family: 'Courier New', monospace;">
+                                                    ${otp}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </table>
+                            
+                            <p style="margin: 32px 0 0; color: #999999; font-size: 14px; line-height: 1.6; font-family: 'Comfortaa', sans-serif;">
+                                If you didn't request this code, please ignore this email or contact support if you have concerns.
+                            </p>
+                        </td>
+                    </tr>
+                    
+                    <!-- Footer -->
+                    <tr>
+                        <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb;">
+                            <p style="margin: 0; color: #999999; font-size: 13px; text-align: center; line-height: 1.5; font-family: 'Comfortaa', sans-serif;">
+                                © ${new Date().getFullYear()} fillxo. All rights reserved.
+                            </p>
+                            <p style="margin: 8px 0 0; color: #999999; font-size: 13px; text-align: center; font-family: 'Comfortaa', sans-serif;">
+                                This is an automated message, please do not reply.
+                            </p>
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>
+`

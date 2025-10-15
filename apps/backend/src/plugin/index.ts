@@ -7,9 +7,12 @@ import jwt from "./jwt"
 import { main } from "../"
 
 export default async function Plugin(fastify: Awaited<ReturnType<typeof main>>) {
+    if (process.env.NODE_ENV === "development") {
+        await swagger(fastify)
+        await swagger_ui(fastify)
+    }
+
     await rl(fastify)
-    await swagger(fastify)
-    await swagger_ui(fastify)
     await cookie(fastify)
     await jwt(fastify)
     await cors(fastify)
