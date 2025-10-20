@@ -1,19 +1,22 @@
 import { uuid, pgTable, text, timestamp } from "drizzle-orm/pg-core"
-import Type, { Static } from "typebox"
+import { userRoleEnum } from "./common"
+import { Static } from "typebox"
 import { v7 } from "uuid"
+import Type from "typebox"
 
-export const user = pgTable("user", {
+export const users = pgTable("users", {
     id: uuid("id")
-        .unique()
         .primaryKey()
         .$defaultFn(() => v7()),
-    token: text("token").notNull(),
-    type: text("type").notNull().$type<"client" | "worker" | "supporter">(),
     email: text("email").notNull().unique(),
-    username: text("username").notNull().unique(),
-    name: text("name").notNull(),
+    username: text("username").unique(),
+    name: text("name"),
     avatar: text("avatar"),
-    createdAt: timestamp("created_at", { withTimezone: false }).notNull().defaultNow()
+    bio: text("bio"),
+    role: userRoleEnum("role").default("freelancer"),
+    githubId: text("github_id").unique(),
+    createdAt: timestamp("created_at").defaultNow().notNull(),
+    updatedAt: timestamp("updated_at").defaultNow().notNull()
 })
 
 export type User = Static<typeof User>

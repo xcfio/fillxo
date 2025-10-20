@@ -1,6 +1,6 @@
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
-export { User } from "./database/user"
+export { User } from "./database/users"
 declare module "fastify" {
     interface FastifyInstance {
         auth: (request: FastifyRequest, reply: FastifyReply) => void

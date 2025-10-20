@@ -12,6 +12,7 @@ import {
     Globe
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Footer from "@/components/footer"
 import Image from "next/image"
 
 export default function LandingPage() {
@@ -422,16 +423,7 @@ export default function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
-            <footer className="border-t border-blue-900/20 py-8 px-6">
-                <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
-                    <div className="flex items-center gap-2">
-                        <Image src="/favicon.svg" alt="fillxo" width={24} height={24} className="w-6 h-6" />
-                        <span className="font-semibold text-blue-400">fillxo</span>
-                    </div>
-                    <p className="text-gray-500 text-sm">© 2025 fillxo. All rights reserved</p>
-                </div>
-            </footer>
+            <Footer />
         </div>
     )
 }
