@@ -1,4 +1,5 @@
 // src/app/layout.tsx
+import { Analytics } from "@vercel/analytics/next"
 import "./globals.css"
 
 import type { Metadata } from "next"
@@ -27,7 +28,10 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="msapplication-TileColor" content="#4285f4" />
                 <meta name="theme-color" content="#4285f4" />
             </head>
-            <body className={comfortaa.className}>{children}</body>
+            <body className={comfortaa.className}>
+                {children}
+                <Analytics />
+            </body>
         </html>
     )
 }
