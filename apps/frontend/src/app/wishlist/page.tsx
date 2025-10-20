@@ -1,8 +1,26 @@
 "use client"
 
-import { useState } from "react"
-import { ArrowRight, CheckCircle2, Sparkles, ArrowLeft, AlertCircle } from "lucide-react"
+import { ArrowRight, CheckCircle2, ArrowLeft, AlertCircle, LoaderCircle } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useState } from "react"
+import Image from "next/image"
+
+const ALLOWED_EMAIL_PROVIDERS = [
+    "gmail.com",
+    "googlemail.com",
+    "outlook.com",
+    "hotmail.com",
+    "live.com",
+    "icloud.com",
+    "proton.me",
+    "protonmail.com",
+    "proton.me",
+    "zoho.com",
+    "fastmail.com",
+    "tutanota.com",
+    "mailfence.com",
+    "mail.com"
+]
 
 export default function WishlistPage() {
     const router = useRouter()
@@ -13,14 +31,25 @@ export default function WishlistPage() {
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        return emailRegex.test(email)
+        if (!emailRegex.test(email)) {
+            return { isValid: false, message: "Please enter a valid email address" }
+        }
+
+        const domain = email.split("@")[1]?.toLowerCase()
+        if (!ALLOWED_EMAIL_PROVIDERS.includes(domain)) {
+            return {
+                isValid: false,
+                message: "Please use a popular email provider (Gmail, Outlook, etc.)"
+            }
+        }
+
+        return { isValid: true, message: "" }
     }
 
     const validateForm = () => {
         const newErrors = { fullName: "", email: "", general: "" }
         let isValid = true
 
-        // Validate full name
         if (!formData.fullName.trim()) {
             newErrors.fullName = "Full name is required"
             isValid = false
@@ -29,13 +58,15 @@ export default function WishlistPage() {
             isValid = false
         }
 
-        // Validate email
         if (!formData.email.trim()) {
             newErrors.email = "Email is required"
             isValid = false
-        } else if (!validateEmail(formData.email)) {
-            newErrors.email = "Please enter a valid email address"
-            isValid = false
+        } else {
+            const emailValidation = validateEmail(formData.email.trim())
+            if (!emailValidation.isValid) {
+                newErrors.email = emailValidation.message
+                isValid = false
+            }
         }
 
         setErrors(newErrors)
@@ -44,23 +75,15 @@ export default function WishlistPage() {
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
-
-        // Clear previous errors
         setErrors({ fullName: "", email: "", general: "" })
 
-        // Validate form
-        if (!validateForm()) {
-            return
-        }
-
+        if (!validateForm()) return
         setIsSubmitting(true)
 
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/wishlist`, {
                 method: "POST",
-                headers: {
-                    "Content-Type": "application/json"
-                },
+                headers: { "Content-Type": "application/json" },
                 body: JSON.stringify(formData)
             })
 
@@ -71,11 +94,7 @@ export default function WishlistPage() {
 
             setIsSuccess(true)
             setFormData({ fullName: "", email: "" })
-
-            // Redirect to home after 3 seconds
-            setTimeout(() => {
-                router.push("/")
-            }, 3000)
+            setTimeout(() => router.push("/"), 3000)
         } catch (err) {
             setErrors({
                 ...errors,
@@ -95,9 +114,7 @@ export default function WishlistPage() {
                         onClick={() => router.push("/")}
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-5 h-5" />
-                        </div>
+                        <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
                         <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             fillxo
                         </span>
@@ -134,14 +151,14 @@ export default function WishlistPage() {
                         <>
                             <div className="text-center mb-12">
                                 <div className="inline-block mb-6 px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-blue-300 text-sm">
-                                    🚀 Be the First to Know
+                                    ✨ Coming Soon
                                 </div>
                                 <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                                    Join the
-                                    <span className="text-blue-400"> Wishlist</span>
+                                    Get Early
+                                    <span className="text-blue-400"> Access</span>
                                 </h1>
                                 <p className="text-lg text-gray-400">
-                                    Get early access and exclusive updates when we launch fillxo.
+                                    Join the wishlist and be notified when fillxo launches in Bangladesh.
                                 </p>
                             </div>
 
@@ -153,7 +170,7 @@ export default function WishlistPage() {
                                     </div>
                                 )}
 
-                                <div className="space-y-6">
+                                <form onSubmit={handleSubmit} className="space-y-6">
                                     <div>
                                         <label
                                             htmlFor="fullName"
@@ -200,13 +217,13 @@ export default function WishlistPage() {
                                     </div>
 
                                     <button
-                                        onClick={handleSubmit}
+                                        type="submit"
                                         disabled={isSubmitting}
-                                        className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:bg-blue-800 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                        className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
                                     >
                                         {isSubmitting ? (
                                             <>
-                                                <div className="w-5 h-5 border-2 border-white/20 border-t-white rounded-full animate-spin" />
+                                                <LoaderCircle className="w-5 h-5 animate-spin" />
                                                 Joining...
                                             </>
                                         ) : (
@@ -219,10 +236,8 @@ export default function WishlistPage() {
 
                                     <p className="text-gray-500 text-sm text-center">
                                         We respect your privacy. No spam, ever.
-                                        <br />
-                                        Unsubscribe anytime.
                                     </p>
-                                </div>
+                                </form>
                             </div>
 
                             {/* Benefits */}
@@ -254,9 +269,7 @@ export default function WishlistPage() {
             <footer className="border-t border-blue-900/20 py-8 px-6">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-4 h-4" />
-                        </div>
+                        <Image src="/favicon.svg" alt="fillxo" width={24} height={24} className="w-6 h-6" />
                         <span className="font-semibold text-blue-400">fillxo</span>
                     </div>
                     <p className="text-gray-500 text-sm">© 2025 fillxo. Built with ❤️ for Bangladeshi Freelancers</p>

@@ -1,23 +1,18 @@
 "use client"
 
-import { useState } from "react"
 import {
     Users,
     Zap,
-    Shield,
-    Clock,
     ArrowRight,
     CheckCircle2,
-    Sparkles,
-    FileText,
     DollarSign,
-    BarChart3,
     Briefcase,
     UserCheck,
     CircleChevronDown,
     Globe
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
 
 export default function LandingPage() {
     const router = useRouter()
@@ -28,9 +23,7 @@ export default function LandingPage() {
             <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
-                        <div className="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-5 h-5" />
-                        </div>
+                        <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
                         <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             fillxo
                         </span>
@@ -48,7 +41,7 @@ export default function LandingPage() {
             <section className="pt-32 pb-20 px-6">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="inline-block mb-6 px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-blue-300 text-sm">
-                        🇧🇩 The Future of Freelancing in Bangladesh
+                        The Future of Freelancing in Bangladesh
                     </div>
 
                     <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
@@ -424,7 +417,7 @@ export default function LandingPage() {
                         </button>
                     </div>
                     <p className="text-gray-500 text-sm mt-6">
-                        No credit card required • Launching soon • Built for Bangladesh 🇧🇩
+                        No credit card required • Launching soon • Built for Bangladesh
                     </p>
                 </div>
             </section>
@@ -433,9 +426,7 @@ export default function LandingPage() {
             <footer className="border-t border-blue-900/20 py-8 px-6">
                 <div className="max-w-6xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
                     <div className="flex items-center gap-2">
-                        <div className="w-6 h-6 bg-blue-600 rounded-lg flex items-center justify-center">
-                            <Sparkles className="w-4 h-4" />
-                        </div>
+                        <Image src="/favicon.svg" alt="fillxo" width={24} height={24} className="w-6 h-6" />
                         <span className="font-semibold text-blue-400">fillxo</span>
                     </div>
                     <p className="text-gray-500 text-sm">© 2025 fillxo. All rights reserved</p>
