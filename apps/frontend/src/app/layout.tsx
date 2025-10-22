@@ -12,10 +12,48 @@ const comfortaa = Comfortaa({
 })
 
 export const metadata: Metadata = {
-    title: "fillxo",
-    description: "Real-time chat application with Next.js and Socket.IO",
+    title: "fillxo - Bangladesh's Freelance Marketplace",
+    description:
+        "Connect with top Bangladeshi freelancers or find your next project. A complete freelance marketplace with local payment methods, secure escrow, and dual language support. Built for Bangladesh.",
     icons: {
         icon: "/favicon.svg"
+    },
+    keywords: [
+        "fillxo",
+        "freelance Bangladesh",
+        "Bangladeshi freelancers",
+        "freelance marketplace",
+        "hire talent Bangladesh",
+        "remote work BD",
+        "upwork alternative",
+        "fiverr Bangladesh"
+    ],
+    authors: [{ name: "fillxo Team" }],
+    openGraph: {
+        title: "fillxo - Bangladesh's Freelance Marketplace",
+        description:
+            "Where talent meets opportunity. Connect with skilled Bangladeshi freelancers or find projects. Local payments, secure escrow, free to start.",
+        url: "https://fillxo.vercel.app",
+        siteName: "fillxo",
+        locale: "en_BD",
+        type: "website"
+    },
+    twitter: {
+        card: "summary_large_image",
+        title: "fillxo - Bangladesh's Freelance Marketplace",
+        description:
+            "Connect with top Bangladeshi talent or find projects. Local payments, secure escrow, free to start."
+    },
+    robots: {
+        index: true,
+        follow: true,
+        googleBot: {
+            index: true,
+            follow: true
+        }
+    },
+    alternates: {
+        canonical: "https://fillxo.vercel.app"
     }
 }
 
@@ -23,7 +61,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <link rel="icon" href="/favicon.ico" sizes="any" />
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <meta name="msapplication-TileColor" content="#4285f4" />
                 <meta name="theme-color" content="#4285f4" />
