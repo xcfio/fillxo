@@ -27,6 +27,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <meta name="msapplication-TileColor" content="#4285f4" />
                 <meta name="theme-color" content="#4285f4" />
+                <script
+                    defer
+                    src="https://cloud.umami.is/script.js"
+                    data-website-id="afd13f16-1202-42ba-8e3e-8b64335baf4f"
+                ></script>
             </head>
             <body className={comfortaa.className}>
                 {children}
