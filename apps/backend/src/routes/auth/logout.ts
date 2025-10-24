@@ -3,7 +3,7 @@ import { ErrorResponse } from "../../type"
 import { main } from "../../"
 import { Type } from "typebox"
 
-export default function SessionLogout(fastify: Awaited<ReturnType<typeof main>>) {
+export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/logout",

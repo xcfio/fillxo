@@ -48,6 +48,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
             response: {
                 201: User,
                 400: ErrorResponse(400, "Bad Request - Invalid input data"),
+                403: ErrorResponse(403, "Forbidden - Invalid OTP"),
                 409: ErrorResponse(409, "Conflict - Email or username already exists"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
@@ -56,7 +57,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { name, username, email, password, role } = request.body
-
+                // TODO: Add OTP validator
                 const existingUser = await db
                     .select({ email: table.users.email, username: table.users.username })
                     .from(table.users)
@@ -88,10 +89,10 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error
+                } else {
+                    console.trace(error)
+                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
                 }
-
-                request.log.error(error, "Registration error")
-                throw CreateError(500, "INTERNAL_SERVER_ERROR", "An unexpected error occurred")
             }
         }
     })

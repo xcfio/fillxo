@@ -4,7 +4,7 @@ import { db, table } from "../../database"
 import { main } from "../../"
 import { eq } from "drizzle-orm"
 
-export default function SessionMe(fastify: Awaited<ReturnType<typeof main>>) {
+export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "GET",
         url: "/auth/me",
