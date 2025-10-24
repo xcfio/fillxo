@@ -5,6 +5,7 @@ import { Value } from "typebox/value"
 import { Payload } from "./type"
 import Fastify from "fastify"
 import Plugin from "./plugin"
+import Routes from "./routes"
 
 export async function main() {
     const isDevelopment = process.env.NODE_ENV === "development"
@@ -59,6 +60,7 @@ export async function main() {
         }
     })
 
+    Routes(fastify)
     fastify.addHook("onError", (_, __, error) => {
         if ((Error.isError(error) && error.message.startsWith("Rate limit exceeded")) || isFastifyError(error)) {
             throw error

@@ -1,6 +1,7 @@
 import { Static, Type } from "typebox"
-import { v7 } from "uuid"
 export { User } from "./database/users"
+import { v7 } from "uuid"
+
 declare module "fastify" {
     interface FastifyInstance {
         auth: (request: FastifyRequest, reply: FastifyReply) => void
@@ -23,6 +24,7 @@ declare global {
             NODE_ENV: "development" | "production"
             DATABASE_URI: string
 
+            HMAC_SECRET: string
             COOKIE_SECRET: string
             JWT_SECRET: string
 
