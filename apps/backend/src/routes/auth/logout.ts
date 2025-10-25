@@ -1,7 +1,7 @@
 import { CreateError, isFastifyError } from "../../function"
 import { ErrorResponse } from "../../type"
 import { main } from "../../"
-import { Type } from "typebox"
+import Type from "typebox"
 
 export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -9,7 +9,7 @@ export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
         url: "/auth/logout",
         schema: {
             description: "Logout user and clear authentication",
-            tags: ["Sessions"],
+            tags: ["Authentication"],
             response: {
                 200: Type.Object(
                     {

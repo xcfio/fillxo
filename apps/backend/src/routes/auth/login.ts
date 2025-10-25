@@ -4,14 +4,14 @@ import { db, table } from "../../database"
 import { main } from "../../"
 import { timingSafeEqual } from "node:crypto"
 import { eq, or } from "drizzle-orm"
-import { Type } from "typebox"
+import Type from "typebox"
 
 export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/login",
         schema: {
-            description: "Register a new user account",
+            description: "Login to a account",
             tags: ["Authentication"],
             body: Type.Object({ input: Type.String(), password: Type.String() }),
             response: {

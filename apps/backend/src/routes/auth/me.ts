@@ -10,7 +10,7 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
         url: "/auth/me",
         schema: {
             description: "Get current authenticated user",
-            tags: ["Sessions"],
+            tags: ["Authentication"],
             response: {
                 200: User,
                 401: ErrorResponse(401, "Unauthorized - authentication required"),

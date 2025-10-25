@@ -1,9 +1,9 @@
-import { CreateError, isFastifyError, HmacPassword } from "../../function"
+import { CreateError, isFastifyError, HmacPassword, VerifyOTP } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { eq, or } from "drizzle-orm"
-import { Type } from "typebox"
+import Type from "typebox"
 
 export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -19,6 +19,13 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
                         pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
                         description: "User's email address",
                         examples: ["user@example.com"]
+                    }),
+                    otp: Type.String({
+                        minLength: 6,
+                        maxLength: 6,
+                        pattern: "^[0-9]{6}$",
+                        description: "One-time verification code (6 numeric digits)",
+                        examples: ["420960"]
                     }),
                     username: Type.String({
                         minLength: 3,
@@ -56,20 +63,22 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
         },
         handler: async (request, reply) => {
             try {
-                const { name, username, email, password, role } = request.body
-                // TODO: Add OTP validator
-                const existingUser = await db
+                const { otp, name, username, email, password, role } = request.body
+
+                if (!VerifyOTP(email, otp)) {
+                    throw CreateError(403, "INVALID_OTP", "The provided OTP is incorrect or has expired")
+                }
+
+                const [exist] = await db
                     .select({ email: table.users.email, username: table.users.username })
                     .from(table.users)
                     .where(or(eq(table.users.email, email), eq(table.users.username, username)))
-                    .limit(1)
 
-                if (existingUser.length > 0) {
-                    const existing = existingUser[0]
-                    if (existing.email === email) {
+                if (exist) {
+                    if (exist.email === email) {
                         throw CreateError(409, "EMAIL_ALREADY_EXISTS", "This email is already registered")
                     }
-                    if (existing.username === username) {
+                    if (exist.username === username) {
                         throw CreateError(409, "USERNAME_ALREADY_EXISTS", "This username is already taken")
                     }
                 }
