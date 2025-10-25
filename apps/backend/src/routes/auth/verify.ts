@@ -10,59 +10,17 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Verify user email",
             tags: ["Authentication"],
-            body: Type.Union([
-                Type.Object({
-                    email: Type.String({
-                        format: "email",
-                        pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
-                        description: "User's email address",
-                        examples: ["user@example.com"]
-                    })
-                }),
-                Type.Object({
-                    email: Type.String({
-                        format: "email",
-                        pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$",
-                        description: "User's email address",
-                        examples: ["user@example.com"]
-                    }),
-                    otp: Type.String({
-                        minLength: 6,
-                        maxLength: 6,
-                        pattern: "^[0-9]{6}$",
-                        description: "One-time verification code (6 numeric digits)",
-                        examples: ["420960"]
-                    })
-                })
-            ]),
+            body: Type.Object({ email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }) }),
             response: {
-                200: Type.Object(
-                    {
-                        success: Type.Boolean({ description: "Indicates if OTP send successful" }),
-                        email: Type.String({ description: "User's email address" })
-                    },
-                    {
-                        description: "Response schema for successful verification operation"
-                    }
-                ),
-                403: ErrorResponse(403, "Forbidden - Invalid OTP"),
+                200: Type.Object({ success: Type.Boolean() }),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
         },
         handler: async (request, reply) => {
             try {
-                if ("otp" in request.body) {
-                    const { email, otp } = request.body
-                    if (!VerifyOTP(email, otp)) {
-                        throw CreateError(403, "INVALID_OTP", "The provided OTP is incorrect or has expired")
-                    } else {
-                        return reply.send({ success: true, email })
-                    }
-                } else {
-                    const { email } = await SendOTP(request.body.email)
-                    return reply.send({ success: true, email })
-                }
+                await SendOTP(request.body.email)
+                return reply.send({ success: true })
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

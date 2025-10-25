@@ -11,15 +11,7 @@ export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Logout user and clear authentication",
             tags: ["Authentication"],
             response: {
-                200: Type.Object(
-                    {
-                        success: Type.Boolean({ description: "Indicates if logout was successful" }),
-                        message: Type.String({ description: "Logout confirmation message" })
-                    },
-                    {
-                        description: "Response schema for successful logout operation"
-                    }
-                ),
+                200: Type.Object({ success: Type.Boolean(), message: Type.String() }),
                 401: ErrorResponse(401, "Unauthorized - authentication required"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")

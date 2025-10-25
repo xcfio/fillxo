@@ -53,24 +53,22 @@ export const User = Type.Object(
             description: "User's full name",
             examples: ["John Doe"]
         }),
-        avatar: Type.Optional(
-            Type.Union(
-                [
-                    Type.String({
-                        examples: ["https://avatars.githubusercontent.com/u/119097812"],
-                        pattern: "^https?://.+",
-                        description: "URL to the user's avatar image if it exists"
-                    }),
-                    Type.Null({
-                        description: "Null if no avatar is set"
-                    })
-                ],
-                {
-                    description: "User's avatar image (optional)"
-                }
-            )
+        avatar: Type.Union(
+            [
+                Type.String({
+                    examples: ["https://avatars.githubusercontent.com/u/119097812"],
+                    pattern: "^https?://.+",
+                    description: "URL to the user's avatar image if it exists"
+                }),
+                Type.Null({
+                    description: "Null if no avatar is set"
+                })
+            ],
+            {
+                description: "User's avatar image (optional)"
+            }
         ),
-        bio: Type.Optional(Type.Union([Type.String(), Type.Null()])),
+        bio: Type.Union([Type.String(), Type.Null()]),
         role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")]),
         createdAt: Type.String({ format: "date-time", description: "ISO timestamp of when user account was created" }),
         updatedAt: Type.String({

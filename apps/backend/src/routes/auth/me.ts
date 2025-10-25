@@ -1,5 +1,5 @@
-import { ErrorResponse, User } from "../../type"
 import { CreateError, isFastifyError } from "../../function"
+import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { eq } from "drizzle-orm"
@@ -22,7 +22,7 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const [user] = await db.select().from(table.users).where(eq(table.users.id, request.user.id)).limit(1)
+                const [user] = await db.select().from(table.users).where(eq(table.users.id, request.user.id))
                 if (user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
                 return reply.send(user)
             } catch (error) {

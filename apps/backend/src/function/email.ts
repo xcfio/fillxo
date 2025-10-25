@@ -1,4 +1,4 @@
-import { createInterface } from "node:readline"
+import { randomInt, timingSafeEqual } from "node:crypto"
 import { Email } from "./front-end"
 import { Resend } from "resend"
 
@@ -9,23 +9,19 @@ setInterval(() => {
     for (const [email, data] of otpStore.entries()) if (Date.now() > data.expires) otpStore.delete(email)
 }, 60000)
 
-export function input(prompt: string) {
-    const rl = createInterface({ input: process.stdin, output: process.stdout })
-    return new Promise<string>((resolve) => rl.question(prompt, (answer) => (resolve(answer) ?? null) || rl.close()))
-}
-
 export function VerifyOTP(email: string, otp: string): boolean {
     const stored = otpStore.get(email)
-
     if (!stored) return false
-    if (stored.otp !== otp) return false
+
+    if (!timingSafeEqual(Buffer.from(stored.otp), Buffer.from(otp))) return false
+    if (stored.expires < Date.now()) return false
 
     otpStore.delete(email)
     return true
 }
 
 export async function SendOTP(email: string): Promise<{ email: string; otp: string }> {
-    const otp = Math.floor(100000 + Math.random() * 900000).toString()
+    const otp = randomInt(100000, 1000000).toString()
     otpStore.set(email, { otp, expires: Date.now() + 10 * 60 * 1000 })
 
     await resend.emails.send({
