@@ -19,22 +19,30 @@ export default function LandingPage() {
     const router = useRouter()
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
+        <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
             {/* Navigation */}
             <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             fillxo
                         </span>
                     </div>
-                    <button
-                        onClick={() => router.push("/wishlist")}
-                        className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-                    >
-                        Join Wishlist
-                    </button>
+                    <div className="flex items-center gap-4">
+                        <button
+                            onClick={() => router.push("/login")}
+                            className="px-4 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            onClick={() => router.push("/register")}
+                            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                        >
+                            Get Started
+                        </button>
+                    </div>
                 </div>
             </nav>
 
@@ -48,7 +56,7 @@ export default function LandingPage() {
                     <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight">
                         Where Talent Meets
                         <br />
-                        <span className="bg-gradient-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-blue-400 via-blue-500 to-blue-600 bg-clip-text text-transparent">
                             Opportunity
                         </span>
                     </h1>
@@ -60,14 +68,14 @@ export default function LandingPage() {
 
                     <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
                         <button
-                            onClick={() => router.push("/wishlist")}
+                            onClick={() => router.push("/register")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
                         >
                             Join as Freelancer
                             <ArrowRight className="w-5 h-5" />
                         </button>
                         <button
-                            onClick={() => router.push("/wishlist")}
+                            onClick={() => router.push("/register")}
                             className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
                         >
                             I'm Hiring
@@ -75,7 +83,7 @@ export default function LandingPage() {
                         </button>
                     </div>
 
-                    <p className="text-gray-500 text-sm mt-6">Free to join • Coming soon • Built for Bangladesh</p>
+                    <p className="text-gray-500 text-sm mt-6">Free to join • Built for Bangladesh</p>
                 </div>
             </section>
 
@@ -106,7 +114,7 @@ export default function LandingPage() {
                                     "Connect with local and global clients"
                                 ].map((item, index) => (
                                     <li key={index} className="flex items-start gap-3">
-                                        <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                                        <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                                         <span className="text-gray-300">{item}</span>
                                     </li>
                                 ))}
@@ -131,7 +139,7 @@ export default function LandingPage() {
                                     "Quality work, fair prices"
                                 ].map((item, index) => (
                                     <li key={index} className="flex items-start gap-3">
-                                        <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0 mt-0.5" />
+                                        <CheckCircle2 className="w-5 h-5 text-green-400 shrink-0 mt-0.5" />
                                         <span className="text-gray-300">{item}</span>
                                     </li>
                                 ))}
@@ -242,7 +250,7 @@ export default function LandingPage() {
                                     "Dedicated support team"
                                 ].map((benefit, index) => (
                                     <li key={index} className="flex items-start gap-3">
-                                        <CheckCircle2 className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+                                        <CheckCircle2 className="w-6 h-6 text-blue-400 shrink-0 mt-0.5" />
                                         <span className="text-lg text-gray-300">{benefit}</span>
                                     </li>
                                 ))}
@@ -251,7 +259,7 @@ export default function LandingPage() {
 
                         <div className="relative">
                             <div className="absolute inset-0 bg-blue-600/20 blur-3xl rounded-full"></div>
-                            <div className="relative bg-gradient-to-br from-gray-900/80 to-blue-900/40 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                            <div className="relative bg-linear-to-br from-gray-900/80 to-blue-900/40 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
                                 <div className="space-y-4">
                                     <div className="bg-blue-600/10 border border-blue-700/30 rounded-xl p-6">
                                         <div className="flex items-center gap-3 mb-3">
@@ -373,20 +381,6 @@ export default function LandingPage() {
                             </details>
                         ))}
                     </div>
-
-                    <div className="mt-12 bg-blue-900/20 border border-blue-700/30 rounded-xl p-8 text-center">
-                        <h3 className="text-xl font-semibold mb-3">Still have questions?</h3>
-                        <p className="text-gray-400 mb-6">
-                            We're here to help! Join our wishlist and we'll keep you updated with all the details.
-                        </p>
-                        <button
-                            onClick={() => router.push("/wishlist")}
-                            className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg font-semibold transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
-                        >
-                            Join the Wishlist
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
-                    </div>
                 </div>
             </section>
 
@@ -403,14 +397,14 @@ export default function LandingPage() {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => router.push("/wishlist")}
+                            onClick={() => router.push("/register")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
                         >
                             Join as Freelancer
                             <ArrowRight className="w-5 h-5" />
                         </button>
                         <button
-                            onClick={() => router.push("/wishlist")}
+                            onClick={() => router.push("/register")}
                             className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
                         >
                             Join as Client
