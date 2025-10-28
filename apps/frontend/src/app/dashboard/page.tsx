@@ -31,7 +31,7 @@ export default function DashboardPage() {
 
     if (!user) {
         return (
-            <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 text-white flex items-center justify-center">
+            <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white flex items-center justify-center">
                 <div className="text-center">
                     <div className="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4" />
                     <p className="text-gray-400">Loading...</p>
@@ -41,13 +41,13 @@ export default function DashboardPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
+        <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
             {/* Navigation */}
             <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
                     <div className="flex items-center gap-2">
                         <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             fillxo
                         </span>
                     </div>
@@ -71,7 +71,7 @@ export default function DashboardPage() {
             </nav>
 
             {/* Main Content */}
-            <div className="pt-24 px-6 pb-12">
+            <div className="pt-24 px-6 pb-12 flex-1">
                 <div className="max-w-7xl mx-auto">
                     {/* Welcome Section */}
                     <div className="mb-12">

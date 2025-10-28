@@ -107,7 +107,7 @@ export default function WishlistPage() {
     }
 
     return (
-        <div className="min-h-screen bg-gradient-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
+        <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
             {/* Navigation */}
             <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
                 <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
@@ -116,7 +116,7 @@ export default function WishlistPage() {
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
                         <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-2xl font-bold bg-gradient-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
                             fillxo
                         </span>
                     </button>
@@ -166,7 +166,7 @@ export default function WishlistPage() {
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
                                 {errors.general && (
                                     <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
-                                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                                         <p className="text-red-300 text-sm">{errors.general}</p>
                                     </div>
                                 )}
@@ -255,7 +255,7 @@ export default function WishlistPage() {
                                             key={index}
                                             className="flex items-start gap-3 bg-gray-900/30 border border-blue-900/20 rounded-lg p-4"
                                         >
-                                            <CheckCircle2 className="w-5 h-5 text-blue-400 flex-shrink-0 mt-0.5" />
+                                            <CheckCircle2 className="w-5 h-5 text-blue-400 shrink-0 mt-0.5" />
                                             <span className="text-gray-300">{benefit}</span>
                                         </div>
                                     ))}

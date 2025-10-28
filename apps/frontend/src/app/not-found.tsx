@@ -33,7 +33,7 @@ export default function NotFound() {
 
     return (
         <>
-            <div className="min-h-screen bg-gradient-to-br from-blue-900 via-teal-900 to-blue-900 flex items-center justify-center p-4 overflow-hidden relative">
+            <div className="min-h-screen bg-linear-to-br from-blue-900 via-teal-900 to-blue-900 flex items-center justify-center p-4 overflow-hidden relative">
                 {/* Background particles */}
                 <div className="absolute inset-0 overflow-hidden">
                     {particles.map((particle, i) => (
@@ -54,7 +54,7 @@ export default function NotFound() {
                 <div className="absolute inset-0 pointer-events-none">
                     <div className="shape-square absolute w-20 h-20 border-2 border-teal-500/30 rotate-45 top-20 left-20 md:w-12 md:h-12 md:top-8 md:left-8" />
                     <div
-                        className="shape-circle absolute w-12 h-12 bg-gradient-to-r from-teal-500/20 to-cyan-500/20 rounded-full top-40 right-32 md:w-8 md:h-8 md:top-24 md:right-8"
+                        className="shape-circle absolute w-12 h-12 bg-linear-to-r from-teal-500/20 to-cyan-500/20 rounded-full top-40 right-32 md:w-8 md:h-8 md:top-24 md:right-8"
                         style={{ animationDelay: "1s" }}
                     />
                     <div
@@ -71,7 +71,7 @@ export default function NotFound() {
                     {/* Main 404 Text */}
                     <div className="relative">
                         <h1
-                            className={`text-404 text-[clamp(4rem,15vw,9rem)] font-black text-white tracking-[0.1em] m-0 relative transition-all duration-200 ${
+                            className={`text-404 text-[clamp(4rem,15vw,9rem)] font-black text-white tracking-widest m-0 relative transition-all duration-200 ${
                                 glitchActive ? "glitch-active" : ""
                             }`}
                         >
@@ -81,10 +81,10 @@ export default function NotFound() {
                         {/* Glitch overlay */}
                         {glitchActive && (
                             <>
-                                <h1 className="text-404-glitch absolute inset-0 text-[clamp(4rem,15vw,9rem)] font-black tracking-[0.1em] m-0 opacity-70 text-red-500 translate-x-1 -translate-y-1">
+                                <h1 className="text-404-glitch absolute inset-0 text-[clamp(4rem,15vw,9rem)] font-black tracking-widest m-0 opacity-70 text-red-500 translate-x-1 -translate-y-1">
                                     404
                                 </h1>
-                                <h1 className="text-404-glitch absolute inset-0 text-[clamp(4rem,15vw,9rem)] font-black tracking-[0.1em] m-0 opacity-70 text-cyan-500 -translate-x-1 translate-y-1">
+                                <h1 className="text-404-glitch absolute inset-0 text-[clamp(4rem,15vw,9rem)] font-black tracking-widest m-0 opacity-70 text-cyan-500 -translate-x-1 translate-y-1">
                                     404
                                 </h1>
                             </>
