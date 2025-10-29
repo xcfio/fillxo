@@ -12,39 +12,23 @@ import {
     Globe
 } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 import Footer from "@/components/footer"
+import Navbar from "@/components/navbar"
 import Image from "next/image"
 
 export default function LandingPage() {
     const router = useRouter()
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    useEffect(() => {
+        const userData = localStorage.getItem("user")
+        setIsLoggedIn(!!userData)
+    }, [])
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
-            {/* Navigation */}
-            <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <div className="flex items-center gap-2">
-                        <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                            fillxo
-                        </span>
-                    </div>
-                    <div className="flex items-center gap-4">
-                        <button
-                            onClick={() => router.push("/login")}
-                            className="px-4 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
-                        >
-                            Sign In
-                        </button>
-                        <button
-                            onClick={() => router.push("/register")}
-                            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-                        >
-                            Get Started
-                        </button>
-                    </div>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Hero Section */}
             <section className="pt-32 pb-20 px-6">
@@ -66,22 +50,32 @@ export default function LandingPage() {
                         built for local needs.
                     </p>
 
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                    {isLoggedIn ? (
                         <button
-                            onClick={() => router.push("/register")}
+                            onClick={() => router.push("/dashboard")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
                         >
-                            Join as Freelancer
+                            Go to Dashboard
                             <ArrowRight className="w-5 h-5" />
                         </button>
-                        <button
-                            onClick={() => router.push("/register")}
-                            className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
-                        >
-                            I'm Hiring
-                            <Briefcase className="w-5 h-5" />
-                        </button>
-                    </div>
+                    ) : (
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
+                            <button
+                                onClick={() => router.push("/register")}
+                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                            >
+                                Join as Freelancer
+                                <ArrowRight className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => router.push("/register")}
+                                className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                            >
+                                I'm Hiring
+                                <Briefcase className="w-5 h-5" />
+                            </button>
+                        </div>
+                    )}
 
                     <p className="text-gray-500 text-sm mt-6">Free to join • Built for Bangladesh</p>
                 </div>
@@ -395,22 +389,32 @@ export default function LandingPage() {
                     <p className="text-xl text-gray-400 mb-8">
                         Join thousands of Bangladeshi freelancers and clients waiting for launch.
                     </p>
-                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                    {isLoggedIn ? (
                         <button
-                            onClick={() => router.push("/register")}
+                            onClick={() => router.push("/dashboard")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
                         >
-                            Join as Freelancer
+                            Go to Dashboard
                             <ArrowRight className="w-5 h-5" />
                         </button>
-                        <button
-                            onClick={() => router.push("/register")}
-                            className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
-                        >
-                            Join as Client
-                            <Briefcase className="w-5 h-5" />
-                        </button>
-                    </div>
+                    ) : (
+                        <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                            <button
+                                onClick={() => router.push("/register")}
+                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                            >
+                                Join as Freelancer
+                                <ArrowRight className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => router.push("/register")}
+                                className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
+                            >
+                                Join as Client
+                                <Briefcase className="w-5 h-5" />
+                            </button>
+                        </div>
+                    )}
                     <p className="text-gray-500 text-sm mt-6">
                         No credit card required • Launching soon • Built for Bangladesh
                     </p>

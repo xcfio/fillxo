@@ -2,8 +2,9 @@
 
 import { ArrowLeft, ArrowRight, LoaderCircle, AlertCircle, Eye, EyeOff, Mail, CheckCircle2 } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import Footer from "@/components/footer"
+import Navbar from "@/components/navbar"
 import Image from "next/image"
 import Link from "next/link"
 
@@ -49,6 +50,11 @@ export default function RegisterPage() {
         confirmPassword: "",
         general: ""
     })
+
+    useEffect(() => {
+        const userData = localStorage.getItem("user")
+        if (userData) return router.push("/dashboard")
+    }, [router])
 
     const validateEmail = (email: string) => {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
@@ -231,27 +237,7 @@ export default function RegisterPage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white flex flex-col">
-            {/* Navigation */}
-            <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
-                <div className="max-w-7xl mx-auto px-6 py-4 flex justify-between items-center">
-                    <button
-                        onClick={() => router.push("/")}
-                        className="flex items-center gap-2 hover:opacity-80 transition-opacity"
-                    >
-                        <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-2xl font-bold bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                            fillxo
-                        </span>
-                    </button>
-                    <button
-                        onClick={() => router.push("/")}
-                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-                    >
-                        <ArrowLeft className="w-4 h-4" />
-                        Back to Home
-                    </button>
-                </div>
-            </nav>
+            <Navbar />
 
             {/* Main Content */}
             <section className="pt-32 pb-20 px-6 flex-1">

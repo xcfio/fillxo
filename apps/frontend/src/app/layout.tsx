@@ -63,12 +63,14 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
                 <meta name="msapplication-TileColor" content="#4285f4" />
                 <meta name="theme-color" content="#4285f4" />
-                <Script
-                    src="/api/analytics/script.js"
-                    data-website-id="afd13f16-1202-42ba-8e3e-8b64335baf4f"
-                    data-host-url="/api/analytics"
-                    strategy="afterInteractive"
-                />
+                {process.env.NODE_ENV !== "development" && (
+                    <Script
+                        src="/api/analytics/script.js"
+                        data-website-id="afd13f16-1202-42ba-8e3e-8b64335baf4f"
+                        data-host-url="/api/analytics"
+                        strategy="afterInteractive"
+                    />
+                )}
             </head>
             <body className={comfortaa.className}>
                 {children}
