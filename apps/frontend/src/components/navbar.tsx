@@ -27,6 +27,18 @@ export default function Navbar() {
                     </span>
                 </button>
                 <div className="flex items-center gap-4">
+                    <button
+                        onClick={() => router.push("/terms")}
+                        className="px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                    >
+                        Terms of Service
+                    </button>
+                    <button
+                        onClick={() => router.push("/privacy")}
+                        className="px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                    >
+                        Privacy Policy
+                    </button>
                     {isLoggedIn ? (
                         <button
                             onClick={() => router.push("/dashboard")}

@@ -26,6 +26,18 @@ export default function NavbarAuth() {
                 </button>
 
                 <div className="flex items-center gap-6">
+                    <button
+                        onClick={() => router.push("/terms")}
+                        className="px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                    >
+                        Terms of Service
+                    </button>
+                    <button
+                        onClick={() => router.push("/privacy")}
+                        className="px-3 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                    >
+                        Privacy Policy
+                    </button>
                     <button className="text-gray-400 hover:text-white transition-colors">
                         <Bell className="w-5 h-5" />
                     </button>

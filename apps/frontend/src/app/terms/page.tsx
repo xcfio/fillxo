@@ -153,9 +153,12 @@ export default function TermsPage() {
                         <section>
                             <h2 className="text-2xl font-bold mb-4 text-blue-400">11. Changes to Terms</h2>
                             <p className="text-gray-300 leading-relaxed">
-                                We reserve the right to modify these terms at any time. We will notify users of any
-                                changes by posting the new Terms of Service on this page and updating the "Last updated"
-                                date.
+                                We reserve the right to modify, update, or change these terms at any time without prior
+                                notice to users. Changes will be effective immediately upon posting the updated Terms of
+                                Service on this page with a revised "Last updated" date. We are not obligated to notify
+                                users of changes through email, in-app notifications, or any other means. It is your
+                                responsibility to review these Terms periodically for any changes. Your continued use of
+                                the platform after changes are posted constitutes your acceptance of the modified terms.
                             </p>
                         </section>
 
@@ -174,3 +177,4 @@ export default function TermsPage() {
         </div>
     )
 }
+
