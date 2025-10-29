@@ -7,6 +7,13 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/verify",
+        config: {
+            rateLimit: {
+                max: 3,
+                timeWindow: 600000,
+                groupId: "Auth-OTP"
+            }
+        },
         schema: {
             description: "Verify user email",
             tags: ["Authentication"],

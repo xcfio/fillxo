@@ -9,6 +9,13 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/reset",
+        config: {
+            rateLimit: {
+                max: 3,
+                timeWindow: 3600000,
+                groupId: "Auth"
+            }
+        },
         schema: {
             description: "Reset Password",
             tags: ["Authentication"],

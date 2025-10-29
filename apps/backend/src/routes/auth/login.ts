@@ -10,6 +10,13 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/login",
+        config: {
+            rateLimit: {
+                max: 3,
+                timeWindow: 3600000,
+                groupId: "Auth"
+            }
+        },
         schema: {
             description: "Login to a account",
             tags: ["Authentication"],
