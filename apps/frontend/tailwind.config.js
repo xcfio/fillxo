@@ -1,4 +1,3 @@
-// tailwind.config.js
 /** @type {import('tailwindcss').Config} */
 module.exports = {
     content: [
@@ -15,11 +14,10 @@ module.exports = {
     },
     plugins: [],
     corePlugins: {
-        preflight: false // Disable Tailwind's base styles to avoid conflicts with Mantine
+        preflight: false
     }
 }
 
-// postcss.config.js
 module.exports = {
     plugins: {
         tailwindcss: {},

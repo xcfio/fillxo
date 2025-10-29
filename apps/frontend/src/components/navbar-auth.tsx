@@ -9,6 +9,7 @@ export default function NavbarAuth() {
 
     const handleLogout = () => {
         localStorage.removeItem("user")
+        sessionStorage.removeItem("user")
         router.push("/")
     }
 

@@ -52,7 +52,7 @@ export default function RegisterPage() {
     })
 
     useEffect(() => {
-        const userData = localStorage.getItem("user")
+        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
         if (userData) return router.push("/dashboard")
     }, [router])
 
@@ -203,7 +203,6 @@ export default function RegisterPage() {
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}))
 
-                // Handle specific error codes
                 if (response.status === 403) {
                     throw new Error("Invalid or expired OTP. Please request a new one.")
                 } else if (response.status === 409) {
@@ -220,10 +219,8 @@ export default function RegisterPage() {
 
             const userData = await response.json()
 
-            // Store user data in localStorage
             localStorage.setItem("user", JSON.stringify(userData))
 
-            // Redirect to dashboard
             router.push("/dashboard")
         } catch (err) {
             setErrors({
@@ -392,6 +389,19 @@ export default function RegisterPage() {
                         ) : (
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
+                                    <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
+                                        Email Address
+                                    </label>
+                                    <input
+                                        id="email"
+                                        type="email"
+                                        value={formData.email}
+                                        readOnly
+                                        className="w-full px-6 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-gray-400 cursor-not-allowed"
+                                    />
+                                </div>
+
+                                <div>
                                     <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
                                         Full Name
                                     </label>
@@ -505,11 +515,10 @@ export default function RegisterPage() {
 
                                 <div>
                                     <label className="block text-sm font-medium text-gray-300 mb-3">I want to:</label>
-                                    <div className="grid grid-cols-3 gap-3">
+                                    <div className="grid grid-cols-2 gap-3">
                                         {[
                                             { value: "freelancer", label: "Work" },
-                                            { value: "client", label: "Hire" },
-                                            { value: "both", label: "Both" }
+                                            { value: "client", label: "Hire" }
                                         ].map((option) => (
                                             <button
                                                 key={option.value}
@@ -527,33 +536,43 @@ export default function RegisterPage() {
                                     </div>
                                 </div>
 
-                                <div className="flex gap-3">
-                                    <button
-                                        type="button"
-                                        onClick={() => setStep("email")}
-                                        className="px-6 py-4 bg-gray-800 hover:bg-gray-700 rounded-xl font-medium transition-all flex items-center gap-2"
+                                <button
+                                    type="submit"
+                                    disabled={isSubmitting}
+                                    className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                >
+                                    {isSubmitting ? (
+                                        <>
+                                            <LoaderCircle className="w-5 h-5 animate-spin" />
+                                            Creating Account...
+                                        </>
+                                    ) : (
+                                        <>
+                                            Create Account
+                                            <ArrowRight className="w-5 h-5" />
+                                        </>
+                                    )}
+                                </button>
+
+                                <p className="text-xs text-center text-gray-400">
+                                    By creating an account you agree to the{" "}
+                                    <Link
+                                        href="/terms"
+                                        target="_blank"
+                                        className="text-blue-400 hover:text-blue-300 underline"
                                     >
-                                        <ArrowLeft className="w-5 h-5" />
-                                        Back
-                                    </button>
-                                    <button
-                                        type="submit"
-                                        disabled={isSubmitting}
-                                        className="flex-1 px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                        Terms of Service
+                                    </Link>{" "}
+                                    and our{" "}
+                                    <Link
+                                        href="/privacy"
+                                        target="_blank"
+                                        className="text-blue-400 hover:text-blue-300 underline"
                                     >
-                                        {isSubmitting ? (
-                                            <>
-                                                <LoaderCircle className="w-5 h-5 animate-spin" />
-                                                Creating Account...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Create Account
-                                                <ArrowRight className="w-5 h-5" />
-                                            </>
-                                        )}
-                                    </button>
-                                </div>
+                                        Privacy Policy
+                                    </Link>
+                                    .
+                                </p>
                             </form>
                         )}
 

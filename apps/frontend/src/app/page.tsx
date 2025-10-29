@@ -22,7 +22,7 @@ export default function LandingPage() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     useEffect(() => {
-        const userData = localStorage.getItem("user")
+        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
         setIsLoggedIn(!!userData)
     }, [])
 

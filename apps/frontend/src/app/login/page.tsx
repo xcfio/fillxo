@@ -12,11 +12,12 @@ export default function LoginPage() {
     const router = useRouter()
     const [formData, setFormData] = useState({ input: "", password: "" })
     const [showPassword, setShowPassword] = useState(false)
+    const [rememberMe, setRememberMe] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errors, setErrors] = useState({ input: "", password: "", general: "" })
 
     useEffect(() => {
-        const userData = localStorage.getItem("user")
+        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
         if (userData) return router.push("/dashboard")
     }, [router])
 
@@ -52,14 +53,13 @@ export default function LoginPage() {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/login`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                credentials: "include", // Important for cookies
+                credentials: "include",
                 body: JSON.stringify(formData)
             })
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}))
 
-                // Handle specific error codes
                 if (response.status === 404) {
                     throw new Error("User not found. Please check your email/username.")
                 } else if (response.status === 403) {
@@ -71,10 +71,12 @@ export default function LoginPage() {
 
             const userData = await response.json()
 
-            // Store user data in localStorage or context
-            localStorage.setItem("user", JSON.stringify(userData))
+            if (rememberMe) {
+                localStorage.setItem("user", JSON.stringify(userData))
+            } else {
+                sessionStorage.setItem("user", JSON.stringify(userData))
+            }
 
-            // Redirect to dashboard
             router.push("/dashboard")
         } catch (err) {
             setErrors({
@@ -160,12 +162,21 @@ export default function LoginPage() {
                             </div>
 
                             <div className="flex items-center justify-between text-sm">
-                                <label className="flex items-center gap-2 cursor-pointer">
-                                    <input
-                                        type="checkbox"
-                                        className="w-4 h-4 rounded border-blue-900/30 bg-gray-900/50 text-blue-600 focus:ring-2 focus:ring-blue-600/20"
-                                    />
-                                    <span className="text-gray-400">Remember me</span>
+                                <label className="flex items-center gap-3 cursor-pointer">
+                                    <div className="relative">
+                                        <input
+                                            type="checkbox"
+                                            checked={rememberMe}
+                                            onChange={(e) => setRememberMe(e.target.checked)}
+                                            className="sr-only peer"
+                                        />
+                                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-600/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
+                                    </div>
+                                    <span
+                                        className={`transition-all duration-250 ease-in-out ${rememberMe ? "text-blue-400 decoration-blue-400 decoration-2 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" : "text-gray-400"}`}
+                                    >
+                                        Remember me
+                                    </span>
                                 </label>
                                 <Link
                                     href="/reset-password"

@@ -9,8 +9,7 @@ export default function Navbar() {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
 
     useEffect(() => {
-        // Check if user is logged in
-        const userData = localStorage.getItem("user")
+        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
         setIsLoggedIn(!!userData)
     }, [])
 
@@ -47,20 +46,12 @@ export default function Navbar() {
                             Go to Dashboard
                         </button>
                     ) : (
-                        <>
-                            <button
-                                onClick={() => router.push("/login")}
-                                className="px-4 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
-                            >
-                                Sign In
-                            </button>
-                            <button
-                                onClick={() => router.push("/register")}
-                                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-                            >
-                                Get Started
-                            </button>
-                        </>
+                        <button
+                            onClick={() => router.push("/register")}
+                            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                        >
+                            Get Started
+                        </button>
                     )}
                 </div>
             </div>

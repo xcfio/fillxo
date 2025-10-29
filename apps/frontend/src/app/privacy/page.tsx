@@ -213,13 +213,13 @@ export default function PrivacyPage() {
                                 12. Changes to This Privacy Policy
                             </h2>
                             <p className="text-gray-300 leading-relaxed">
-                                We reserve the right to modify, update, or change this Privacy Policy at any time without
-                                prior notice to users. Changes will be effective immediately upon posting the updated
-                                Privacy Policy on this page with a revised "Last updated" date. We are not obligated to
-                                notify users of changes through email, in-app notifications, or any other means. It is
-                                your responsibility to review this Privacy Policy periodically for any changes. Your
-                                continued use of the platform after changes are posted constitutes your acceptance of the
-                                updated policy.
+                                We reserve the right to modify, update, or change this Privacy Policy at any time
+                                without prior notice to users. Changes will be effective immediately upon posting the
+                                updated Privacy Policy on this page with a revised "Last updated" date. We are not
+                                obligated to notify users of changes through email, in-app notifications, or any other
+                                means. It is your responsibility to review this Privacy Policy periodically for any
+                                changes. Your continued use of the platform after changes are posted constitutes your
+                                acceptance of the updated policy.
                             </p>
                         </section>
 
