@@ -7,10 +7,27 @@ import Image from "next/image"
 export default function Navbar() {
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [authCheckDone, setAuthCheckDone] = useState(false)
 
     useEffect(() => {
-        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
-        setIsLoggedIn(!!userData)
+        // Check authentication status from backend
+        const checkAuth = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                    credentials: "include"
+                })
+                setIsLoggedIn(response.ok)
+            } catch (error) {
+                // Network error or auth failed, treat as not logged in
+                if (process.env.NODE_ENV !== "production") {
+                    console.error("Auth check failed:", error)
+                }
+                setIsLoggedIn(false)
+            } finally {
+                setAuthCheckDone(true)
+            }
+        }
+        checkAuth()
     }, [])
 
     return (
@@ -38,7 +55,12 @@ export default function Navbar() {
                     >
                         Privacy Policy
                     </button>
-                    {isLoggedIn ? (
+                    {!authCheckDone && process.env.NODE_ENV !== "production" ? (
+                        <div className="px-4 py-2 text-sm bg-gray-700 rounded-lg flex items-center gap-2">
+                            <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                            <span className="text-gray-400">Auth...</span>
+                        </div>
+                    ) : isLoggedIn ? (
                         <button
                             onClick={() => router.push("/dashboard")}
                             className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"

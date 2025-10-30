@@ -15,10 +15,28 @@ export default function LoginPage() {
     const [rememberMe, setRememberMe] = useState(false)
     const [isSubmitting, setIsSubmitting] = useState(false)
     const [errors, setErrors] = useState({ input: "", password: "", general: "" })
+    const [authCheckStatus, setAuthCheckStatus] = useState<"checking" | "done" | "error">("checking")
 
     useEffect(() => {
-        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
-        if (userData) return router.push("/dashboard")
+        // Check if user is already authenticated via cookie
+        const checkAuth = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                    credentials: "include"
+                })
+                if (response.ok) {
+                    router.push("/dashboard")
+                } else {
+                    setAuthCheckStatus("done")
+                }
+            } catch (error) {
+                setAuthCheckStatus("error")
+                if (process.env.NODE_ENV !== "production") {
+                    console.error("Auth check failed:", error)
+                }
+            }
+        }
+        checkAuth()
     }, [router])
 
     const validateForm = () => {
@@ -54,7 +72,7 @@ export default function LoginPage() {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
-                body: JSON.stringify(formData)
+                body: JSON.stringify({ ...formData, remember: rememberMe })
             })
 
             if (!response.ok) {
@@ -67,14 +85,6 @@ export default function LoginPage() {
                 } else {
                     throw new Error(errorData.message || "Login failed. Please try again.")
                 }
-            }
-
-            const userData = await response.json()
-
-            if (rememberMe) {
-                localStorage.setItem("user", JSON.stringify(userData))
-            } else {
-                sessionStorage.setItem("user", JSON.stringify(userData))
             }
 
             router.push("/dashboard")
@@ -104,6 +114,25 @@ export default function LoginPage() {
                     </div>
 
                     <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                        {/* Development-only auth check status */}
+                        {process.env.NODE_ENV !== "production" && authCheckStatus === "checking" && (
+                            <div className="mb-6 bg-blue-900/30 border border-blue-700/50 rounded-xl p-4 flex items-start gap-3">
+                                <LoaderCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5 animate-spin" />
+                                <p className="text-blue-300 text-sm">Checking authentication status...</p>
+                            </div>
+                        )}
+                        {process.env.NODE_ENV !== "production" && authCheckStatus === "error" && (
+                            <div className="mb-6 bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-4 flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+                                <div className="text-yellow-300 text-sm">
+                                    <p className="font-medium mb-1">Dev Notice: Auth check failed</p>
+                                    <p className="text-xs text-yellow-400">
+                                        Cannot connect to backend. Check console for details.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
                         {errors.general && (
                             <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
                                 <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />

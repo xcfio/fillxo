@@ -7,10 +7,17 @@ import { LogOut, MessageSquare, Bell } from "lucide-react"
 export default function NavbarAuth() {
     const router = useRouter()
 
-    const handleLogout = () => {
-        localStorage.removeItem("user")
-        sessionStorage.removeItem("user")
-        router.push("/")
+    const handleLogout = async () => {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            })
+        } catch (error) {
+            console.error("Logout error:", error)
+        } finally {
+            router.push("/")
+        }
     }
 
     return (

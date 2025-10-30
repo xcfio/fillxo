@@ -8,7 +8,7 @@ import Navbar from "@/components/navbar"
 import Image from "next/image"
 import Link from "next/link"
 
-const ALLOWED_EMAIL_PROVIDERS = [
+const allowed_emails = new Set([
     "gmail.com",
     "googlemail.com",
     "outlook.com",
@@ -22,7 +22,7 @@ const ALLOWED_EMAIL_PROVIDERS = [
     "tutanota.com",
     "mailfence.com",
     "mail.com"
-]
+])
 
 export default function RegisterPage() {
     const router = useRouter()
@@ -50,10 +50,28 @@ export default function RegisterPage() {
         confirmPassword: "",
         general: ""
     })
+    const [authCheckStatus, setAuthCheckStatus] = useState<"checking" | "done" | "error">("checking")
 
     useEffect(() => {
-        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
-        if (userData) return router.push("/dashboard")
+        // Check if user is already authenticated via cookie
+        const checkAuth = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                    credentials: "include"
+                })
+                if (response.ok) {
+                    router.push("/dashboard")
+                } else {
+                    setAuthCheckStatus("done")
+                }
+            } catch (error) {
+                setAuthCheckStatus("error")
+                if (process.env.NODE_ENV !== "production") {
+                    console.error("Auth check failed:", error)
+                }
+            }
+        }
+        checkAuth()
     }, [router])
 
     const validateEmail = (email: string) => {
@@ -63,7 +81,7 @@ export default function RegisterPage() {
         }
 
         const domain = email.split("@")[1]?.toLowerCase()
-        if (!ALLOWED_EMAIL_PROVIDERS.includes(domain)) {
+        if (!allowed_emails.has(domain)) {
             return {
                 isValid: false,
                 message: "Please use a popular email provider (Gmail, Outlook, etc.)"
@@ -217,10 +235,8 @@ export default function RegisterPage() {
                 }
             }
 
-            const userData = await response.json()
-
-            localStorage.setItem("user", JSON.stringify(userData))
-
+            // User data is now stored in httpOnly cookie by backend
+            // No need to store in localStorage
             router.push("/dashboard")
         } catch (err) {
             setErrors({
@@ -281,6 +297,25 @@ export default function RegisterPage() {
                     </div>
 
                     <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                        {/* Development-only auth check status */}
+                        {process.env.NODE_ENV !== "production" && authCheckStatus === "checking" && (
+                            <div className="mb-6 bg-blue-900/30 border border-blue-700/50 rounded-xl p-4 flex items-start gap-3">
+                                <LoaderCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5 animate-spin" />
+                                <p className="text-blue-300 text-sm">Checking authentication status...</p>
+                            </div>
+                        )}
+                        {process.env.NODE_ENV !== "production" && authCheckStatus === "error" && (
+                            <div className="mb-6 bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-4 flex items-start gap-3">
+                                <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
+                                <div className="text-yellow-300 text-sm">
+                                    <p className="font-medium mb-1">Dev Notice: Auth check failed</p>
+                                    <p className="text-xs text-yellow-400">
+                                        Cannot connect to backend. Check console for details.
+                                    </p>
+                                </div>
+                            </div>
+                        )}
+
                         {errors.general && (
                             <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
                                 <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />

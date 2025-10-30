@@ -9,22 +9,29 @@ import { User, Briefcase } from "lucide-react"
 export default function DashboardPage() {
     const router = useRouter()
     const [user, setUser] = useState<any>(null)
+    const [loading, setLoading] = useState(true)
 
     useEffect(() => {
-        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
-        if (!userData) {
-            router.push("/login")
-            return
+        const fetchUser = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                    credentials: "include"
+                })
+
+                if (!response.ok) return router.push("/login")
+                const userData = await response.json()
+                setUser(userData)
+            } catch (error) {
+                router.push("/login")
+            } finally {
+                setLoading(false)
+            }
         }
 
-        try {
-            setUser(JSON.parse(userData))
-        } catch {
-            router.push("/login")
-        }
+        fetchUser()
     }, [router])
 
-    if (!user) {
+    if (loading || !user) {
         return (
             <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white flex items-center justify-center">
                 <div className="text-center">

@@ -1,7 +1,19 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Plus, FileText, HelpCircle, Info, Github, MessageCircle, Sun, Moon, Shield, Briefcase } from "lucide-react"
+import {
+    Plus,
+    FileText,
+    HelpCircle,
+    Info,
+    Github,
+    MessageCircle,
+    Sun,
+    Moon,
+    Shield,
+    Briefcase,
+    Facebook
+} from "lucide-react"
 
 export default function Footer() {
     const [isLight, setIsLight] = useState(false)
@@ -133,31 +145,31 @@ export default function Footer() {
                         <div className="flex flex-col gap-4">
                             <h4 className="m-0 mb-2 p-0 text-[1.1rem] font-semibold text-white">Connect</h4>
                             <div className="flex flex-col gap-2.5 md:items-start items-center">
-                                <a
-                                    href="https://github.com/xcfio/fillxo"
+                                {/* <a
+                                    href="https://github.com/xcfio"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex min-h-8 w-fit items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[0.9rem] leading-snug text-gray-400 no-underline transition-all duration-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white"
-                                    aria-label="GitHub Repository"
+                                    aria-label="GitHub"
                                 >
                                     <Github
                                         size={20}
                                         className="shrink-0 transition-transform duration-300 hover:scale-110"
                                     />
                                     <span className="shrink-0 overflow-visible whitespace-nowrap">GitHub</span>
-                                </a>
+                                </a> */}
                                 <a
-                                    href="https://discord.gg/fillxo"
+                                    href="https://www.facebook.com/groups/fillxo"
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex min-h-8 w-fit items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[0.9rem] leading-snug text-gray-400 no-underline transition-all duration-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white"
-                                    aria-label="Discord Server"
+                                    aria-label="Support Group"
                                 >
-                                    <MessageCircle
+                                    <Facebook
                                         size={20}
                                         className="shrink-0 transition-transform duration-300 hover:scale-110"
                                     />
-                                    <span className="shrink-0 overflow-visible whitespace-nowrap">Discord</span>
+                                    <span className="shrink-0 overflow-visible whitespace-nowrap">Support Group</span>
                                 </a>
                             </div>
                         </div>

@@ -15,15 +15,31 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Footer from "@/components/footer"
 import Navbar from "@/components/navbar"
-import Image from "next/image"
 
 export default function LandingPage() {
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [authCheckDone, setAuthCheckDone] = useState(false)
 
     useEffect(() => {
-        const userData = localStorage.getItem("user") ?? sessionStorage.getItem("user")
-        setIsLoggedIn(!!userData)
+        // Check authentication status from backend
+        const checkAuth = async () => {
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                    credentials: "include"
+                })
+                setIsLoggedIn(response.ok)
+            } catch (error) {
+                // Network error or auth failed, treat as not logged in
+                if (process.env.NODE_ENV !== "production") {
+                    console.error("Auth check failed:", error)
+                }
+                setIsLoggedIn(false)
+            } finally {
+                setAuthCheckDone(true)
+            }
+        }
+        checkAuth()
     }, [])
 
     return (
@@ -50,7 +66,16 @@ export default function LandingPage() {
                         built for local needs.
                     </p>
 
-                    {isLoggedIn ? (
+                    {!authCheckDone ? (
+                        process.env.NODE_ENV !== "production" ? (
+                            <div className="flex items-center justify-center gap-3 px-8 py-4 bg-gray-800/50 border border-blue-900/30 rounded-xl">
+                                <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                                <span className="text-gray-400">Checking authentication...</span>
+                            </div>
+                        ) : (
+                            <div className="h-14" />
+                        )
+                    ) : isLoggedIn ? (
                         <button
                             onClick={() => router.push("/dashboard")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
@@ -389,7 +414,16 @@ export default function LandingPage() {
                     <p className="text-xl text-gray-400 mb-8">
                         Join thousands of Bangladeshi freelancers and clients waiting for launch.
                     </p>
-                    {isLoggedIn ? (
+                    {!authCheckDone ? (
+                        process.env.NODE_ENV !== "production" ? (
+                            <div className="flex items-center justify-center gap-3 px-8 py-4 bg-gray-800/50 border border-blue-900/30 rounded-xl">
+                                <div className="w-5 h-5 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
+                                <span className="text-gray-400">Checking authentication...</span>
+                            </div>
+                        ) : (
+                            <div className="h-14" /> // Silent loading in production
+                        )
+                    ) : isLoggedIn ? (
                         <button
                             onClick={() => router.push("/dashboard")}
                             className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
