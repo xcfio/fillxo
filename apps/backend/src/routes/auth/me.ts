@@ -23,8 +23,12 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const [user] = await db.select().from(table.users).where(eq(table.users.id, request.user.id))
-                if (user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
-                return reply.send(user)
+                if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
+                return reply.send({
+                    ...user,
+                    createdAt: user.createdAt.toISOString(),
+                    updatedAt: user.updatedAt.toISOString()
+                })
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

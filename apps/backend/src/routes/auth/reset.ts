@@ -7,7 +7,7 @@ import Type from "typebox"
 
 export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
-        method: "POST",
+        method: "PATCH",
         url: "/auth/reset",
         config: {
             rateLimit: {
@@ -17,7 +17,7 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
             }
         },
         schema: {
-            description: "Reset Password",
+            description: "Reset user password with OTP verification",
             tags: ["Authentication"],
             body: Type.Object({
                 email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }),
@@ -26,6 +26,7 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
             }),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
+                403: ErrorResponse(403, "Forbidden - Invalid email or OTP"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -33,13 +34,23 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { email, otp, password } = request.body
-                if (!VerifyOTP(email, otp)) {
-                    throw CreateError(403, "INVALID_OTP", "The provided OTP is incorrect or has expired")
+
+                const [user] = await db
+                    .select({ id: table.users.id })
+                    .from(table.users)
+                    .where(eq(table.users.email, email))
+                    .limit(1)
+
+                if (!user || !VerifyOTP(email, otp)) {
+                    throw CreateError(403, "INVALID_CREDENTIALS", "Invalid email or OTP")
                 }
 
                 await db
                     .update(table.users)
-                    .set({ password: HmacPassword(password) })
+                    .set({
+                        password: HmacPassword(password),
+                        updatedAt: new Date()
+                    })
                     .where(eq(table.users.email, email))
 
                 return reply.send({ success: true })

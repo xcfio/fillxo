@@ -43,15 +43,16 @@ export const User = Type.Object(
         username: Type.String({
             minLength: 3,
             maxLength: 20,
-            pattern: "^[a-zA-Z0-9_-]+$",
-            description: "Unique username (3-20 characters, letters, numbers, underscores, and hyphens)",
-            examples: ["john_doe"]
+            pattern: "^[a-zA-Z][a-zA-Z0-9_-]*$",
+            description:
+                "Unique username (3-20 characters, must start with a letter, can contain letters, numbers, underscores, and hyphens)",
+            examples: ["cool_cake"]
         }),
         name: Type.String({
             minLength: 2,
             maxLength: 100,
             description: "User's full name",
-            examples: ["John Doe"]
+            examples: ["Cool Cake"]
         }),
         avatar: Type.Union(
             [
@@ -68,8 +69,23 @@ export const User = Type.Object(
                 description: "User's avatar image (optional)"
             }
         ),
-        bio: Type.Union([Type.String(), Type.Null()]),
-        role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")]),
+        bio: Type.Union(
+            [
+                Type.String({
+                    maxLength: 500,
+                    description: "User's biography or description"
+                }),
+                Type.Null({
+                    description: "Null if no bio is set"
+                })
+            ],
+            {
+                description: "User's bio (optional, max 500 characters)"
+            }
+        ),
+        role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")], {
+            description: "User's role on the platform"
+        }),
         createdAt: Type.String({ format: "date-time", description: "ISO timestamp of when user account was created" }),
         updatedAt: Type.String({
             format: "date-time",

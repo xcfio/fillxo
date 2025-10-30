@@ -18,9 +18,13 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
             }
         },
         schema: {
-            description: "Login to a account",
+            description: "Login to an account",
             tags: ["Authentication"],
-            body: Type.Object({ input: Type.String(), password: Type.String() }),
+            body: Type.Object({
+                input: Type.String(),
+                password: Type.String(),
+                remember: Type.Optional(Type.Boolean())
+            }),
             response: {
                 200: User,
                 403: ErrorResponse(403, "Forbidden - Incorrect username/email or password"),
@@ -31,7 +35,7 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
         },
         handler: async (request, reply) => {
             try {
-                const { input, password } = request.body
+                const { input, password, remember } = request.body
 
                 const [user] = await db
                     .select()
@@ -46,10 +50,11 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(403, "INCORRECT_INPUTTED_DATA", "Incorrect username/email or password")
                 }
 
+                const exp = remember ? 30 * 24 * 60 * 60 : 24 * 60 * 60
                 const payload: Payload = {
                     id: user.id,
                     iat: Math.floor(Date.now() / 1000),
-                    exp: Math.floor(Date.now() / 1000) + 30 * 24 * 60 * 60
+                    exp: Math.floor(Date.now() / 1000) + exp
                 }
 
                 const jwt = fastify.jwt.sign(payload)
@@ -58,7 +63,7 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
                     httpOnly: true,
                     secure: true,
                     sameSite: "none",
-                    maxAge: 30 * 24 * 60 * 60,
+                    maxAge: exp,
                     path: "/"
                 })
 

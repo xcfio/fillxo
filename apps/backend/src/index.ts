@@ -24,7 +24,7 @@ export async function main() {
     fastify.get("/license", () => license)
     fastify.get("/terms", () => "ToS?? Forget about it")
 
-    fastify.decorate("authenticate", async function (request: FastifyRequest, reply: FastifyReply) {
+    fastify.decorate("auth", async function (request: FastifyRequest, reply: FastifyReply) {
         try {
             const user = (await request.jwtVerify()) as Payload
 
