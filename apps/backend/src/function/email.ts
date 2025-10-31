@@ -26,7 +26,7 @@ export async function SendOTP(email: string): Promise<{ email: string; otp: stri
     if (process.env.NODE_ENV === "development") console.log(`OTP for ${email}: ${otp}`)
 
     await resend.emails.send({
-        from: "fillxo <no-reply@xcfio.space>",
+        from: "fillxo <no-reply@fillxo.xcfio.space>",
         to: [process.env.NODE_ENV === "development" ? "delivered@resend.dev" : email],
         subject: "Your fillxo Verification Code",
         html: Email(otp),

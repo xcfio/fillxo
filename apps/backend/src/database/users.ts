@@ -1,9 +1,10 @@
 import { sql } from "drizzle-orm"
-import { uuid, pgTable, text, timestamp, pgEnum, char, check } from "drizzle-orm/pg-core"
+import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean } from "drizzle-orm/pg-core"
 import { Type, Static } from "typebox"
 import { v7 } from "uuid"
 
 export const Role = pgEnum("user_role", ["freelancer", "client", "both"])
+export const AccountStatus = pgEnum("account_status", ["active", "suspended", "banned", "pending"])
 
 export const users = pgTable(
     "users",
@@ -16,8 +17,13 @@ export const users = pgTable(
         name: text("name").notNull(),
         avatar: text("avatar"),
         bio: text("bio"),
+        phone: text("phone"),
+        phoneVerified: boolean("phone_verified").notNull().default(false),
         password: char("password", { length: 64 }).notNull(),
         role: Role("role").notNull(),
+        isBanned: boolean("is_banned").notNull().default(false),
+        country: text("country"),
+        timezone: text("timezone"),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
             .notNull()
@@ -83,9 +89,61 @@ export const User = Type.Object(
                 description: "User's bio (optional, max 500 characters)"
             }
         ),
+        phone: Type.Union(
+            [
+                Type.String({
+                    pattern: "^\\+[1-9]\\d{1,14}$",
+                    description: "User's phone number in E.164 format (e.g., +1234567890)",
+                    examples: ["+1234567890"]
+                }),
+                Type.Null({
+                    description: "Null if no phone number is set"
+                })
+            ],
+            {
+                description: "User's phone number (optional, E.164 format)"
+            }
+        ),
+        phoneVerified: Type.Boolean({
+            description: "Whether the user's phone number has been verified"
+        }),
         role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")], {
             description: "User's role on the platform"
         }),
+        isBanned: Type.Boolean({
+            description: "Whether the user account is banned"
+        }),
+        country: Type.Union(
+            [
+                Type.String({
+                    minLength: 2,
+                    maxLength: 2,
+                    pattern: "^[A-Z]{2}$",
+                    description: "ISO 3166-1 alpha-2 country code (e.g., US, GB, CA)",
+                    examples: ["US", "GB", "CA"]
+                }),
+                Type.Null({
+                    description: "Null if no country is set"
+                })
+            ],
+            {
+                description: "User's country (optional, ISO 3166-1 alpha-2 code)"
+            }
+        ),
+        timezone: Type.Union(
+            [
+                Type.String({
+                    description: "User's timezone in IANA format (e.g., America/New_York, Europe/London)",
+                    examples: ["America/New_York", "Europe/London", "Asia/Tokyo"]
+                }),
+                Type.Null({
+                    description: "Null if no timezone is set"
+                })
+            ],
+            {
+                description: "User's timezone (optional, IANA timezone format)"
+            }
+        ),
         createdAt: Type.String({ format: "date-time", description: "ISO timestamp of when user account was created" }),
         updatedAt: Type.String({
             format: "date-time",

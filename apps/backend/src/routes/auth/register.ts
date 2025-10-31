@@ -15,10 +15,13 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
             body: Type.Object({
                 email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }),
                 otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
-                username: Type.String({ minLength: 3, maxLength: 20, pattern: "^[a-zA-Z0-9_-]+$" }),
+                username: Type.String({ minLength: 3, maxLength: 20, pattern: "^[a-zA-Z][a-zA-Z0-9_-]*$" }),
                 name: Type.String({ minLength: 2, maxLength: 100 }),
                 password: Type.String({ minLength: 8, maxLength: 128 }),
-                role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")])
+                role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")]),
+                phone: Type.Optional(Type.String({ pattern: "^\\+[1-9]\\d{1,14}$" })),
+                country: Type.Optional(Type.String({ minLength: 2, maxLength: 2, pattern: "^[A-Z]{2}$" })),
+                timezone: Type.Optional(Type.String())
             }),
             response: {
                 201: User,
@@ -31,7 +34,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
         },
         handler: async (request, reply) => {
             try {
-                const { otp, name, username, email, password, role } = request.body
+                const { otp, name, username, email, password, role, phone, country, timezone } = request.body
 
                 if (!VerifyOTP(email, otp)) {
                     throw CreateError(403, "INVALID_OTP", "The provided OTP is incorrect or has expired")
@@ -53,16 +56,27 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [user] = await db
                     .insert(table.users)
-                    .values({ name, username, email, password: HmacPassword(password), role })
+                    .values({
+                        name,
+                        username,
+                        email,
+                        password: HmacPassword(password),
+                        role,
+                        phone: phone ?? null,
+                        country: country ?? null,
+                        timezone: timezone ?? null
+                    })
                     .returning()
 
                 if (!user) {
                     throw CreateError(500, "USER_CREATION_FAILED", "Failed to create user account")
                 }
 
-                return reply
-                    .status(201)
-                    .send({ ...user, updatedAt: user.updatedAt.toISOString(), createdAt: user.createdAt.toISOString() })
+                return reply.status(201).send({
+                    ...user,
+                    createdAt: user.createdAt.toISOString(),
+                    updatedAt: user.updatedAt.toISOString()
+                })
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error
