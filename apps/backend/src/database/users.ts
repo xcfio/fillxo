@@ -3,8 +3,7 @@ import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean } from "dr
 import { Type, Static } from "typebox"
 import { v7 } from "uuid"
 
-export const Role = pgEnum("user_role", ["freelancer", "client", "both"])
-export const AccountStatus = pgEnum("account_status", ["active", "suspended", "banned", "pending"])
+export const Role = pgEnum("role", ["freelancer", "client", "moderator", "admin"])
 
 export const users = pgTable(
     "users",
@@ -16,8 +15,7 @@ export const users = pgTable(
         username: text("username").unique().notNull(),
         name: text("name").notNull(),
         avatar: text("avatar"),
-        bio: text("bio"),
-        phone: text("phone"),
+        phone: text("phone").notNull(),
         phoneVerified: boolean("phone_verified").notNull().default(false),
         password: char("password", { length: 64 }).notNull(),
         role: Role("role").notNull(),
@@ -75,41 +73,20 @@ export const User = Type.Object(
                 description: "User's avatar image (optional)"
             }
         ),
-        bio: Type.Union(
-            [
-                Type.String({
-                    maxLength: 500,
-                    description: "User's biography or description"
-                }),
-                Type.Null({
-                    description: "Null if no bio is set"
-                })
-            ],
-            {
-                description: "User's bio (optional, max 500 characters)"
-            }
-        ),
-        phone: Type.Union(
-            [
-                Type.String({
-                    pattern: "^\\+[1-9]\\d{1,14}$",
-                    description: "User's phone number in E.164 format (e.g., +1234567890)",
-                    examples: ["+1234567890"]
-                }),
-                Type.Null({
-                    description: "Null if no phone number is set"
-                })
-            ],
-            {
-                description: "User's phone number (optional, E.164 format)"
-            }
-        ),
+        phone: Type.String({
+            pattern: "^\\+[1-9]\\d{1,14}$",
+            description: "User's phone number in E.164 format (e.g., +1234567890)",
+            examples: ["+1234567890"]
+        }),
         phoneVerified: Type.Boolean({
             description: "Whether the user's phone number has been verified"
         }),
-        role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")], {
-            description: "User's role on the platform"
-        }),
+        role: Type.Union(
+            [Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("moderator"), Type.Literal("admin")],
+            {
+                description: "User's role on the platform"
+            }
+        ),
         isBanned: Type.Boolean({
             description: "Whether the user account is banned"
         }),

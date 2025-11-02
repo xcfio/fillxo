@@ -1,5 +1,5 @@
-import { freelancerProfiles } from "./freelancer-profiles"
-import { clientProfiles } from "./client-profiles"
+import { freelancer } from "./freelancer-profiles"
+import { client } from "./client-profiles"
 import { notifications } from "./notifications"
 import { contracts } from "./contracts"
 import { proposals } from "./proposals"
@@ -12,9 +12,9 @@ import postgres from "postgres"
 
 export const db = drizzle({ client: postgres(process.env.DATABASE_URI) })
 export const table = {
-    clientProfiles,
+    clientProfiles: client,
     contracts,
-    freelancerProfiles,
+    freelancerProfiles: freelancer,
     jobs,
     messages,
     notifications,

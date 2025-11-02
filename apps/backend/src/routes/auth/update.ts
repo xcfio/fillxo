@@ -19,7 +19,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Update user profile information",
             tags: ["Authentication"],
-            body: Type.Partial(Type.Omit(User, ["id", "createdAt", "updatedAt"])),
+            body: Type.Partial(Type.Omit(User, ["id", "createdAt", "isBanned", "", "updatedAt"])),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
                 400: ErrorResponse(400, "Invalid input or duplicate username/email"),
@@ -30,10 +30,10 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { avatar, bio, email, name, role, username } = request.body
+                const { avatar, email, name, role, username } = request.body
                 const { id } = request.user
 
-                if (!avatar && !bio && !email && !name && !role && !username) {
+                if (!avatar && !email && !name && !role && !username) {
                     throw CreateError(400, "BAD_REQUEST", "At least one field must be provided for update")
                 }
 
@@ -53,15 +53,10 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                     }
                 }
 
-                const updateData: Record<string, any> = { updatedAt: new Date() }
-                if (avatar !== undefined) updateData.avatar = avatar
-                if (bio !== undefined) updateData.bio = bio
-                if (email !== undefined) updateData.email = email
-                if (name !== undefined) updateData.name = name
-                if (role !== undefined) updateData.role = role
-                if (username !== undefined) updateData.username = username
-
-                await db.update(table.users).set(updateData).where(eq(table.users.id, id))
+                await db
+                    .update(table.users)
+                    .set({ ...request.body, updatedAt: new Date() })
+                    .where(eq(table.users.id, id))
 
                 return reply.send({ success: true })
             } catch (error) {

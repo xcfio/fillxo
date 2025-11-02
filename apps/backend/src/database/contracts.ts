@@ -1,9 +1,10 @@
-import { pgTable, timestamp, decimal, uuid, index } from "drizzle-orm/pg-core"
-import { contractStatusEnum } from "./common"
+import { pgTable, timestamp, decimal, uuid, index, pgEnum } from "drizzle-orm/pg-core"
 import { proposals } from "./proposals"
 import { users } from "./users"
 import { jobs } from "./jobs"
 import { v7 } from "uuid"
+
+export const contractStatusEnum = pgEnum("contract", ["active", "completed", "cancelled"])
 
 export const contracts = pgTable(
     "contracts",

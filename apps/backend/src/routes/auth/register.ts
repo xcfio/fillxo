@@ -13,15 +13,15 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Register a new user account",
             tags: ["Authentication"],
             body: Type.Object({
-                email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }),
-                otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
-                username: Type.String({ minLength: 3, maxLength: 20, pattern: "^[a-zA-Z][a-zA-Z0-9_-]*$" }),
-                name: Type.String({ minLength: 2, maxLength: 100 }),
                 password: Type.String({ minLength: 8, maxLength: 128 }),
-                role: Type.Union([Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("both")]),
-                phone: Type.Optional(Type.String({ pattern: "^\\+[1-9]\\d{1,14}$" })),
-                country: Type.Optional(Type.String({ minLength: 2, maxLength: 2, pattern: "^[A-Z]{2}$" })),
-                timezone: Type.Optional(Type.String())
+                otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
+                email: Type.Index(User, ["email"]),
+                username: Type.Index(User, ["username"]),
+                name: Type.Index(User, ["name"]),
+                role: Type.Exclude(Type.Index(User, ["role"]), ["moderator", "admin"]),
+                phone: Type.Index(User, ["phone"]),
+                country: Type.Index(User, ["country"]),
+                timezone: Type.Index(User, ["timezone"])
             }),
             response: {
                 201: User,
@@ -34,21 +34,32 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
         },
         handler: async (request, reply) => {
             try {
-                const { otp, name, username, email, password, role, phone, country, timezone } = request.body
+                const { otp, username, email, password, phone } = request.body
 
                 if (!VerifyOTP(email, otp)) {
                     throw CreateError(403, "INVALID_OTP", "The provided OTP is incorrect or has expired")
                 }
 
                 const [exist] = await db
-                    .select({ email: table.users.email, username: table.users.username })
+                    .select({ email: table.users.email, phone: table.users.phone, username: table.users.username })
                     .from(table.users)
-                    .where(or(eq(table.users.email, email), eq(table.users.username, username)))
+                    .where(
+                        or(
+                            eq(table.users.email, email),
+                            eq(table.users.phone, phone),
+                            eq(table.users.username, username)
+                        )
+                    )
 
                 if (exist) {
                     if (exist.email === email) {
                         throw CreateError(409, "EMAIL_ALREADY_EXISTS", "This email is already registered")
                     }
+
+                    if (exist.phone === phone) {
+                        throw CreateError(409, "PHONE_ALREADY_EXISTS", "This phone is already registered")
+                    }
+
                     if (exist.username === username) {
                         throw CreateError(409, "USERNAME_ALREADY_EXISTS", "This username is already taken")
                     }
@@ -56,16 +67,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [user] = await db
                     .insert(table.users)
-                    .values({
-                        name,
-                        username,
-                        email,
-                        password: HmacPassword(password),
-                        role,
-                        phone: phone ?? null,
-                        country: country ?? null,
-                        timezone: timezone ?? null
-                    })
+                    .values({ ...request.body, password: HmacPassword(password) })
                     .returning()
 
                 if (!user) {
