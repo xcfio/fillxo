@@ -25,7 +25,7 @@ export const users = pgTable(
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
             .notNull()
-            .$defaultFn(() => new Date())
+            .$onUpdateFn(() => new Date())
     },
     (table) => [check("password_length_check", sql`length(${table.password}) = 64`)]
 )

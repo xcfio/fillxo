@@ -39,7 +39,6 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
                     .select({ id: table.users.id })
                     .from(table.users)
                     .where(eq(table.users.email, email))
-                    .limit(1)
 
                 if (!user || !VerifyOTP(email, otp)) {
                     throw CreateError(403, "INVALID_CREDENTIALS", "Invalid email or OTP")

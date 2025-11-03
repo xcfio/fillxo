@@ -1,7 +1,7 @@
 import { CreateError, isFastifyError } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../../"
+import { main } from "../.."
 import { eq } from "drizzle-orm"
 
 export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
@@ -10,7 +10,7 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
         url: "/auth/me",
         schema: {
             description: "Get current authenticated user",
-            tags: ["Authentication"],
+            tags: ["User"],
             response: {
                 200: User,
                 401: ErrorResponse(401, "Unauthorized - authentication required"),
@@ -24,6 +24,7 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
             try {
                 const [user] = await db.select().from(table.users).where(eq(table.users.id, request.user.id))
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
+
                 return reply.send({
                     ...user,
                     createdAt: user.createdAt.toISOString(),

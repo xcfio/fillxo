@@ -18,8 +18,17 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         },
         schema: {
             description: "Update user profile information",
-            tags: ["Authentication"],
-            body: Type.Partial(Type.Omit(User, ["id", "createdAt", "isBanned", "", "updatedAt"])),
+            tags: ["User"],
+            body: Type.Object({
+                avatar: Type.Index(User, ["avatar"]),
+                email: Type.Index(User, ["email"]),
+                username: Type.Index(User, ["username"]),
+                name: Type.Index(User, ["name"]),
+                role: Type.Exclude(Type.Index(User, ["role"]), ["moderator", "admin"]),
+                phone: Type.Index(User, ["phone"]),
+                country: Type.Index(User, ["country"]),
+                timezone: Type.Index(User, ["timezone"])
+            }),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
                 400: ErrorResponse(400, "Invalid input or duplicate username/email"),
@@ -37,18 +46,22 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(400, "BAD_REQUEST", "At least one field must be provided for update")
                 }
 
-                if (email || username) {
-                    const conditions = []
-                    if (email) conditions.push(eq(table.users.email, email))
-                    if (username) conditions.push(eq(table.users.username, username))
+                if (role === "admin" || role === "moderator") {
+                    throw CreateError(400, "BAD_REQUEST", "Invalid role assignment")
+                }
 
-                    const existingUser = await db
+                if (email || username) {
+                    const [existingUser] = await db
                         .select({ id: table.users.id })
                         .from(table.users)
-                        .where(or(...conditions))
-                        .limit(1)
+                        .where(
+                            or(
+                                email ? eq(table.users.email, email) : undefined,
+                                username ? eq(table.users.username, username) : undefined
+                            )
+                        )
 
-                    if (existingUser.length > 0 && existingUser[0].id !== id) {
+                    if (existingUser.id !== id) {
                         throw CreateError(400, "DUPLICATE_ENTRY", "Username or email already exists")
                     }
                 }
