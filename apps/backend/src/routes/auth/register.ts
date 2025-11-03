@@ -25,10 +25,13 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
                 email: Type.Index(User, ["email"]),
                 username: Type.Index(User, ["username"]),
                 name: Type.Index(User, ["name"]),
-                role: Type.Exclude(Type.Index(User, ["role"]), ["moderator", "admin"]),
                 phone: Type.Index(User, ["phone"]),
                 country: Type.Index(User, ["country"]),
-                timezone: Type.Index(User, ["timezone"])
+                timezone: Type.Index(User, ["timezone"]),
+                role: Type.Exclude(
+                    Type.Index(User, ["role"]),
+                    Type.Union([Type.Literal("moderator"), Type.Literal("admin")])
+                )
             }),
             response: {
                 201: User,

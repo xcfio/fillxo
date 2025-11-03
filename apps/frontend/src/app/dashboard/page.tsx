@@ -111,7 +111,10 @@ export default function DashboardPage() {
                                     <h3 className="text-xl font-semibold mb-2">Browse Jobs</h3>
                                     <p className="text-gray-400">Find your next opportunity</p>
                                 </div>
-                                <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer">
+                                <div
+                                    onClick={() => router.push("/profile/update")}
+                                    className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer"
+                                >
                                     <User className="w-8 h-8 text-blue-400 mb-4" />
                                     <h3 className="text-xl font-semibold mb-2">Edit Profile</h3>
                                     <p className="text-gray-400">Update your portfolio</p>

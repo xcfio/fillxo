@@ -1,7 +1,7 @@
 {
     "name": "frontend",
     "version": "1.0.0",
-    "type": "commonjs",
+    "type": "module",
     "license": "ISC",
     "scripts": {
         "dev": "next dev --port=7700",
@@ -12,21 +12,20 @@
     "dependencies": {
         "@emotion/react": "^11.14.0",
         "@mantine/core": "^8.3.6",
-        "@mantine/hooks": "^8.3.4",
-        "@mantine/notifications": "^8.3.5",
+        "@mantine/hooks": "^8.3.6",
+        "@mantine/notifications": "^8.3.6",
         "@tailwindcss/postcss": "^4.1.16",
         "@vercel/analytics": "^1.5.0",
-        "axios": "^1.12.2",
-        "lucide-react": "^0.548.0",
-        "next": "^15.5.5",
+        "lucide-react": "^0.552.0",
+        "next": "^16.0.1",
         "react": "^19.2.0",
         "react-dom": "^19.2.0",
         "socket.io-client": "^4.8.1"
     },
     "devDependencies": {
-        "@types/node": "^24.9.2",
+        "@types/node": "^24.10.0",
         "@types/react": "^19.2.2",
-        "@types/react-dom": "^19.2.1",
+        "@types/react-dom": "^19.2.2",
         "autoprefixer": "^10.4.21",
         "postcss": "^8.5.6",
         "tailwindcss": "^4.1.16",

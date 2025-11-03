@@ -19,16 +19,21 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Update user profile information",
             tags: ["User"],
-            body: Type.Object({
-                avatar: Type.Index(User, ["avatar"]),
-                email: Type.Index(User, ["email"]),
-                username: Type.Index(User, ["username"]),
-                name: Type.Index(User, ["name"]),
-                role: Type.Exclude(Type.Index(User, ["role"]), ["moderator", "admin"]),
-                phone: Type.Index(User, ["phone"]),
-                country: Type.Index(User, ["country"]),
-                timezone: Type.Index(User, ["timezone"])
-            }),
+            body: Type.Partial(
+                Type.Object({
+                    avatar: Type.Index(User, ["avatar"]),
+                    email: Type.Index(User, ["email"]),
+                    username: Type.Index(User, ["username"]),
+                    name: Type.Index(User, ["name"]),
+                    phone: Type.Index(User, ["phone"]),
+                    country: Type.Index(User, ["country"]),
+                    timezone: Type.Index(User, ["timezone"]),
+                    role: Type.Exclude(
+                        Type.Index(User, ["role"]),
+                        Type.Union([Type.Literal("moderator"), Type.Literal("admin")])
+                    )
+                })
+            ),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
                 400: ErrorResponse(400, "Invalid input or duplicate username/email"),
@@ -39,16 +44,8 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { avatar, email, name, role, username } = request.body
+                const { email, username } = request.body
                 const { id } = request.user
-
-                if (!avatar && !email && !name && !role && !username) {
-                    throw CreateError(400, "BAD_REQUEST", "At least one field must be provided for update")
-                }
-
-                if (role === "admin" || role === "moderator") {
-                    throw CreateError(400, "BAD_REQUEST", "Invalid role assignment")
-                }
 
                 if (email || username) {
                     const [existingUser] = await db
@@ -61,7 +58,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                             )
                         )
 
-                    if (existingUser.id !== id) {
+                    if (existingUser?.id !== id) {
                         throw CreateError(400, "DUPLICATE_ENTRY", "Username or email already exists")
                     }
                 }
