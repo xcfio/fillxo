@@ -1,36 +1,103 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import Image from "next/image"
-import { Menu, X } from "lucide-react"
+import {
+    Menu,
+    X,
+    LogOut,
+    MessageSquare,
+    Bell,
+    User,
+    Settings,
+    Briefcase,
+    LayoutDashboard,
+    ChevronDown
+} from "lucide-react"
 
 export default function Navbar() {
     const router = useRouter()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [authCheckDone, setAuthCheckDone] = useState(false)
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false)
+    const [userData, setUserData] = useState<any>(null)
+    const dropdownRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         // Check authentication status from backend
         const checkAuth = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                     credentials: "include"
                 })
-                setIsLoggedIn(response.ok)
-            } catch (error) {
-                // Network error or auth failed, treat as not logged in
-                if (process.env.NODE_ENV !== "production") {
-                    console.error("Auth check failed:", error)
+                if (response.ok) {
+                    const data = await response.json()
+                    setUserData(data)
+                    setIsLoggedIn(true)
+                } else {
+                    setIsLoggedIn(false)
+                    setUserData(null)
                 }
+            } catch (error) {
                 setIsLoggedIn(false)
+                setUserData(null)
             } finally {
                 setAuthCheckDone(true)
             }
         }
         checkAuth()
+
+        // Also check when window gains focus (user might have logged in/out in another tab)
+        const handleFocus = () => {
+            checkAuth()
+        }
+        window.addEventListener("focus", handleFocus)
+
+        return () => {
+            window.removeEventListener("focus", handleFocus)
+        }
     }, [])
+
+    // Close dropdown when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsDropdownOpen(false)
+            }
+        }
+
+        if (isDropdownOpen) {
+            document.addEventListener("mousedown", handleClickOutside)
+        }
+
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside)
+        }
+    }, [isDropdownOpen])
+
+    const handleLogout = async () => {
+        try {
+            await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/logout`, {
+                method: "POST",
+                credentials: "include"
+            })
+        } catch (error) {
+            console.error("Logout error:", error)
+        } finally {
+            setIsLoggedIn(false)
+            setUserData(null)
+            setIsDropdownOpen(false)
+            router.push("/")
+        }
+    }
+
+    const handleNavigation = (path: string) => {
+        setIsDropdownOpen(false)
+        setIsMobileMenuOpen(false)
+        router.push(path)
+    }
 
     return (
         <nav className="fixed top-0 w-full bg-gray-900/80 backdrop-blur-md border-b border-blue-900/20 z-50">
@@ -64,20 +131,129 @@ export default function Navbar() {
                             <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
                             <span className="text-gray-400">Auth...</span>
                         </div>
-                    ) : isLoggedIn ? (
-                        <button
-                            onClick={() => router.push("/dashboard")}
-                            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-                        >
-                            Go to Dashboard
-                        </button>
+                    ) : isLoggedIn && userData ? (
+                        <>
+                            <button
+                                onClick={() => router.push("/dashboard")}
+                                className="text-gray-400 hover:text-white transition-colors"
+                                title="Notifications"
+                            >
+                                <Bell className="w-5 h-5" />
+                            </button>
+                            <button
+                                onClick={() => router.push("/dashboard")}
+                                className="text-gray-400 hover:text-white transition-colors"
+                                title="Messages"
+                            >
+                                <MessageSquare className="w-5 h-5" />
+                            </button>
+
+                            {/* Avatar Dropdown */}
+                            <div className="relative" ref={dropdownRef}>
+                                <button
+                                    onClick={() => setIsDropdownOpen(!isDropdownOpen)}
+                                    className="flex items-center gap-2 px-3 py-2 hover:bg-gray-800/50 rounded-lg transition-colors"
+                                >
+                                    <div className="w-8 h-8 bg-blue-600/20 border border-blue-700/50 rounded-full flex items-center justify-center">
+                                        {userData.avatar ? (
+                                            <Image
+                                                src={userData.avatar}
+                                                alt={userData.name}
+                                                width={32}
+                                                height={32}
+                                                className="rounded-full"
+                                            />
+                                        ) : (
+                                            <User className="w-4 h-4 text-blue-400" />
+                                        )}
+                                    </div>
+                                    <ChevronDown
+                                        className={`w-4 h-4 text-gray-400 transition-transform ${isDropdownOpen ? "rotate-180" : ""}`}
+                                    />
+                                </button>
+
+                                {/* Dropdown Menu */}
+                                {isDropdownOpen && (
+                                    <div className="absolute right-0 mt-2 w-64 bg-gray-900 border border-blue-900/30 rounded-lg shadow-xl overflow-hidden z-50">
+                                        {/* User Info */}
+                                        <div className="px-4 py-3 border-b border-blue-900/30">
+                                            <p className="font-semibold text-white">{userData.name}</p>
+                                            <p className="text-sm text-gray-400">@{userData.username}</p>
+                                            <p className="text-xs text-gray-500 mt-1">{userData.email}</p>
+                                        </div>
+
+                                        {/* Menu Items */}
+                                        <div className="py-2">
+                                            <button
+                                                onClick={() => handleNavigation("/dashboard")}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
+                                            >
+                                                <LayoutDashboard className="w-4 h-4" />
+                                                Dashboard
+                                            </button>
+                                            <button
+                                                onClick={() => handleNavigation(`/users/${userData.username}`)}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
+                                            >
+                                                <User className="w-4 h-4" />
+                                                View Profile
+                                            </button>
+                                            <button
+                                                onClick={() => handleNavigation("/profile/update")}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
+                                            >
+                                                <Settings className="w-4 h-4" />
+                                                Edit Profile
+                                            </button>
+                                            {(userData.role === "freelancer" || userData.role === "both") && (
+                                                <button
+                                                    onClick={() => handleNavigation("/dashboard")}
+                                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
+                                                >
+                                                    <Briefcase className="w-4 h-4" />
+                                                    Browse Jobs
+                                                </button>
+                                            )}
+                                            {(userData.role === "client" || userData.role === "both") && (
+                                                <button
+                                                    onClick={() => handleNavigation("/dashboard")}
+                                                    className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
+                                                >
+                                                    <Briefcase className="w-4 h-4" />
+                                                    Post a Job
+                                                </button>
+                                            )}
+                                        </div>
+
+                                        {/* Logout */}
+                                        <div className="border-t border-blue-900/30 py-2">
+                                            <button
+                                                onClick={handleLogout}
+                                                className="w-full flex items-center gap-3 px-4 py-2 text-sm text-red-400 hover:bg-red-900/20 hover:text-red-300 transition-colors"
+                                            >
+                                                <LogOut className="w-4 h-4" />
+                                                Logout
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+                        </>
                     ) : (
-                        <button
-                            onClick={() => router.push("/register")}
-                            className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
-                        >
-                            Get Started
-                        </button>
+                        <>
+                            <button
+                                onClick={() => router.push("/login")}
+                                className="px-4 py-2 text-sm text-gray-300 hover:text-white transition-colors font-medium"
+                            >
+                                Login
+                            </button>
+                            <button
+                                onClick={() => router.push("/register")}
+                                className="px-4 py-2 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium"
+                            >
+                                Get Started
+                            </button>
+                        </>
                     )}
                 </div>
 
@@ -118,26 +294,100 @@ export default function Navbar() {
                                 <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
                                 <span className="text-gray-400">Auth...</span>
                             </div>
-                        ) : isLoggedIn ? (
-                            <button
-                                onClick={() => {
-                                    router.push("/dashboard")
-                                    setIsMobileMenuOpen(false)
-                                }}
-                                className="block w-full px-4 py-3 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
-                            >
-                                Go to Dashboard
-                            </button>
+                        ) : isLoggedIn && userData ? (
+                            <>
+                                <button
+                                    onClick={() => handleNavigation("/dashboard")}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <LayoutDashboard className="w-4 h-4" />
+                                        Dashboard
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation(`/users/${userData.username}`)}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <User className="w-4 h-4" />
+                                        View Profile
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation("/profile/update")}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Settings className="w-4 h-4" />
+                                        Edit Profile
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation("/dashboard")}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <Bell className="w-4 h-4" />
+                                        Notifications
+                                    </div>
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation("/dashboard")}
+                                    className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                >
+                                    <div className="flex items-center gap-3">
+                                        <MessageSquare className="w-4 h-4" />
+                                        Messages
+                                    </div>
+                                </button>
+                                {(userData.role === "freelancer" || userData.role === "both") && (
+                                    <button
+                                        onClick={() => handleNavigation("/dashboard")}
+                                        className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Briefcase className="w-4 h-4" />
+                                            Browse Jobs
+                                        </div>
+                                    </button>
+                                )}
+                                {(userData.role === "client" || userData.role === "both") && (
+                                    <button
+                                        onClick={() => handleNavigation("/dashboard")}
+                                        className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <Briefcase className="w-4 h-4" />
+                                            Post a Job
+                                        </div>
+                                    </button>
+                                )}
+                                <button
+                                    onClick={() => {
+                                        handleLogout()
+                                    }}
+                                    className="flex items-center justify-center gap-2 w-full px-4 py-3 bg-red-600/20 hover:bg-red-600/30 border border-red-700/50 rounded-lg text-red-300 transition-colors"
+                                >
+                                    <LogOut className="w-4 h-4" />
+                                    Logout
+                                </button>
+                            </>
                         ) : (
-                            <button
-                                onClick={() => {
-                                    router.push("/register")
-                                    setIsMobileMenuOpen(false)
-                                }}
-                                className="block w-full px-4 py-3 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
-                            >
-                                Get Started
-                            </button>
+                            <>
+                                <button
+                                    onClick={() => handleNavigation("/login")}
+                                    className="block w-full px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium text-center"
+                                >
+                                    Login
+                                </button>
+                                <button
+                                    onClick={() => handleNavigation("/register")}
+                                    className="block w-full px-4 py-3 text-sm bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors font-medium text-center"
+                                >
+                                    Get Started
+                                </button>
+                            </>
                         )}
                     </div>
                 </div>

@@ -7,7 +7,7 @@ import { eq } from "drizzle-orm"
 export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "GET",
-        url: "/auth/me",
+        url: "/users/me",
         schema: {
             description: "Get current authenticated user",
             tags: ["User"],

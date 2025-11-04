@@ -46,10 +46,7 @@ export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
 
                 await db
                     .update(table.users)
-                    .set({
-                        password: HmacPassword(password),
-                        updatedAt: new Date()
-                    })
+                    .set({ password: HmacPassword(password), updatedAt: new Date() })
                     .where(eq(table.users.email, email))
 
                 return reply.send({ success: true })

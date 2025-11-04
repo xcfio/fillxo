@@ -8,7 +8,7 @@ import Type from "typebox"
 export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "PATCH",
-        url: "/auth/me",
+        url: "/users/me",
         config: {
             rateLimit: {
                 max: 5,

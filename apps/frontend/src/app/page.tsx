@@ -25,7 +25,7 @@ export default function LandingPage() {
         // Check authentication status from backend
         const checkAuth = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                     credentials: "include"
                 })
                 setIsLoggedIn(response.ok)

@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import NavbarAuth from "@/components/navbar-auth"
+import Navbar from "@/components/navbar"
 import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown } from "lucide-react"
 
 interface UpdateFormData {
@@ -28,7 +28,7 @@ export default function UpdateProfilePage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                     credentials: "include"
                 })
 
@@ -83,7 +83,7 @@ export default function UpdateProfilePage() {
                 return
             }
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                 method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
@@ -101,7 +101,7 @@ export default function UpdateProfilePage() {
             setSuccess("Profile updated successfully!")
 
             // Refresh user data
-            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                 credentials: "include"
             })
             const updatedUser = await userResponse.json()
@@ -138,7 +138,7 @@ export default function UpdateProfilePage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
-            <NavbarAuth />
+            <Navbar />
 
             <div className="pt-24 px-6 pb-12">
                 <div className="max-w-3xl mx-auto">

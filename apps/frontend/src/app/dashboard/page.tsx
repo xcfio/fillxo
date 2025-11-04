@@ -2,7 +2,7 @@
 
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import NavbarAuth from "@/components/navbar-auth"
+import Navbar from "@/components/navbar"
 import Image from "next/image"
 import { User, Briefcase } from "lucide-react"
 
@@ -14,7 +14,7 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                     credentials: "include"
                 })
 
@@ -44,7 +44,7 @@ export default function DashboardPage() {
 
     return (
         <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
-            <NavbarAuth />
+            <Navbar />
 
             {/* Main Content */}
             <div className="pt-24 px-6 pb-12 flex-1">
@@ -82,7 +82,14 @@ export default function DashboardPage() {
 
                             <div className="flex-1">
                                 <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
-                                <p className="text-gray-400 mb-4">@{user.username}</p>
+                                <p className="text-gray-400 mb-4">
+                                    <button
+                                        onClick={() => router.push(`/users/${user.username}`)}
+                                        className="hover:text-blue-400 transition-colors"
+                                    >
+                                        @{user.username}
+                                    </button>
+                                </p>
 
                                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                                     <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
@@ -105,21 +112,11 @@ export default function DashboardPage() {
                     {/* Quick Actions */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                         {user.role === "freelancer" || user.role === "both" ? (
-                            <>
-                                <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer">
-                                    <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
-                                    <h3 className="text-xl font-semibold mb-2">Browse Jobs</h3>
-                                    <p className="text-gray-400">Find your next opportunity</p>
-                                </div>
-                                <div
-                                    onClick={() => router.push("/profile/update")}
-                                    className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer"
-                                >
-                                    <User className="w-8 h-8 text-blue-400 mb-4" />
-                                    <h3 className="text-xl font-semibold mb-2">Edit Profile</h3>
-                                    <p className="text-gray-400">Update your portfolio</p>
-                                </div>
-                            </>
+                            <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer">
+                                <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
+                                <h3 className="text-xl font-semibold mb-2">Browse Jobs</h3>
+                                <p className="text-gray-400">Find your next opportunity</p>
+                            </div>
                         ) : null}
 
                         {user.role === "client" || user.role === "both" ? (
@@ -129,6 +126,20 @@ export default function DashboardPage() {
                                 <p className="text-gray-400">Find talented freelancers</p>
                             </div>
                         ) : null}
+
+                        {/* Edit Profile - Available for all roles */}
+                        <div
+                            onClick={() => router.push("/profile/update")}
+                            className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer"
+                        >
+                            <User className="w-8 h-8 text-blue-400 mb-4" />
+                            <h3 className="text-xl font-semibold mb-2">Edit Profile</h3>
+                            <p className="text-gray-400">
+                                {user.role === "freelancer" || user.role === "both"
+                                    ? "Update your portfolio"
+                                    : "Update your information"}
+                            </p>
+                        </div>
                     </div>
 
                     {/* Coming Soon Notice */}

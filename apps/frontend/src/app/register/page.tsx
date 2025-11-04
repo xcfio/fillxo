@@ -236,7 +236,7 @@ export default function RegisterPage() {
 
         const checkAuth = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/me`, {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
                     credentials: "include"
                 })
                 if (response.ok) {
