@@ -43,13 +43,13 @@ importers:
         version: 5.2.3
       '@fastify/type-provider-typebox':
         specifier: ^6.1.0
-        version: 6.1.0(typebox@1.0.49)
+        version: 6.1.0(typebox@1.0.51)
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
       discord-api-types:
-        specifier: ^0.38.31
-        version: 0.38.31
+        specifier: ^0.38.32
+        version: 0.38.32
       drizzle-orm:
         specifier: ^0.44.7
         version: 0.44.7(postgres@3.4.7)
@@ -60,14 +60,14 @@ importers:
         specifier: ^3.4.7
         version: 3.4.7
       resend:
-        specifier: ^6.4.0
-        version: 6.4.0
+        specifier: ^6.4.1
+        version: 6.4.1
       snowtransfer:
         specifier: ^0.15.0
         version: 0.15.0
       typebox:
-        specifier: ^1.0.49
-        version: 1.0.49
+        specifier: ^1.0.51
+        version: 1.0.51
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1127,8 +1127,8 @@ packages:
   detect-node-es@1.1.0:
     resolution: {integrity: sha512-ypdmJU/TbBby2Dxibuv7ZLW3Bs1QEmM7nHjEANfohJLvE0XVujisn1qPJcZxg+qDucsr+bP6fLD1rPS3AhJ7EQ==}
 
-  discord-api-types@0.38.31:
-    resolution: {integrity: sha512-kC94ANsk8ackj8ENTuO8joTNEL0KtymVhHy9dyEC/s4QAZ7GCx40dYEzQaadyo8w+oP0X8QydE/nzAWRylTGtQ==}
+  discord-api-types@0.38.32:
+    resolution: {integrity: sha512-UhIqkFuUVwBzejLPPWF18qixYPucMf718RnGh1NxZYNS7czXUmcUsWWkzWR7lRWj5pjfj4LwrnN9McvpfLvGqQ==}
 
   dom-helpers@5.2.1:
     resolution: {integrity: sha512-nRCa7CK3VTrM2NmGkIy4cbK7IZlgBE/PYMn55rrXefr5xXDP0LdtfPnblFDoVdcAfslJ7or6iqAUnx0CCGIWQA==}
@@ -1735,8 +1735,8 @@ packages:
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
-  resend@6.4.0:
-    resolution: {integrity: sha512-CTr4ix4RI5M/ucL58Wqr+LE8eI4JHtJEFaBAx6yUVNOI3eaPVtJjpNL0G/BdRSWMbwv6CtpprVOY8Xvpp6UJlA==}
+  resend@6.4.1:
+    resolution: {integrity: sha512-+P1gF6bYT0lKd0vsYyKKTHd6PfMH37yDgNRA6wAARQgQbYlc2BZYuo9sB/uZKkVg1oGSh0cgpnxNKGsZJutXMg==}
     engines: {node: '>=18'}
     peerDependencies:
       '@react-email/render': '*'
@@ -1960,8 +1960,8 @@ packages:
     resolution: {integrity: sha512-TeTSQ6H5YHvpqVwBRcnLDCBnDOHWYu7IvGbHT6N8AOymcr9PJGjc1GTtiWZTYg0NCgYwvnYWEkVChQAr9bjfwA==}
     engines: {node: '>=16'}
 
-  typebox@1.0.49:
-    resolution: {integrity: sha512-wNYIrDGDEAy51YlJGDHt9gapoFApU9c0OtTqCMW7jK8KSKUqBecaSvNOjX7+8+50IOj3p5hQH9HO33OewK/t3w==}
+  typebox@1.0.51:
+    resolution: {integrity: sha512-HbnSM17BFdKubGlk4jgAqIxLoDoB6eNg5anbi8Hqs5vFiisNxOmIpNi9s3hOoUIccIV+diQuQFvHyx4IQCtHdg==}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -2449,9 +2449,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@fastify/type-provider-typebox@6.1.0(typebox@1.0.49)':
+  '@fastify/type-provider-typebox@6.1.0(typebox@1.0.51)':
     dependencies:
-      typebox: 1.0.49
+      typebox: 1.0.51
 
   '@floating-ui/core@1.7.3':
     dependencies:
@@ -2885,7 +2885,7 @@ snapshots:
 
   detect-node-es@1.1.0: {}
 
-  discord-api-types@0.38.31: {}
+  discord-api-types@0.38.32: {}
 
   dom-helpers@5.2.1:
     dependencies:
@@ -3439,7 +3439,7 @@ snapshots:
 
   requires-port@1.0.0: {}
 
-  resend@6.4.0:
+  resend@6.4.1:
     dependencies:
       svix: 1.76.1
 
@@ -3522,7 +3522,7 @@ snapshots:
 
   snowtransfer@0.15.0:
     dependencies:
-      discord-api-types: 0.38.31
+      discord-api-types: 0.38.32
 
   socket.io-client@4.8.1:
     dependencies:
@@ -3652,7 +3652,7 @@ snapshots:
 
   type-fest@4.41.0: {}
 
-  typebox@1.0.49: {}
+  typebox@1.0.51: {}
 
   typescript@5.9.3: {}
 
