@@ -205,7 +205,7 @@ export default function Navbar() {
                                                 <Settings className="w-4 h-4" />
                                                 Edit Profile
                                             </button>
-                                            {(userData.role === "freelancer" || userData.role === "both") && (
+                                            {userData.role === "freelancer" && (
                                                 <button
                                                     onClick={() => handleNavigation("/dashboard")}
                                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
@@ -214,7 +214,7 @@ export default function Navbar() {
                                                     Browse Jobs
                                                 </button>
                                             )}
-                                            {(userData.role === "client" || userData.role === "both") && (
+                                            {userData.role === "client" && (
                                                 <button
                                                     onClick={() => handleNavigation("/dashboard")}
                                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
@@ -341,7 +341,7 @@ export default function Navbar() {
                                         Messages
                                     </div>
                                 </button>
-                                {(userData.role === "freelancer" || userData.role === "both") && (
+                                {userData.role === "freelancer" && (
                                     <button
                                         onClick={() => handleNavigation("/dashboard")}
                                         className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
@@ -352,7 +352,7 @@ export default function Navbar() {
                                         </div>
                                     </button>
                                 )}
-                                {(userData.role === "client" || userData.role === "both") && (
+                                {userData.role === "client" && (
                                     <button
                                         onClick={() => handleNavigation("/dashboard")}
                                         className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"

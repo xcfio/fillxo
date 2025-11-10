@@ -198,7 +198,7 @@ export default function RegisterPage() {
         name: "",
         password: "",
         confirmPassword: "",
-        role: "freelancer" as "freelancer" | "client" | "both",
+        role: "freelancer" as "freelancer" | "client",
         phone: "",
         phoneCountryCode: "",
         country: "",

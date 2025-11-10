@@ -18,7 +18,8 @@ import {
     Briefcase as Portfolio,
     Star,
     Building2,
-    Factory
+    Factory,
+    Shield
 } from "lucide-react"
 
 interface PortfolioItem {
@@ -45,7 +46,8 @@ interface UserProfile {
     username: string
     name: string
     avatar: string | null
-    role: "freelancer" | "client" | "both"
+    role: "freelancer" | "client"
+    privilege?: "moderator" | "admin" | null
     country: string
     timezone: string
     client?: ClientProfile
@@ -190,7 +192,21 @@ export default function UserProfilePage() {
                             <div className="flex-1">
                                 <div className="flex items-start justify-between flex-wrap gap-4 mb-4">
                                     <div>
-                                        <h1 className="text-3xl font-bold mb-2">{profile.name}</h1>
+                                        <div className="flex items-center gap-3 mb-2">
+                                            <h1 className="text-3xl font-bold">{profile.name}</h1>
+                                            {profile.privilege && (
+                                                <span
+                                                    className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                                                        profile.privilege === "admin"
+                                                            ? "bg-sky-600/20 text-sky-400 border border-sky-700/50"
+                                                            : "bg-green-600/20 text-green-400 border border-green-700/50"
+                                                    }`}
+                                                >
+                                                    <Shield className="w-3.5 h-3.5" />
+                                                    {profile.privilege.toUpperCase()}
+                                                </span>
+                                            )}
+                                        </div>
                                         <p className="text-gray-400 text-lg">@{profile.username}</p>
                                     </div>
                                     {isOwnProfile && (
@@ -246,7 +262,7 @@ export default function UserProfilePage() {
                     {/* Profile Sections */}
                     <div className="grid grid-cols-1 gap-6">
                         {/* Client Profile Section */}
-                        {(profile.role === "client" || profile.role === "both") && (
+                        {profile.role === "client" && (
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
                                 <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                                     <Briefcase className="w-6 h-6 text-blue-400" />
@@ -284,7 +300,7 @@ export default function UserProfilePage() {
                         )}
 
                         {/* About Section */}
-                        {(profile.role === "freelancer" || profile.role === "both") && (
+                        {profile.role === "freelancer" && (
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
                                 <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
                                     <FileText className="w-6 h-6 text-blue-400" />
@@ -302,7 +318,7 @@ export default function UserProfilePage() {
                             </div>
                         )}
 
-                        {profile.role === "freelancer" || profile.role === "both" ? (
+                        {profile.role === "freelancer" ? (
                             <>
                                 {/* Professional Title */}
                                 {profile.freelancer?.title && (

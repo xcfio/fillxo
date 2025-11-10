@@ -4,7 +4,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
 import Image from "next/image"
-import { User, Briefcase } from "lucide-react"
+import { User, Briefcase, Shield } from "lucide-react"
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -81,7 +81,21 @@ export default function DashboardPage() {
                             </div>
 
                             <div className="flex-1">
-                                <h2 className="text-2xl font-bold mb-1">{user.name}</h2>
+                                <div className="flex items-center gap-3 mb-1">
+                                    <h2 className="text-2xl font-bold">{user.name}</h2>
+                                    {user.privilege && (
+                                        <span
+                                            className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold ${
+                                                user.privilege === "admin"
+                                                    ? "bg-sky-600/20 text-sky-400 border border-sky-700/50"
+                                                    : "bg-green-600/20 text-green-400 border border-green-700/50"
+                                            }`}
+                                        >
+                                            <Shield className="w-3.5 h-3.5" />
+                                            {user.privilege.toUpperCase()}
+                                        </span>
+                                    )}
+                                </div>
                                 <p className="text-gray-400 mb-4">
                                     <button
                                         onClick={() => router.push(`/users/${user.username}`)}
@@ -111,7 +125,7 @@ export default function DashboardPage() {
 
                     {/* Quick Actions */}
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                        {user.role === "freelancer" || user.role === "both" ? (
+                        {user.role === "freelancer" ? (
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer">
                                 <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
                                 <h3 className="text-xl font-semibold mb-2">Browse Jobs</h3>
@@ -119,7 +133,7 @@ export default function DashboardPage() {
                             </div>
                         ) : null}
 
-                        {user.role === "client" || user.role === "both" ? (
+                        {user.role === "client" ? (
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-6 backdrop-blur-sm hover:border-blue-600/50 transition-colors cursor-pointer">
                                 <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
                                 <h3 className="text-xl font-semibold mb-2">Post a Job</h3>
@@ -135,9 +149,7 @@ export default function DashboardPage() {
                             <User className="w-8 h-8 text-blue-400 mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Edit Profile</h3>
                             <p className="text-gray-400">
-                                {user.role === "freelancer" || user.role === "both"
-                                    ? "Update your portfolio"
-                                    : "Update your information"}
+                                {user.role === "freelancer" ? "Update your portfolio" : "Update your information"}
                             </p>
                         </div>
                     </div>

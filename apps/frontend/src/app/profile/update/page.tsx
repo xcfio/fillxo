@@ -3,7 +3,7 @@
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
-import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcase, Award } from "lucide-react"
+import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcase, Award, Shield } from "lucide-react"
 
 interface PortfolioItem {
     title: string
@@ -29,7 +29,7 @@ interface UpdateFormData {
     email?: string
     username?: string
     name?: string
-    role?: "freelancer" | "client" | "both"
+    role?: "freelancer" | "client"
     phone?: string
     country?: string
     timezone?: string
@@ -272,7 +272,21 @@ export default function UpdateProfilePage() {
                             <ArrowLeft className="w-5 h-5" />
                             Back to Dashboard
                         </button>
-                        <h1 className="text-4xl font-bold mb-2">Update Profile</h1>
+                        <div className="flex items-center gap-3 mb-2">
+                            <h1 className="text-4xl font-bold">Update Profile</h1>
+                            {user?.privilege && (
+                                <span
+                                    className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-semibold ${
+                                        user.privilege === "admin"
+                                            ? "bg-sky-600/20 text-sky-400 border border-sky-700/50"
+                                            : "bg-green-600/20 text-green-400 border border-green-700/50"
+                                    }`}
+                                >
+                                    <Shield className="w-4 h-4" />
+                                    {user.privilege.toUpperCase()}
+                                </span>
+                            )}
+                        </div>
                         <p className="text-gray-400">Update your personal information and preferences</p>
                     </div>
 
@@ -583,7 +597,7 @@ export default function UpdateProfilePage() {
                             </div>
 
                             {/* Client Profile Fields */}
-                            {(formData.role === "client" || formData.role === "both") && (
+                            {formData.role === "client" && (
                                 <div className="space-y-6 pt-6 border-t border-blue-900/30">
                                     <h3 className="text-xl font-semibold flex items-center gap-2">
                                         <Briefcase className="w-5 h-5 text-blue-400" />
@@ -631,7 +645,7 @@ export default function UpdateProfilePage() {
                             )}
 
                             {/* Freelancer Profile Fields */}
-                            {(formData.role === "freelancer" || formData.role === "both") && (
+                            {formData.role === "freelancer" && (
                                 <div className="space-y-6 pt-6 border-t border-blue-900/30">
                                     <h3 className="text-xl font-semibold flex items-center gap-2">
                                         <Award className="w-5 h-5 text-blue-400" />

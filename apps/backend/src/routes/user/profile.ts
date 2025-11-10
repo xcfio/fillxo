@@ -16,39 +16,7 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 username: Type.String()
             }),
             response: {
-                200: Type.Object({
-                    id: Type.Index(User, ["id"]),
-                    username: Type.Index(User, ["username"]),
-                    name: Type.Index(User, ["name"]),
-                    avatar: Type.Index(User, ["avatar"]),
-                    role: Type.Index(User, ["role"]),
-                    country: Type.Index(User, ["country"]),
-                    timezone: Type.Index(User, ["timezone"]),
-                    client: Type.Optional(
-                        Type.Object({
-                            companyName: Type.Optional(Type.String()),
-                            industry: Type.Optional(Type.String())
-                        })
-                    ),
-                    freelancer: Type.Optional(
-                        Type.Object({
-                            title: Type.Optional(Type.String()),
-                            bio: Type.Optional(Type.String()),
-                            skills: Type.Optional(Type.Array(Type.String())),
-                            portfolio: Type.Optional(
-                                Type.Array(
-                                    Type.Object({
-                                        title: Type.String(),
-                                        description: Type.String(),
-                                        images: Type.String(),
-                                        link: Type.String()
-                                    })
-                                )
-                            )
-                        })
-                    ),
-                    createdAt: Type.String()
-                }),
+                200: User,
                 404: ErrorResponse(404, "Not found - User not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
@@ -61,15 +29,8 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
 
                 return reply.send({
-                    id: user.id,
-                    username: user.username,
-                    name: user.name,
-                    avatar: user.avatar,
-                    role: user.role,
-                    country: user.country,
-                    timezone: user.timezone,
-                    client: user.client || undefined,
-                    freelancer: user.freelancer || undefined,
+                    ...user,
+                    updatedAt: user.updatedAt.toISOString(),
                     createdAt: user.createdAt.toISOString()
                 })
             } catch (error) {

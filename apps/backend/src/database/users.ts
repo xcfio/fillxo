@@ -3,7 +3,8 @@ import { Type, Static } from "typebox"
 import { sql } from "drizzle-orm"
 import { v7 } from "uuid"
 
-export const Role = pgEnum("role", ["freelancer", "client", "moderator", "admin"])
+export const Role = pgEnum("role", ["freelancer", "client"])
+export const Privilege = pgEnum("privilege", ["moderator", "admin"])
 
 export const users = pgTable(
     "users",
@@ -19,6 +20,7 @@ export const users = pgTable(
         phoneVerified: boolean("phone_verified").notNull().default(false),
         password: char("password", { length: 64 }).notNull(),
         role: Role("role").notNull(),
+        privilege: Privilege("privilege"),
         isBanned: boolean("is_banned").notNull().default(false),
         country: text("country"),
         timezone: text("timezone"),
@@ -89,12 +91,12 @@ export const User = Type.Object(
         phoneVerified: Type.Boolean({
             description: "Whether the user's phone number has been verified"
         }),
-        role: Type.Union(
-            [Type.Literal("freelancer"), Type.Literal("client"), Type.Literal("moderator"), Type.Literal("admin")],
-            {
-                description: "User's role on the platform"
-            }
-        ),
+        role: Type.Union([Type.Literal("freelancer"), Type.Literal("client")], {
+            description: "User's role on the platform"
+        }),
+        privilege: Type.Union([Type.Literal("moderator"), Type.Literal("admin"), Type.Null()], {
+            description: "User's privilege level for staff access (null for regular users)"
+        }),
         isBanned: Type.Boolean({
             description: "Whether the user account is banned"
         }),
@@ -127,6 +129,61 @@ export const User = Type.Object(
             ],
             {
                 description: "User's timezone (optional, IANA timezone format)"
+            }
+        ),
+        rating: Type.Union(
+            [
+                Type.Object({
+                    id: Type.String({ description: "ID of the reviewer" }),
+                    review: Type.Union([
+                        Type.Literal(1),
+                        Type.Literal(2),
+                        Type.Literal(3),
+                        Type.Literal(4),
+                        Type.Literal(5)
+                    ]),
+                    comment: Type.Optional(Type.String({ description: "Optional review comment" }))
+                }),
+                Type.Null()
+            ],
+            {
+                description: "User's rating information (optional)"
+            }
+        ),
+        client: Type.Union(
+            [
+                Type.Object({
+                    companyName: Type.Optional(Type.String({ description: "Client's company name" })),
+                    industry: Type.Optional(Type.String({ description: "Client's industry" }))
+                }),
+                Type.Null()
+            ],
+            {
+                description: "Client profile information (optional, only for clients)"
+            }
+        ),
+        freelancer: Type.Union(
+            [
+                Type.Object({
+                    title: Type.Optional(Type.String({ description: "Professional title" })),
+                    bio: Type.Optional(Type.String({ description: "Professional bio" })),
+                    skills: Type.Optional(Type.Array(Type.String(), { description: "Array of skill names" })),
+                    portfolio: Type.Optional(
+                        Type.Array(
+                            Type.Object({
+                                title: Type.String({ description: "Portfolio project title" }),
+                                description: Type.String({ description: "Portfolio project description" }),
+                                images: Type.String({ description: "Portfolio project image URL" }),
+                                link: Type.String({ description: "Portfolio project link" })
+                            }),
+                            { description: "Array of portfolio items" }
+                        )
+                    )
+                }),
+                Type.Null()
+            ],
+            {
+                description: "Freelancer profile information (optional, only for freelancers)"
             }
         ),
         createdAt: Type.String({ format: "date-time", description: "ISO timestamp of when user account was created" }),

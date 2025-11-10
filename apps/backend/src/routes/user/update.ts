@@ -28,10 +28,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                     phone: Type.Index(User, ["phone"]),
                     country: Type.Index(User, ["country"]),
                     timezone: Type.Index(User, ["timezone"]),
-                    role: Type.Exclude(
-                        Type.Index(User, ["role"]),
-                        Type.Union([Type.Literal("moderator"), Type.Literal("admin")])
-                    ),
+                    role: Type.Index(User, ["role"]),
                     client: Type.Partial(
                         Type.Object({
                             companyName: Type.String(),
