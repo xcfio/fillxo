@@ -3,7 +3,26 @@
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
-import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown } from "lucide-react"
+import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcase, Award } from "lucide-react"
+
+interface PortfolioItem {
+    title: string
+    description: string
+    images: string
+    link: string
+}
+
+interface ClientProfile {
+    companyName?: string
+    industry?: string
+}
+
+interface FreelancerProfile {
+    title?: string
+    skills?: string[]
+    bio?: string
+    portfolio?: PortfolioItem[]
+}
 
 interface UpdateFormData {
     avatar?: string
@@ -14,6 +33,8 @@ interface UpdateFormData {
     phone?: string
     country?: string
     timezone?: string
+    client?: ClientProfile
+    freelancer?: FreelancerProfile
 }
 
 export default function UpdateProfilePage() {
@@ -24,6 +45,14 @@ export default function UpdateProfilePage() {
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
     const [formData, setFormData] = useState<UpdateFormData>({})
+    const [skillInput, setSkillInput] = useState("")
+    const [portfolioItems, setPortfolioItems] = useState<PortfolioItem[]>([])
+    const [newPortfolioItem, setNewPortfolioItem] = useState<PortfolioItem>({
+        title: "",
+        description: "",
+        images: "",
+        link: ""
+    })
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -45,8 +74,15 @@ export default function UpdateProfilePage() {
                     role: userData.role || "freelancer",
                     phone: userData.phone || "",
                     country: userData.country || "",
-                    timezone: userData.timezone || ""
+                    timezone: userData.timezone || "",
+                    client: userData.client || {},
+                    freelancer: userData.freelancer || {}
                 })
+
+                // Initialize portfolio items if they exist
+                if (userData.freelancer?.portfolio) {
+                    setPortfolioItems(userData.freelancer.portfolio)
+                }
             } catch (error) {
                 router.push("/login")
             } finally {
@@ -75,6 +111,23 @@ export default function UpdateProfilePage() {
             if (formData.phone !== user.phone) updatedFields.phone = formData.phone
             if (formData.country !== user.country) updatedFields.country = formData.country
             if (formData.timezone !== user.timezone) updatedFields.timezone = formData.timezone
+
+            // Add client fields if modified
+            if (
+                formData.client?.companyName !== user.client?.companyName ||
+                formData.client?.industry !== user.client?.industry
+            ) {
+                updatedFields.client = formData.client
+            }
+
+            // Add freelancer fields if modified
+            const freelancerChanged = JSON.stringify(formData.freelancer) !== JSON.stringify(user.freelancer)
+            if (freelancerChanged) {
+                updatedFields.freelancer = {
+                    ...formData.freelancer,
+                    portfolio: portfolioItems
+                }
+            }
 
             // Check if at least one field is being updated
             if (Object.keys(updatedFields).length === 0) {
@@ -118,11 +171,79 @@ export default function UpdateProfilePage() {
         }
     }
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
+        const { name, value } = e.target
+
+        // Handle nested client fields
+        if (name.startsWith("client.")) {
+            const field = name.split(".")[1]
+            setFormData({
+                ...formData,
+                client: {
+                    ...formData.client,
+                    [field]: value
+                }
+            })
+        }
+        // Handle nested freelancer fields
+        else if (name.startsWith("freelancer.")) {
+            const field = name.split(".")[1]
+            setFormData({
+                ...formData,
+                freelancer: {
+                    ...formData.freelancer,
+                    [field]: value
+                }
+            })
+        }
+        // Handle regular fields
+        else {
+            setFormData({
+                ...formData,
+                [name]: value
+            })
+        }
+    }
+
+    const handleAddSkill = () => {
+        if (skillInput.trim()) {
+            const currentSkills = formData.freelancer?.skills || []
+            setFormData({
+                ...formData,
+                freelancer: {
+                    ...formData.freelancer,
+                    skills: [...currentSkills, skillInput.trim()]
+                }
+            })
+            setSkillInput("")
+        }
+    }
+
+    const handleRemoveSkill = (index: number) => {
+        const currentSkills = formData.freelancer?.skills || []
         setFormData({
             ...formData,
-            [e.target.name]: e.target.value
+            freelancer: {
+                ...formData.freelancer,
+                skills: currentSkills.filter((_, i) => i !== index)
+            }
         })
+    }
+
+    const handleAddPortfolioItem = () => {
+        if (
+            newPortfolioItem.title &&
+            newPortfolioItem.description &&
+            newPortfolioItem.images &&
+            newPortfolioItem.link
+        ) {
+            setPortfolioItems([...portfolioItems, newPortfolioItem])
+            setNewPortfolioItem({ title: "", description: "", images: "", link: "" })
+        }
+    }
+
+    const handleRemovePortfolioItem = (index: number) => {
+        setPortfolioItems(portfolioItems.filter((_, i) => i !== index))
     }
 
     if (loading || !user) {
@@ -460,6 +581,240 @@ export default function UpdateProfilePage() {
                                     </select>
                                 </div>
                             </div>
+
+                            {/* Client Profile Fields */}
+                            {(formData.role === "client" || formData.role === "both") && (
+                                <div className="space-y-6 pt-6 border-t border-blue-900/30">
+                                    <h3 className="text-xl font-semibold flex items-center gap-2">
+                                        <Briefcase className="w-5 h-5 text-blue-400" />
+                                        Client Profile
+                                    </h3>
+
+                                    {/* Company Name */}
+                                    <div>
+                                        <label
+                                            htmlFor="client.companyName"
+                                            className="flex items-center gap-2 text-sm font-medium mb-2"
+                                        >
+                                            Company Name
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="client.companyName"
+                                            name="client.companyName"
+                                            value={formData.client?.companyName || ""}
+                                            onChange={handleChange}
+                                            placeholder="Your Company Ltd."
+                                            className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                                        />
+                                    </div>
+
+                                    {/* Industry */}
+                                    <div>
+                                        <label
+                                            htmlFor="client.industry"
+                                            className="flex items-center gap-2 text-sm font-medium mb-2"
+                                        >
+                                            Industry
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="client.industry"
+                                            name="client.industry"
+                                            value={formData.client?.industry || ""}
+                                            onChange={handleChange}
+                                            placeholder="Technology, Finance, Healthcare, etc."
+                                            className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                                        />
+                                    </div>
+                                </div>
+                            )}
+
+                            {/* Freelancer Profile Fields */}
+                            {(formData.role === "freelancer" || formData.role === "both") && (
+                                <div className="space-y-6 pt-6 border-t border-blue-900/30">
+                                    <h3 className="text-xl font-semibold flex items-center gap-2">
+                                        <Award className="w-5 h-5 text-blue-400" />
+                                        Freelancer Profile
+                                    </h3>
+
+                                    {/* Title */}
+                                    <div>
+                                        <label
+                                            htmlFor="freelancer.title"
+                                            className="flex items-center gap-2 text-sm font-medium mb-2"
+                                        >
+                                            Professional Title
+                                        </label>
+                                        <input
+                                            type="text"
+                                            id="freelancer.title"
+                                            name="freelancer.title"
+                                            value={formData.freelancer?.title || ""}
+                                            onChange={handleChange}
+                                            placeholder="Full Stack Developer, UI/UX Designer, etc."
+                                            className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                                        />
+                                    </div>
+
+                                    {/* Bio */}
+                                    <div>
+                                        <label
+                                            htmlFor="freelancer.bio"
+                                            className="flex items-center gap-2 text-sm font-medium mb-2"
+                                        >
+                                            Bio
+                                        </label>
+                                        <textarea
+                                            id="freelancer.bio"
+                                            name="freelancer.bio"
+                                            value={formData.freelancer?.bio || ""}
+                                            onChange={handleChange}
+                                            placeholder="Tell us about yourself and your experience..."
+                                            rows={4}
+                                            className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none"
+                                        />
+                                    </div>
+
+                                    {/* Skills */}
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                                            Skills
+                                        </label>
+                                        <div className="flex gap-2 mb-3">
+                                            <input
+                                                type="text"
+                                                value={skillInput}
+                                                onChange={(e) => setSkillInput(e.target.value)}
+                                                onKeyPress={(e) => {
+                                                    if (e.key === "Enter") {
+                                                        e.preventDefault()
+                                                        handleAddSkill()
+                                                    }
+                                                }}
+                                                placeholder="Add a skill (e.g., React, Python)"
+                                                className="flex-1 px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddSkill}
+                                                className="px-6 py-3 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors"
+                                            >
+                                                Add
+                                            </button>
+                                        </div>
+                                        <div className="flex flex-wrap gap-2">
+                                            {formData.freelancer?.skills?.map((skill, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-3 py-1 bg-blue-900/30 border border-blue-700/50 rounded-full text-sm flex items-center gap-2"
+                                                >
+                                                    {skill}
+                                                    <button
+                                                        type="button"
+                                                        onClick={() => handleRemoveSkill(index)}
+                                                        className="text-red-400 hover:text-red-300"
+                                                    >
+                                                        ×
+                                                    </button>
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {/* Portfolio */}
+                                    <div>
+                                        <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                                            Portfolio
+                                        </label>
+
+                                        {/* Existing Portfolio Items */}
+                                        <div className="space-y-4 mb-4">
+                                            {portfolioItems.map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="p-4 bg-gray-900/50 border border-blue-900/30 rounded-lg"
+                                                >
+                                                    <div className="flex justify-between items-start mb-2">
+                                                        <h4 className="font-medium">{item.title}</h4>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => handleRemovePortfolioItem(index)}
+                                                            className="text-red-400 hover:text-red-300"
+                                                        >
+                                                            Remove
+                                                        </button>
+                                                    </div>
+                                                    <p className="text-sm text-gray-400 mb-2">{item.description}</p>
+                                                    <div className="text-xs text-blue-400">
+                                                        <a
+                                                            href={item.link}
+                                                            target="_blank"
+                                                            rel="noopener noreferrer"
+                                                            className="hover:underline"
+                                                        >
+                                                            {item.link}
+                                                        </a>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+
+                                        {/* Add New Portfolio Item */}
+                                        <div className="p-4 bg-gray-900/30 border border-blue-900/20 rounded-lg space-y-3">
+                                            <input
+                                                type="text"
+                                                value={newPortfolioItem.title}
+                                                onChange={(e) =>
+                                                    setNewPortfolioItem({ ...newPortfolioItem, title: e.target.value })
+                                                }
+                                                placeholder="Project Title"
+                                                className="w-full px-4 py-2 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-sm"
+                                            />
+                                            <textarea
+                                                value={newPortfolioItem.description}
+                                                onChange={(e) =>
+                                                    setNewPortfolioItem({
+                                                        ...newPortfolioItem,
+                                                        description: e.target.value
+                                                    })
+                                                }
+                                                placeholder="Project Description"
+                                                rows={2}
+                                                className="w-full px-4 py-2 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors resize-none text-sm"
+                                            />
+                                            <input
+                                                type="url"
+                                                value={newPortfolioItem.images}
+                                                onChange={(e) =>
+                                                    setNewPortfolioItem({
+                                                        ...newPortfolioItem,
+                                                        images: e.target.value
+                                                    })
+                                                }
+                                                placeholder="Image URL"
+                                                className="w-full px-4 py-2 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-sm"
+                                            />
+                                            <input
+                                                type="url"
+                                                value={newPortfolioItem.link}
+                                                onChange={(e) =>
+                                                    setNewPortfolioItem({ ...newPortfolioItem, link: e.target.value })
+                                                }
+                                                placeholder="Project Link"
+                                                className="w-full px-4 py-2 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-sm"
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={handleAddPortfolioItem}
+                                                className="w-full px-4 py-2 bg-blue-600 hover:bg-blue-700 rounded-lg transition-colors text-sm"
+                                            >
+                                                Add Portfolio Item
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            )}
 
                             {/* Error Message */}
                             {error && (

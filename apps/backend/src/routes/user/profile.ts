@@ -24,6 +24,29 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                     role: Type.Index(User, ["role"]),
                     country: Type.Index(User, ["country"]),
                     timezone: Type.Index(User, ["timezone"]),
+                    client: Type.Optional(
+                        Type.Object({
+                            companyName: Type.Optional(Type.String()),
+                            industry: Type.Optional(Type.String())
+                        })
+                    ),
+                    freelancer: Type.Optional(
+                        Type.Object({
+                            title: Type.Optional(Type.String()),
+                            bio: Type.Optional(Type.String()),
+                            skills: Type.Optional(Type.Array(Type.String())),
+                            portfolio: Type.Optional(
+                                Type.Array(
+                                    Type.Object({
+                                        title: Type.String(),
+                                        description: Type.String(),
+                                        images: Type.String(),
+                                        link: Type.String()
+                                    })
+                                )
+                            )
+                        })
+                    ),
                     createdAt: Type.String()
                 }),
                 404: ErrorResponse(404, "Not found - User not found"),
@@ -36,7 +59,19 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 const { username } = request.params
                 const [user] = await db.select().from(table.users).where(eq(table.users.username, username))
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
-                return reply.send({ ...user, createdAt: user.createdAt.toISOString() })
+
+                return reply.send({
+                    id: user.id,
+                    username: user.username,
+                    name: user.name,
+                    avatar: user.avatar,
+                    role: user.role,
+                    country: user.country,
+                    timezone: user.timezone,
+                    client: user.client || undefined,
+                    freelancer: user.freelancer || undefined,
+                    createdAt: user.createdAt.toISOString()
+                })
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

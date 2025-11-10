@@ -4,7 +4,41 @@ import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import Navbar from "@/components/navbar"
 import Image from "next/image"
-import { User, MapPin, Clock, Calendar, ArrowLeft, Briefcase } from "lucide-react"
+import {
+    User,
+    MapPin,
+    Clock,
+    Calendar,
+    ArrowLeft,
+    Briefcase,
+    Award,
+    ExternalLink,
+    FileText,
+    Lightbulb,
+    Briefcase as Portfolio,
+    Star,
+    Building2,
+    Factory
+} from "lucide-react"
+
+interface PortfolioItem {
+    title: string
+    description: string
+    images: string
+    link: string
+}
+
+interface ClientProfile {
+    companyName?: string
+    industry?: string
+}
+
+interface FreelancerProfile {
+    title?: string
+    skills?: string[]
+    bio?: string
+    portfolio?: PortfolioItem[]
+}
 
 interface UserProfile {
     id: string
@@ -14,6 +48,8 @@ interface UserProfile {
     role: "freelancer" | "client" | "both"
     country: string
     timezone: string
+    client?: ClientProfile
+    freelancer?: FreelancerProfile
     createdAt: string
 }
 
@@ -209,41 +245,161 @@ export default function UserProfilePage() {
 
                     {/* Profile Sections */}
                     <div className="grid grid-cols-1 gap-6">
-                        {/* About Section - Coming Soon */}
-                        <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                            <h2 className="text-2xl font-bold mb-4">About</h2>
-                            <p className="text-gray-400 italic">
-                                {isOwnProfile
-                                    ? "Add a bio to your profile to tell others about yourself"
-                                    : "This user hasn't added a bio yet"}
-                            </p>
-                        </div>
+                        {/* Client Profile Section */}
+                        {(profile.role === "client" || profile.role === "both") && (
+                            <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                    <Briefcase className="w-6 h-6 text-blue-400" />
+                                    Client Information
+                                </h2>
+                                {profile.client?.companyName || profile.client?.industry ? (
+                                    <div className="space-y-3">
+                                        {profile.client.companyName && (
+                                            <div className="flex items-center gap-3">
+                                                <Building2 className="w-5 h-5 text-blue-400" />
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Company</p>
+                                                    <p className="text-lg font-medium">{profile.client.companyName}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                        {profile.client.industry && (
+                                            <div className="flex items-center gap-3">
+                                                <Factory className="w-5 h-5 text-blue-400" />
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Industry</p>
+                                                    <p className="text-lg font-medium">{profile.client.industry}</p>
+                                                </div>
+                                            </div>
+                                        )}
+                                    </div>
+                                ) : (
+                                    <p className="text-gray-400 italic">
+                                        {isOwnProfile
+                                            ? "Add your company information in your profile settings"
+                                            : "No company information available"}
+                                    </p>
+                                )}
+                            </div>
+                        )}
+
+                        {/* About Section */}
+                        {(profile.role === "freelancer" || profile.role === "both") && (
+                            <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                                <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                    <FileText className="w-6 h-6 text-blue-400" />
+                                    About
+                                </h2>
+                                {profile.freelancer?.bio ? (
+                                    <p className="text-gray-300 leading-relaxed">{profile.freelancer.bio}</p>
+                                ) : (
+                                    <p className="text-gray-400 italic">
+                                        {isOwnProfile
+                                            ? "Add a bio to your profile to tell others about yourself"
+                                            : "This user hasn't added a bio yet"}
+                                    </p>
+                                )}
+                            </div>
+                        )}
 
                         {profile.role === "freelancer" || profile.role === "both" ? (
                             <>
-                                {/* Skills Section - Coming Soon */}
+                                {/* Professional Title */}
+                                {profile.freelancer?.title && (
+                                    <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
+                                        <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                            <Award className="w-6 h-6 text-blue-400" />
+                                            Professional Title
+                                        </h2>
+                                        <p className="text-xl text-gray-300">{profile.freelancer.title}</p>
+                                    </div>
+                                )}
+
+                                {/* Skills Section */}
                                 <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                                    <h2 className="text-2xl font-bold mb-4">Skills & Expertise</h2>
-                                    <p className="text-gray-400 italic">
-                                        {isOwnProfile
-                                            ? "Add your skills to showcase your expertise"
-                                            : "No skills listed yet"}
-                                    </p>
+                                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                        <Lightbulb className="w-6 h-6 text-blue-400" />
+                                        Skills & Expertise
+                                    </h2>
+                                    {profile.freelancer?.skills && profile.freelancer.skills.length > 0 ? (
+                                        <div className="flex flex-wrap gap-2">
+                                            {profile.freelancer.skills.map((skill, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-sm font-medium"
+                                                >
+                                                    {skill}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-400 italic">
+                                            {isOwnProfile
+                                                ? "Add your skills to showcase your expertise"
+                                                : "No skills listed yet"}
+                                        </p>
+                                    )}
                                 </div>
 
-                                {/* Portfolio Section - Coming Soon */}
+                                {/* Portfolio Section */}
                                 <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                                    <h2 className="text-2xl font-bold mb-4">Portfolio</h2>
-                                    <p className="text-gray-400 italic">
-                                        {isOwnProfile
-                                            ? "Add projects to your portfolio to attract clients"
-                                            : "No portfolio items yet"}
-                                    </p>
+                                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                        <Portfolio className="w-6 h-6 text-blue-400" />
+                                        Portfolio
+                                    </h2>
+                                    {profile.freelancer?.portfolio && profile.freelancer.portfolio.length > 0 ? (
+                                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                                            {profile.freelancer.portfolio.map((item, index) => (
+                                                <div
+                                                    key={index}
+                                                    className="bg-gray-900/50 border border-blue-900/30 rounded-lg overflow-hidden hover:border-blue-700/50 transition-colors"
+                                                >
+                                                    {/* Portfolio Image */}
+                                                    {item.images && (
+                                                        <div className="relative h-48 bg-gray-800">
+                                                            <Image
+                                                                src={item.images}
+                                                                alt={item.title}
+                                                                fill
+                                                                className="object-cover"
+                                                            />
+                                                        </div>
+                                                    )}
+
+                                                    {/* Portfolio Content */}
+                                                    <div className="p-4">
+                                                        <h3 className="text-lg font-semibold mb-2">{item.title}</h3>
+                                                        <p className="text-gray-400 text-sm mb-4">{item.description}</p>
+                                                        {item.link && (
+                                                            <a
+                                                                href={item.link}
+                                                                target="_blank"
+                                                                rel="noopener noreferrer"
+                                                                className="inline-flex items-center gap-2 text-blue-400 hover:text-blue-300 text-sm transition-colors"
+                                                            >
+                                                                View Project
+                                                                <ExternalLink className="w-4 h-4" />
+                                                            </a>
+                                                        )}
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-gray-400 italic">
+                                            {isOwnProfile
+                                                ? "Add projects to your portfolio to attract clients"
+                                                : "No portfolio items yet"}
+                                        </p>
+                                    )}
                                 </div>
 
                                 {/* Reviews Section - Coming Soon */}
                                 <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                                    <h2 className="text-2xl font-bold mb-4">Reviews & Ratings</h2>
+                                    <h2 className="text-2xl font-bold mb-4 flex items-center gap-2">
+                                        <Star className="w-6 h-6 text-blue-400" />
+                                        Reviews & Ratings
+                                    </h2>
                                     <p className="text-gray-400 italic">No reviews yet</p>
                                 </div>
                             </>
@@ -266,14 +422,6 @@ export default function UserProfilePage() {
                                 </button>
                             </div>
                         )}
-                    </div>
-
-                    {/* Coming Soon Notice */}
-                    <div className="mt-8 bg-blue-900/30 border border-blue-700/50 rounded-2xl p-6 text-center">
-                        <h3 className="text-xl font-bold mb-2">🚀 More Profile Features Coming Soon!</h3>
-                        <p className="text-gray-300">
-                            We're building out portfolio showcases, skills, reviews, and more!
-                        </p>
                     </div>
                 </div>
             </div>
