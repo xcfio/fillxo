@@ -1,6 +1,6 @@
-import { sql } from "drizzle-orm"
-import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean } from "drizzle-orm/pg-core"
+import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean, jsonb } from "drizzle-orm/pg-core"
 import { Type, Static } from "typebox"
+import { sql } from "drizzle-orm"
 import { v7 } from "uuid"
 
 export const Role = pgEnum("role", ["freelancer", "client", "moderator", "admin"])
@@ -22,6 +22,14 @@ export const users = pgTable(
         isBanned: boolean("is_banned").notNull().default(false),
         country: text("country"),
         timezone: text("timezone"),
+        rating: jsonb("rating").$type<{ id: string; review: 1 | 2 | 3 | 4 | 5; comment?: string }>(),
+        client: jsonb("client").$type<{ companyName?: string; industry?: string }>(),
+        freelancer: jsonb("freelancer").$type<{
+            title?: string
+            bio?: string
+            skills?: Array<string>
+            portfolio?: Array<{ title: string; description: string; images: string; link: string }>
+        }>(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
             .notNull()

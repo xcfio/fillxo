@@ -31,6 +31,27 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                     role: Type.Exclude(
                         Type.Index(User, ["role"]),
                         Type.Union([Type.Literal("moderator"), Type.Literal("admin")])
+                    ),
+                    client: Type.Partial(
+                        Type.Object({
+                            companyName: Type.String(),
+                            industry: Type.String()
+                        })
+                    ),
+                    freelancer: Type.Partial(
+                        Type.Object({
+                            title: Type.String(),
+                            skills: Type.Array(Type.String()),
+                            bio: Type.String(),
+                            portfolio: Type.Array(
+                                Type.Object({
+                                    title: Type.String(),
+                                    description: Type.String(),
+                                    images: Type.String(),
+                                    link: Type.String()
+                                })
+                            )
+                        })
                     )
                 })
             ),
@@ -65,7 +86,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
 
                 await db
                     .update(table.users)
-                    .set({ ...request.body, updatedAt: new Date() })
+                    .set({ ...request.body, client: request.body.client, freelancer: request.body.freelancer })
                     .where(eq(table.users.id, id))
 
                 return reply.send({ success: true })
