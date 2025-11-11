@@ -25,8 +25,8 @@ import {
 interface PortfolioItem {
     title: string
     description: string
-    images: string
-    link: string
+    images?: string
+    link?: string
 }
 
 interface ClientProfile {

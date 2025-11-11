@@ -44,8 +44,8 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                                 Type.Object({
                                     title: Type.String(),
                                     description: Type.String(),
-                                    images: Type.String(),
-                                    link: Type.String()
+                                    images: Type.Optional(Type.String()),
+                                    link: Type.Optional(Type.String())
                                 })
                             )
                         })
@@ -67,7 +67,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
 
                 if (email || username) {
                     const [existingUser] = await db
-                        .select({ id: table.users.id })
+                        .select({ id: table.users.id, email: table.users.email, username: table.users.username })
                         .from(table.users)
                         .where(
                             or(
@@ -77,7 +77,12 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                         )
 
                     if (existingUser?.id !== id) {
-                        throw CreateError(400, "DUPLICATE_ENTRY", "Username or email already exists")
+                        if (existingUser.email === email) {
+                            throw CreateError(400, "DUPLICATE_ENTRY", "Email already exists")
+                        }
+                        if (existingUser.username === username) {
+                            throw CreateError(400, "DUPLICATE_ENTRY", "Username already exists")
+                        }
                     }
                 }
 

@@ -30,7 +30,7 @@ export const users = pgTable(
             title?: string
             bio?: string
             skills?: Array<string>
-            portfolio?: Array<{ title: string; description: string; images: string; link: string }>
+            portfolio?: Array<{ title: string; description: string; images?: string; link?: string }>
         }>(),
         createdAt: timestamp("created_at").defaultNow().notNull(),
         updatedAt: timestamp("updated_at")
@@ -173,8 +173,8 @@ export const User = Type.Object(
                             Type.Object({
                                 title: Type.String({ description: "Portfolio project title" }),
                                 description: Type.String({ description: "Portfolio project description" }),
-                                images: Type.String({ description: "Portfolio project image URL" }),
-                                link: Type.String({ description: "Portfolio project link" })
+                                images: Type.Optional(Type.String({ description: "Portfolio project image URL" })),
+                                link: Type.Optional(Type.String({ description: "Portfolio project link" }))
                             }),
                             { description: "Array of portfolio items" }
                         )

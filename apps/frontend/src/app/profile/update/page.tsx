@@ -8,8 +8,8 @@ import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcas
 interface PortfolioItem {
     title: string
     description: string
-    images: string
-    link: string
+    images?: string
+    link?: string
 }
 
 interface ClientProfile {
@@ -231,12 +231,7 @@ export default function UpdateProfilePage() {
     }
 
     const handleAddPortfolioItem = () => {
-        if (
-            newPortfolioItem.title &&
-            newPortfolioItem.description &&
-            newPortfolioItem.images &&
-            newPortfolioItem.link
-        ) {
+        if (newPortfolioItem.title && newPortfolioItem.description) {
             setPortfolioItems([...portfolioItems, newPortfolioItem])
             setNewPortfolioItem({ title: "", description: "", images: "", link: "" })
         }
