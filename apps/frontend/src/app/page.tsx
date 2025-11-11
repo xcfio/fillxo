@@ -13,8 +13,8 @@ import {
 } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import Footer from "@/components/footer"
-import Navbar from "@/components/navbar"
+import { Button } from "@/components/ui/button"
+import { PageContainer } from "@/components/ui/page-container"
 
 export default function LandingPage() {
     const router = useRouter()
@@ -43,11 +43,9 @@ export default function LandingPage() {
     }, [])
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white">
-            <Navbar />
-
+        <PageContainer>
             {/* Hero Section */}
-            <section className="pt-32 pb-20 px-6">
+            <section className="pt-8 pb-20 px-6">
                 <div className="max-w-6xl mx-auto text-center">
                     <div className="inline-block mb-6 px-4 py-2 bg-blue-900/30 border border-blue-700/50 rounded-full text-blue-300 text-sm">
                         The Future of Freelancing in Bangladesh
@@ -76,29 +74,30 @@ export default function LandingPage() {
                             <div className="h-14" />
                         )
                     ) : isLoggedIn ? (
-                        <button
+                        <Button
                             onClick={() => router.push("/dashboard")}
-                            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                            icon={ArrowRight}
+                            className="text-lg shadow-lg shadow-blue-600/20"
                         >
                             Go to Dashboard
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
+                        </Button>
                     ) : (
                         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center">
-                            <button
+                            <Button
                                 onClick={() => router.push("/register")}
-                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2 shadow-lg shadow-blue-600/20"
+                                icon={ArrowRight}
+                                className="text-lg shadow-lg shadow-blue-600/20"
                             >
                                 Join as Freelancer
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={() => router.push("/register")}
-                                className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center gap-2"
+                                variant="secondary"
+                                icon={Briefcase}
+                                className="text-lg"
                             >
                                 I'm Hiring
-                                <Briefcase className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
                     )}
 
@@ -424,29 +423,30 @@ export default function LandingPage() {
                             <div className="h-14" /> // Silent loading in production
                         )
                     ) : isLoggedIn ? (
-                        <button
+                        <Button
                             onClick={() => router.push("/dashboard")}
-                            className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                            icon={ArrowRight}
+                            className="text-lg shadow-lg shadow-blue-600/20"
                         >
                             Go to Dashboard
-                            <ArrowRight className="w-5 h-5" />
-                        </button>
+                        </Button>
                     ) : (
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                            <button
+                            <Button
                                 onClick={() => router.push("/register")}
-                                className="px-8 py-4 bg-blue-600 hover:bg-blue-700 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                icon={ArrowRight}
+                                className="text-lg shadow-lg shadow-blue-600/20"
                             >
                                 Join as Freelancer
-                                <ArrowRight className="w-5 h-5" />
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={() => router.push("/register")}
-                                className="px-8 py-4 bg-gray-800 hover:bg-gray-700 border border-blue-900/30 rounded-xl font-semibold text-lg transition-all hover:scale-105 active:scale-95 inline-flex items-center justify-center gap-2"
+                                variant="secondary"
+                                icon={Briefcase}
+                                className="text-lg"
                             >
                                 Join as Client
-                                <Briefcase className="w-5 h-5" />
-                            </button>
+                            </Button>
                         </div>
                     )}
                     <p className="text-gray-500 text-sm mt-6">
@@ -454,8 +454,6 @@ export default function LandingPage() {
                     </p>
                 </div>
             </section>
-
-            <Footer />
-        </div>
+        </PageContainer>
     )
 }

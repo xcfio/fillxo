@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from "react"
 import { ArrowLeft, Wifi } from "lucide-react"
 import { useRouter } from "next/navigation"
+import { Button } from "@/components/ui"
 
 export default function NotFound() {
     const router = useRouter()
@@ -110,15 +111,15 @@ export default function NotFound() {
 
                     {/* Action Button */}
                     <div className="button-container flex justify-center">
-                        <button
+                        <Button
                             onClick={() => router.back()}
-                            className="group px-8 py-3 border-2 border-teal-500 text-teal-500 font-semibold rounded-full bg-transparent cursor-pointer text-base transition-all duration-300 relative overflow-hidden hover:bg-teal-500 hover:text-white hover:scale-105 hover:shadow-[0_10px_25px_rgba(20,184,166,0.3)]"
+                            variant="secondary"
+                            icon={ArrowLeft}
+                            iconPosition="left"
+                            className="border-2 border-teal-500 text-teal-500 bg-transparent hover:bg-teal-500 hover:text-white hover:shadow-[0_10px_25px_rgba(20,184,166,0.3)]"
                         >
-                            <div className="flex items-center gap-2 relative z-10">
-                                <ArrowLeft className="w-5 h-5 transition-transform duration-300 group-hover:-translate-x-1" />
-                                Go Back
-                            </div>
-                        </button>
+                            Go Back
+                        </Button>
                     </div>
 
                     {/* Error Code */}

@@ -1,11 +1,13 @@
 "use client"
 
-import { ArrowLeft, ArrowRight, LoaderCircle, AlertCircle, Eye, EyeOff } from "lucide-react"
+import { ArrowRight, Eye, EyeOff } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
-import Footer from "@/components/footer"
-import Navbar from "@/components/navbar"
-import Image from "next/image"
+import { PageContainer } from "@/components/ui/page-container"
+import { FormInput } from "@/components/ui/form-input"
+import { Button } from "@/components/ui/button"
+import { ErrorAlert } from "@/components/ui/error-alert"
+import { Card } from "@/components/ui/card"
 import Link from "next/link"
 
 export default function LoginPage() {
@@ -99,157 +101,121 @@ export default function LoginPage() {
     }
 
     return (
-        <div className="min-h-screen bg-linear-to-br from-gray-950 via-blue-950 to-gray-950 text-white flex flex-col">
-            <Navbar />
+        <PageContainer>
+            <div className="max-w-md mx-auto">
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        Welcome
+                        <span className="text-blue-400"> Back</span>
+                    </h1>
+                    <p className="text-lg text-gray-400">Sign in to continue your freelancing journey</p>
+                </div>
 
-            {/* Main Content */}
-            <section className="pt-32 pb-20 px-6 flex-1">
-                <div className="max-w-md mx-auto">
-                    <div className="text-center mb-12">
-                        <h1 className="text-4xl md:text-5xl font-bold mb-4">
-                            Welcome
-                            <span className="text-blue-400"> Back</span>
-                        </h1>
-                        <p className="text-lg text-gray-400">Sign in to continue your freelancing journey</p>
-                    </div>
+                <Card>
+                    {/* Development-only auth check status */}
+                    {process.env.NODE_ENV !== "production" && authCheckStatus === "checking" && (
+                        <ErrorAlert variant="info" message="Checking authentication status..." />
+                    )}
+                    {process.env.NODE_ENV !== "production" && authCheckStatus === "error" && (
+                        <ErrorAlert
+                            variant="warning"
+                            message="Dev Notice: Auth check failed. Cannot connect to backend. Check console for details."
+                        />
+                    )}
 
-                    <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                        {/* Development-only auth check status */}
-                        {process.env.NODE_ENV !== "production" && authCheckStatus === "checking" && (
-                            <div className="mb-6 bg-blue-900/30 border border-blue-700/50 rounded-xl p-4 flex items-start gap-3">
-                                <LoaderCircle className="w-5 h-5 text-blue-400 shrink-0 mt-0.5 animate-spin" />
-                                <p className="text-blue-300 text-sm">Checking authentication status...</p>
-                            </div>
-                        )}
-                        {process.env.NODE_ENV !== "production" && authCheckStatus === "error" && (
-                            <div className="mb-6 bg-yellow-900/30 border border-yellow-700/50 rounded-xl p-4 flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-yellow-400 shrink-0 mt-0.5" />
-                                <div className="text-yellow-300 text-sm">
-                                    <p className="font-medium mb-1">Dev Notice: Auth check failed</p>
-                                    <p className="text-xs text-yellow-400">
-                                        Cannot connect to backend. Check console for details.
-                                    </p>
-                                </div>
-                            </div>
-                        )}
+                    {errors.general && <ErrorAlert message={errors.general} />}
 
-                        {errors.general && (
-                            <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                                <p className="text-red-300 text-sm">{errors.general}</p>
-                            </div>
-                        )}
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <FormInput
+                            id="input"
+                            label="Email or Username"
+                            type="text"
+                            placeholder="Enter your email or username"
+                            value={formData.input}
+                            error={errors.input}
+                            onChange={(e) => {
+                                setFormData({ ...formData, input: e.target.value })
+                                if (errors.input) setErrors({ ...errors, input: "" })
+                            }}
+                        />
 
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="input" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Email or Username
-                                </label>
+                        <div>
+                            <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
+                                Password
+                            </label>
+                            <div className="relative">
                                 <input
-                                    id="input"
-                                    type="text"
-                                    placeholder="Enter your email or username"
-                                    value={formData.input}
+                                    id="password"
+                                    type={showPassword ? "text" : "password"}
+                                    placeholder="Enter your password"
+                                    value={formData.password}
                                     onChange={(e) => {
-                                        setFormData({ ...formData, input: e.target.value })
-                                        if (errors.input) setErrors({ ...errors, input: "" })
+                                        setFormData({ ...formData, password: e.target.value })
+                                        if (errors.password) setErrors({ ...errors, password: "" })
                                     }}
-                                    className={`w-full px-6 py-4 bg-gray-900/50 border ${
-                                        errors.input ? "border-red-500" : "border-blue-900/30"
+                                    className={`w-full px-6 py-4 pr-12 bg-gray-900/50 border ${
+                                        errors.password ? "border-red-500" : "border-blue-900/30"
                                     } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
                                 />
-                                {errors.input && <p className="mt-2 text-sm text-red-400">{errors.input}</p>}
+                                <button
+                                    type="button"
+                                    onClick={() => setShowPassword(!showPassword)}
+                                    className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                                >
+                                    {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                </button>
                             </div>
+                            {errors.password && <p className="mt-2 text-sm text-red-400">{errors.password}</p>}
+                        </div>
 
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Password
-                                </label>
+                        <div className="flex items-center justify-between text-sm">
+                            <label className="flex items-center gap-3 cursor-pointer">
                                 <div className="relative">
                                     <input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Enter your password"
-                                        value={formData.password}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, password: e.target.value })
-                                            if (errors.password) setErrors({ ...errors, password: "" })
-                                        }}
-                                        className={`w-full px-6 py-4 pr-12 bg-gray-900/50 border ${
-                                            errors.password ? "border-red-500" : "border-blue-900/30"
-                                        } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
+                                        type="checkbox"
+                                        checked={rememberMe}
+                                        onChange={(e) => setRememberMe(e.target.checked)}
+                                        className="sr-only peer"
                                     />
-                                    <button
-                                        type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
-                                    >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                    </button>
+                                    <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-600/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
                                 </div>
-                                {errors.password && <p className="mt-2 text-sm text-red-400">{errors.password}</p>}
-                            </div>
-
-                            <div className="flex items-center justify-between text-sm">
-                                <label className="flex items-center gap-3 cursor-pointer">
-                                    <div className="relative">
-                                        <input
-                                            type="checkbox"
-                                            checked={rememberMe}
-                                            onChange={(e) => setRememberMe(e.target.checked)}
-                                            className="sr-only peer"
-                                        />
-                                        <div className="w-11 h-6 bg-gray-700 peer-focus:outline-none peer-focus:ring-2 peer-focus:ring-blue-600/20 rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-0.5 after:left-0.5 after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-blue-600"></div>
-                                    </div>
-                                    <span
-                                        className={`transition-all duration-250 ease-in-out ${rememberMe ? "text-blue-400 decoration-blue-400 decoration-2 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" : "text-gray-400"}`}
-                                    >
-                                        Remember me
-                                    </span>
-                                </label>
-                                <Link
-                                    href="/reset-password"
-                                    className="text-blue-400 hover:text-blue-300 transition-colors"
+                                <span
+                                    className={`transition-all duration-250 ease-in-out ${rememberMe ? "text-blue-400 decoration-blue-400 decoration-2 drop-shadow-[0_0_8px_rgba(96,165,250,0.8)]" : "text-gray-400"}`}
                                 >
-                                    Forgot password?
-                                </Link>
-                            </div>
-
-                            <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                    Remember me
+                                </span>
+                            </label>
+                            <Link
+                                href="/reset-password"
+                                className="text-blue-400 hover:text-blue-300 transition-colors"
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <LoaderCircle className="w-5 h-5 animate-spin" />
-                                        Signing in...
-                                    </>
-                                ) : (
-                                    <>
-                                        Sign In
-                                        <ArrowRight className="w-5 h-5" />
-                                    </>
-                                )}
-                            </button>
-                        </form>
-
-                        <div className="mt-6 text-center">
-                            <p className="text-gray-400">
-                                Don't have an account?{" "}
-                                <Link
-                                    href="/register"
-                                    className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
-                                >
-                                    Sign up
-                                </Link>
-                            </p>
+                                Forgot password?
+                            </Link>
                         </div>
-                    </div>
-                </div>
-            </section>
 
-            <Footer />
-        </div>
+                        <Button
+                            type="submit"
+                            isLoading={isSubmitting}
+                            icon={ArrowRight}
+                            className="w-full text-lg shadow-lg shadow-blue-600/20"
+                        >
+                            Sign In
+                        </Button>
+                    </form>
+
+                    <div className="mt-6 text-center">
+                        <p className="text-gray-400">
+                            Don't have an account?{" "}
+                            <Link
+                                href="/register"
+                                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                            >
+                                Sign up
+                            </Link>
+                        </p>
+                    </div>
+                </Card>
+            </div>
+        </PageContainer>
     )
 }

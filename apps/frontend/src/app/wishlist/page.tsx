@@ -1,8 +1,12 @@
 "use client"
 
-import { ArrowRight, CheckCircle2, ArrowLeft, AlertCircle, LoaderCircle } from "lucide-react"
+import { ArrowRight, CheckCircle2, ArrowLeft } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
+import { FormInput } from "@/components/ui/form-input"
+import { Button } from "@/components/ui/button"
+import { ErrorAlert } from "@/components/ui/error-alert"
+import { Card } from "@/components/ui/card"
 import Footer from "@/components/footer"
 import Image from "next/image"
 
@@ -164,76 +168,43 @@ export default function WishlistPage() {
                             </div>
 
                             <div className="bg-gray-900/50 border border-blue-900/30 rounded-2xl p-8 backdrop-blur-sm">
-                                {errors.general && (
-                                    <div className="mb-6 bg-red-900/30 border border-red-700/50 rounded-xl p-4 flex items-start gap-3">
-                                        <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
-                                        <p className="text-red-300 text-sm">{errors.general}</p>
-                                    </div>
-                                )}
+                                {errors.general && <ErrorAlert message={errors.general} />}
 
                                 <form onSubmit={handleSubmit} className="space-y-6">
-                                    <div>
-                                        <label
-                                            htmlFor="fullName"
-                                            className="block text-sm font-medium text-gray-300 mb-2"
-                                        >
-                                            Full Name
-                                        </label>
-                                        <input
-                                            id="fullName"
-                                            type="text"
-                                            placeholder="Enter your full name"
-                                            value={formData.fullName}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, fullName: e.target.value })
-                                                if (errors.fullName) setErrors({ ...errors, fullName: "" })
-                                            }}
-                                            className={`w-full px-6 py-4 bg-gray-900/50 border ${
-                                                errors.fullName ? "border-red-500" : "border-blue-900/30"
-                                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
-                                        />
-                                        {errors.fullName && (
-                                            <p className="mt-2 text-sm text-red-400">{errors.fullName}</p>
-                                        )}
-                                    </div>
+                                    <FormInput
+                                        id="fullName"
+                                        label="Full Name"
+                                        type="text"
+                                        placeholder="Enter your full name"
+                                        value={formData.fullName}
+                                        error={errors.fullName}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, fullName: e.target.value })
+                                            if (errors.fullName) setErrors({ ...errors, fullName: "" })
+                                        }}
+                                    />
 
-                                    <div>
-                                        <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                                            Email Address
-                                        </label>
-                                        <input
-                                            id="email"
-                                            type="email"
-                                            placeholder="your@email.com"
-                                            value={formData.email}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, email: e.target.value })
-                                                if (errors.email) setErrors({ ...errors, email: "" })
-                                            }}
-                                            className={`w-full px-6 py-4 bg-gray-900/50 border ${
-                                                errors.email ? "border-red-500" : "border-blue-900/30"
-                                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all`}
-                                        />
-                                        {errors.email && <p className="mt-2 text-sm text-red-400">{errors.email}</p>}
-                                    </div>
+                                    <FormInput
+                                        id="email"
+                                        label="Email Address"
+                                        type="email"
+                                        placeholder="your@email.com"
+                                        value={formData.email}
+                                        error={errors.email}
+                                        onChange={(e) => {
+                                            setFormData({ ...formData, email: e.target.value })
+                                            if (errors.email) setErrors({ ...errors, email: "" })
+                                        }}
+                                    />
 
-                                    <button
+                                    <Button
                                         type="submit"
-                                        disabled={isSubmitting}
-                                        className="w-full px-8 py-4 bg-blue-600 hover:bg-blue-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold text-lg transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/20"
+                                        isLoading={isSubmitting}
+                                        icon={ArrowRight}
+                                        className="w-full text-lg shadow-lg shadow-blue-600/20"
                                     >
-                                        {isSubmitting ? (
-                                            <>
-                                                <LoaderCircle className="w-5 h-5 animate-spin" />
-                                                Joining...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Join the Wishlist
-                                                <ArrowRight className="w-5 h-5" />
-                                            </>
-                                        )}
-                                    </button>
+                                        Join the Wishlist
+                                    </Button>
 
                                     <p className="text-gray-500 text-sm text-center">
                                         We respect your privacy. No spam, ever.
