@@ -1,120 +1,14 @@
 "use client"
 
-import { ArrowRight, Eye, EyeOff, Mail, CheckCircle2, LoaderCircle, ChevronDown } from "lucide-react"
+import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
-import Link from "next/link"
-import { PageContainer, FormInput, Button, Select, ErrorAlert, Card } from "@/components/ui"
+import { Mail, User, Phone, Lock, Send, CheckCircle, ArrowRight } from "lucide-react"
+import { PageContainer } from "@/components/ui/page-container"
+import { Card } from "@/components/ui/card"
+import { FormInput } from "@/components/ui/form-input"
+import { ErrorAlert } from "@/components/ui/error-alert"
 
-const allowed_emails = new Set([
-    "gmail.com",
-    "googlemail.com",
-    "outlook.com",
-    "hotmail.com",
-    "live.com",
-    "icloud.com",
-    "proton.me",
-    "protonmail.com",
-    "zoho.com",
-    "fastmail.com",
-    "tutanota.com",
-    "mailfence.com",
-    "mail.com"
-])
-
-const timezoneToCountry = new Map([
-    // America
-    ["America/New_York", "US"],
-    ["America/Chicago", "US"],
-    ["America/Denver", "US"],
-    ["America/Los_Angeles", "US"],
-    ["America/Anchorage", "US"],
-    ["Pacific/Honolulu", "US"],
-    ["America/Phoenix", "US"],
-    ["America/Toronto", "CA"],
-    ["America/Vancouver", "CA"],
-    ["America/Montreal", "CA"],
-    ["America/Mexico_City", "MX"],
-    ["America/Cancun", "MX"],
-    ["America/Sao_Paulo", "BR"],
-    ["America/Rio_Branco", "BR"],
-    ["America/Buenos_Aires", "AR"],
-    ["America/Bogota", "CO"],
-    ["America/Lima", "PE"],
-    ["America/Santiago", "CL"],
-    // Europe
-    ["Europe/London", "GB"],
-    ["Europe/Dublin", "IE"],
-    ["Europe/Paris", "FR"],
-    ["Europe/Berlin", "DE"],
-    ["Europe/Rome", "IT"],
-    ["Europe/Madrid", "ES"],
-    ["Europe/Amsterdam", "NL"],
-    ["Europe/Brussels", "BE"],
-    ["Europe/Vienna", "AT"],
-    ["Europe/Zurich", "CH"],
-    ["Europe/Stockholm", "SE"],
-    ["Europe/Copenhagen", "DK"],
-    ["Europe/Oslo", "NO"],
-    ["Europe/Helsinki", "FI"],
-    ["Europe/Athens", "GR"],
-    ["Europe/Istanbul", "TR"],
-    ["Europe/Moscow", "RU"],
-    ["Europe/Warsaw", "PL"],
-    ["Europe/Prague", "CZ"],
-    ["Europe/Budapest", "HU"],
-    ["Europe/Bucharest", "RO"],
-    ["Europe/Kiev", "UA"],
-    ["Europe/Sofia", "BG"],
-    ["Europe/Riga", "LV"],
-    ["Europe/Tallinn", "EE"],
-    ["Europe/Vilnius", "LT"],
-    ["Europe/Belgrade", "RS"],
-    ["Europe/Zagreb", "HR"],
-    ["Europe/Ljubljana", "SI"],
-    ["Europe/Bratislava", "SK"],
-    ["Europe/Luxembourg", "LU"],
-    ["Europe/Malta", "MT"],
-    ["Europe/Lisbon", "PT"],
-    ["Europe/Reykjavik", "IS"],
-    ["Europe/Nicosia", "CY"],
-    // Asia
-    ["Asia/Dubai", "AE"],
-    ["Asia/Riyadh", "SA"],
-    ["Asia/Kolkata", "IN"],
-    ["Asia/Dhaka", "BD"],
-    ["Asia/Kathmandu", "NP"],
-    ["Asia/Bangkok", "TH"],
-    ["Asia/Ho_Chi_Minh", "VN"],
-    ["Asia/Jakarta", "ID"],
-    ["Asia/Singapore", "SG"],
-    ["Asia/Hong_Kong", "HK"],
-    ["Asia/Shanghai", "CN"],
-    ["Asia/Taipei", "TW"],
-    ["Asia/Manila", "PH"],
-    ["Asia/Tokyo", "JP"],
-    ["Asia/Seoul", "KR"],
-    ["Asia/Karachi", "PK"],
-    ["Asia/Colombo", "LK"],
-    ["Asia/Kuala_Lumpur", "MY"],
-    ["Asia/Jerusalem", "IL"],
-    // Africa
-    ["Africa/Cairo", "EG"],
-    ["Africa/Johannesburg", "ZA"],
-    ["Africa/Lagos", "NG"],
-    ["Africa/Nairobi", "KE"],
-    ["Africa/Casablanca", "MA"],
-    // Australia & Pacific
-    ["Australia/Sydney", "AU"],
-    ["Australia/Melbourne", "AU"],
-    ["Australia/Brisbane", "AU"],
-    ["Australia/Perth", "AU"],
-    ["Australia/Adelaide", "AU"],
-    ["Pacific/Auckland", "NZ"],
-    ["Pacific/Fiji", "FJ"]
-])
-
-const countryToPhoneCode = new Map([
+const PhoneCodes = new Map([
     ["US", "+1"],
     ["CA", "+1"],
     ["MX", "+52"],
@@ -187,942 +81,487 @@ const countryToPhoneCode = new Map([
     ["FJ", "+679"]
 ])
 
+// Phone Input Component with Country Code
+function PhoneInput({
+    value,
+    onChange,
+    error,
+    countryCode,
+    onCountryCodeChange
+}: {
+    value: string
+    onChange: (value: string) => void
+    error?: string
+    countryCode: string
+    onCountryCodeChange: (value: string) => void
+}) {
+    return (
+        <div>
+            <label className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2">
+                <Phone className="w-4 h-4 text-blue-400" />
+                Phone Number
+            </label>
+            <div className="flex gap-0 border border-blue-900/30 rounded-lg overflow-hidden bg-gray-900/50">
+                <input
+                    type="text"
+                    value={countryCode}
+                    onChange={(e) => onCountryCodeChange(e.target.value)}
+                    placeholder="+880"
+                    className="w-20 sm:w-24 px-3 py-3 bg-transparent border-r border-blue-900/30 focus:outline-none focus:bg-gray-800/50 transition-all text-white text-center font-medium"
+                />
+                <input
+                    type="tel"
+                    value={value}
+                    onChange={(e) => onChange(e.target.value)}
+                    placeholder="1712345678"
+                    className="flex-1 px-4 py-3 bg-transparent focus:outline-none focus:bg-gray-800/50 transition-all text-white placeholder-gray-500"
+                />
+            </div>
+            {error && <p className="mt-2 text-sm text-red-400">{error}</p>}
+        </div>
+    )
+}
+
 export default function RegisterPage() {
     const router = useRouter()
-    const [step, setStep] = useState<"email" | "details">("email")
+    const [step, setStep] = useState(1) // 1: Form, 2: OTP
+    const [loading, setLoading] = useState(false)
+    const [error, setError] = useState("")
+    const [success, setSuccess] = useState("")
+
+    // Form data
     const [formData, setFormData] = useState({
         email: "",
-        otp: "",
         username: "",
         name: "",
+        phone: "",
+        countryCode: "",
         password: "",
         confirmPassword: "",
-        role: "freelancer" as "freelancer" | "client",
-        phone: "",
-        phoneCountryCode: "",
-        country: "",
-        timezone: ""
+        role: "freelancer" as "freelancer" | "client"
     })
-    const [showPassword, setShowPassword] = useState(false)
-    const [showConfirmPassword, setShowConfirmPassword] = useState(false)
-    const [isSubmitting, setIsSubmitting] = useState(false)
-    const [isSendingOTP, setIsSendingOTP] = useState(false)
-    const [otpSent, setOtpSent] = useState(false)
-    const [errors, setErrors] = useState({
-        email: "",
-        otp: "",
-        username: "",
-        name: "",
-        password: "",
-        confirmPassword: "",
-        phone: "",
-        country: "",
-        general: ""
-    })
-    const [authCheckStatus, setAuthCheckStatus] = useState<"checking" | "done" | "error">("checking")
 
+    // OTP
+    const [otp, setOtp] = useState("")
+
+    // Field errors
+    const [errors, setErrors] = useState<Record<string, string>>({})
+
+    // Detect country automatically using IP geolocation
     useEffect(() => {
-        const detectedTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone
-        const detectedCountry = timezoneToCountry.get(detectedTimezone) ?? ""
-        const detectedPhoneCode = countryToPhoneCode.get(detectedCountry) ?? ""
-
-        setFormData((prev) => ({
-            ...prev,
-            timezone: detectedTimezone,
-            country: detectedCountry,
-            phoneCountryCode: detectedPhoneCode
-        }))
-
-        const checkAuth = async () => {
+        const detectCountry = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    router.push("/dashboard")
-                } else {
-                    setAuthCheckStatus("done")
-                }
-            } catch (error) {
-                setAuthCheckStatus("error")
-                if (process.env.NODE_ENV !== "production") {
-                    console.error("Auth check failed:", error)
-                }
-            }
-        }
-        checkAuth()
-    }, [router])
+                const response = await fetch(`https://ipapi.co/country/`)
+                const country = await response.text()
 
-    const validateEmail = (email: string) => {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-        if (!emailRegex.test(email)) {
-            return { isValid: false, message: "Please enter a valid email address" }
-        }
+                const detectedCode = PhoneCodes.get(country) ?? ""
 
-        const domain = email.split("@")[1]?.toLowerCase()
-        if (!allowed_emails.has(domain)) {
-            return {
-                isValid: false,
-                message: "Please use a popular email provider (Gmail, Outlook, etc.)"
+                setFormData((prev) => ({
+                    ...prev,
+                    countryCode: detectedCode
+                }))
+            } catch (err) {
+                // Default to Bangladesh if detection fails
+                console.log("Country detection failed, defaulting to +880")
             }
         }
 
-        return { isValid: true, message: "" }
-    }
+        detectCountry()
+    }, [])
 
-    const handleSendOTP = async () => {
-        setErrors({ ...errors, email: "", phone: "", country: "", general: "" })
+    const validateForm = () => {
+        const newErrors: Record<string, string> = {}
 
-        const emailValidation = validateEmail(formData.email.trim())
-        if (!emailValidation.isValid) {
-            setErrors({ ...errors, email: emailValidation.message })
-            return
+        if (!formData.email.match(/^[^\s@]+@[^\s@]+\.[^\s@]+$/)) {
+            newErrors.email = "Invalid email format"
         }
 
-        setIsSendingOTP(true)
-
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/verify`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ email: formData.email.trim() })
-            })
-
-            if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}))
-                throw new Error(errorData.message ?? "Failed to send OTP")
-            }
-
-            setOtpSent(true)
-        } catch (err) {
-            setErrors({
-                ...errors,
-                general: err instanceof Error ? err.message : "Failed to send OTP. Please try again."
-            })
-        } finally {
-            setIsSendingOTP(false)
-        }
-    }
-
-    const handleVerifyOTP = () => {
-        setErrors({ ...errors, otp: "", phone: "", country: "", general: "" })
-
-        if (!formData.otp.trim()) {
-            setErrors({ ...errors, otp: "OTP is required" })
-            return
+        if (formData.username.length < 3 || !formData.username.match(/^[a-zA-Z0-9_-]+$/)) {
+            newErrors.username = "Username must be 3+ chars (letters, numbers, _, -)"
         }
 
-        if (formData.otp.length !== 6 || !/^\d{6}$/.test(formData.otp)) {
-            setErrors({ ...errors, otp: "OTP must be 6 digits" })
-            return
-        }
-
-        setStep("details")
-    }
-
-    const validateDetailsForm = () => {
-        const newErrors = {
-            email: "",
-            otp: "",
-            username: "",
-            name: "",
-            password: "",
-            confirmPassword: "",
-            phone: "",
-            country: "",
-            general: ""
-        }
-        let isValid = true
-
-        if (!formData.name.trim()) {
-            newErrors.name = "Full name is required"
-            isValid = false
-        } else if (formData.name.trim().length < 2) {
+        if (formData.name.length < 2) {
             newErrors.name = "Name must be at least 2 characters"
-            isValid = false
         }
 
-        if (!formData.username.trim()) {
-            newErrors.username = "Username is required"
-            isValid = false
-        } else if (formData.username.length < 3 || formData.username.length > 20) {
-            newErrors.username = "Username must be 3-20 characters"
-            isValid = false
-        } else if (!/^[a-zA-Z][a-zA-Z0-9_-]*$/.test(formData.username)) {
-            newErrors.username = "Username must start with a letter and can only contain letters, numbers, _ and -"
-            isValid = false
+        if (!formData.phone.match(/^\d{10}$/)) {
+            newErrors.phone = "Phone must be 10 digits"
         }
 
-        if (!formData.password.trim()) {
-            newErrors.password = "Password is required"
-            isValid = false
-        } else if (formData.password.length < 8) {
+        if (formData.password.length < 8) {
             newErrors.password = "Password must be at least 8 characters"
-            isValid = false
         }
 
         if (formData.password !== formData.confirmPassword) {
-            newErrors.confirmPassword = "Passwords do not match"
-            isValid = false
-        }
-
-        if (formData.phone.trim()) {
-            if (!formData.phoneCountryCode) {
-                newErrors.phone = "Please select a country code"
-                isValid = false
-            } else if (!/^\d{4,15}$/.test(formData.phone.trim())) {
-                newErrors.phone = "Phone number must be 4-15 digits"
-                isValid = false
-            }
+            newErrors.confirmPassword = "Passwords don't match"
         }
 
         setErrors(newErrors)
-        return isValid
+        return Object.keys(newErrors).length === 0
     }
 
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault()
-        setErrors({
-            email: "",
-            otp: "",
-            username: "",
-            name: "",
-            password: "",
-            confirmPassword: "",
-            phone: "",
-            country: "",
-            general: ""
-        })
+    const handleSendOTP = async () => {
+        setError("")
+        setSuccess("")
 
-        if (!validateDetailsForm()) return
-        setIsSubmitting(true)
+        if (!validateForm()) {
+            setError("Please fix the errors above")
+            return
+        }
+
+        setLoading(true)
 
         try {
-            const payload: any = {
-                email: formData.email.trim(),
-                otp: formData.otp.trim(),
-                username: formData.username.trim(),
-                name: formData.name.trim(),
-                password: formData.password,
-                role: formData.role
-            }
+            // Store form data in sessionStorage
+            sessionStorage.setItem("fillxo_registration", JSON.stringify(formData))
 
-            // Add optional fields if provided
-            if (formData.phone.trim() && formData.phoneCountryCode) {
-                payload.phone = formData.phoneCountryCode + formData.phone.trim()
-            }
-            if (formData.country.trim()) payload.country = formData.country.trim().toUpperCase()
-            if (formData.timezone.trim()) payload.timezone = formData.timezone.trim()
-
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
+            // Send OTP
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/send-otp`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(payload)
+                body: JSON.stringify({ email: formData.email })
             })
 
             if (!response.ok) {
-                const errorData = await response.json().catch(() => ({}))
-
-                if (response.status === 403) {
-                    throw new Error("Invalid or expired OTP. Please request a new one.")
-                } else if (response.status === 409) {
-                    if (errorData.code === "EMAIL_ALREADY_EXISTS") {
-                        throw new Error("This email is already registered. Please login instead.")
-                    } else if (errorData.code === "USERNAME_ALREADY_EXISTS") {
-                        throw new Error("This username is already taken. Please choose another.")
-                    }
-                    throw new Error(errorData.message ?? "User already exists")
-                } else {
-                    throw new Error(errorData.message ?? "Registration failed. Please try again.")
-                }
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Failed to send OTP")
             }
 
-            router.push("/dashboard")
-        } catch (err) {
-            setErrors({
-                ...errors,
-                email: "",
-                otp: "",
-                username: "",
-                name: "",
-                password: "",
-                confirmPassword: "",
-                phone: "",
-                country: "",
-                general: err instanceof Error ? err.message : "Something went wrong. Please try again."
-            })
+            setSuccess("OTP sent to your email! Check your inbox.")
+            setStep(2)
+        } catch (err: any) {
+            setError(err.message)
         } finally {
-            setIsSubmitting(false)
+            setLoading(false)
+        }
+    }
+
+    const handleRegister = async () => {
+        setError("")
+        setSuccess("")
+
+        if (!otp.match(/^\d{6}$/)) {
+            setError("OTP must be 6 digits")
+            return
+        }
+
+        setLoading(true)
+
+        try {
+            // Get stored data
+            const storedData = JSON.parse(sessionStorage.getItem("fillxo_registration") || "{}")
+            if (!storedData.email) {
+                throw new Error("Session expired. Please start over.")
+            }
+
+            // Prepare registration data
+            const fullPhone = `${storedData.countryCode}${storedData.phone}`
+
+            const registrationData = {
+                email: storedData.email,
+                username: storedData.username,
+                name: storedData.name,
+                phone: fullPhone,
+                role: storedData.role,
+                password: storedData.password,
+                otp: otp
+            }
+
+            // Register user
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/register`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify(registrationData)
+            })
+
+            if (!response.ok) {
+                const errorData = await response.json()
+                throw new Error(errorData.message || "Registration failed")
+            }
+
+            const userData = await response.json()
+
+            // Clear session storage
+            sessionStorage.removeItem("fillxo_registration")
+
+            setSuccess("Registration successful! Redirecting to dashboard...")
+
+            // Redirect after 2 seconds
+            setTimeout(() => {
+                router.push("/dashboard")
+            }, 2000)
+        } catch (err: any) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
+        }
+    }
+
+    const handleResendOTP = async () => {
+        setError("")
+        setSuccess("")
+        setLoading(true)
+
+        try {
+            const storedData = JSON.parse(sessionStorage.getItem("fillxo_registration") || "{}")
+            if (!storedData.email) {
+                throw new Error("Session expired. Please start over.")
+            }
+
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/auth/send-otp`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ email: storedData.email })
+            })
+
+            if (!response.ok) {
+                throw new Error("Failed to resend OTP")
+            }
+
+            setSuccess("OTP resent successfully!")
+        } catch (err: any) {
+            setError(err.message)
+        } finally {
+            setLoading(false)
         }
     }
 
     return (
         <PageContainer>
-            <div className="max-w-xl mx-auto">
-                <div className="text-center mb-10">
-                    <h1 className="text-3xl md:text-4xl font-bold mb-3 bg-clip-text text-transparent bg-linear-to-r from-blue-400 to-cyan-400">
-                        Create Your Account
+            <div className="max-w-md mx-auto px-4 sm:px-6 py-6 sm:py-8">
+                <div className="text-center mb-6 sm:mb-8">
+                    <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
+                        Create Account
                     </h1>
-                    <p className="text-base text-gray-400">
-                        {step === "email"
-                            ? "Start your freelancing journey today"
-                            : "Complete your profile to get started"}
-                    </p>
+                    <p className="text-sm sm:text-base text-gray-400">Join Bangladesh's freelance marketplace</p>
                 </div>
 
-                {/* Progress Steps */}
-                <div className="flex items-center justify-center gap-3 mb-8">
-                    <div
-                        className={`flex items-center gap-2 transition-all ${step === "email" ? "text-blue-400" : "text-emerald-400"}`}
-                    >
-                        <div
-                            className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold transition-all ${
-                                step === "email"
-                                    ? "bg-blue-600 shadow-lg shadow-blue-600/50"
-                                    : "bg-emerald-600 shadow-lg shadow-emerald-600/50"
-                            }`}
-                        >
-                            {step === "email" ? "1" : <CheckCircle2 className="w-5 h-5" />}
-                        </div>
-                        <span className="text-sm font-medium hidden sm:inline">Verify Email</span>
-                    </div>
-                    <div
-                        className={`h-0.5 w-16 transition-all ${step === "details" ? "bg-linear-to-r from-emerald-600 to-blue-600" : "bg-gray-700"}`}
-                    />
-                    <div
-                        className={`flex items-center gap-2 transition-all ${step === "details" ? "text-blue-400" : "text-gray-500"}`}
-                    >
-                        <div
-                            className={`w-9 h-9 rounded-full flex items-center justify-center font-semibold transition-all ${
-                                step === "details"
-                                    ? "bg-blue-600 shadow-lg shadow-blue-600/50"
-                                    : "bg-gray-800 border-2 border-gray-700"
-                            }`}
-                        >
-                            2
-                        </div>
-                        <span className="text-sm font-medium hidden sm:inline">Your Details</span>
-                    </div>
-                </div>
+                <Card>
+                    {error && <ErrorAlert message={error} variant="error" />}
+                    {success && <ErrorAlert message={success} variant="info" />}
 
-                <Card className="p-6 md:p-8">
-                    {/* Development-only auth check status */}
-                    {process.env.NODE_ENV !== "production" && authCheckStatus === "checking" && (
-                        <ErrorAlert variant="info" message="Checking authentication status..." />
-                    )}
-                    {process.env.NODE_ENV !== "production" && authCheckStatus === "error" && (
-                        <ErrorAlert
-                            variant="warning"
-                            message="Dev Notice: Auth check failed - Cannot connect to backend. Check console for details."
+                    {/* Step Indicator */}
+                    <div className="flex items-center justify-center mb-6 sm:mb-8">
+                        <div className={`flex items-center ${step >= 1 ? "text-blue-400" : "text-gray-600"}`}>
+                            <div
+                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
+                                    step >= 1 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
+                                }`}
+                            >
+                                1
+                            </div>
+                            <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Details</span>
+                        </div>
+                        <div
+                            className={`w-8 sm:w-12 h-0.5 mx-1.5 sm:mx-2 ${step >= 2 ? "bg-blue-400" : "bg-gray-600"}`}
                         />
-                    )}
-
-                    {errors.general && <ErrorAlert variant="error" message={errors.general} />}
-
-                    {step === "email" ? (
-                        <div className="space-y-6">
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Email Address
-                                </label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    placeholder="your@email.com"
-                                    value={formData.email}
-                                    onChange={(e) => {
-                                        setFormData({ ...formData, email: e.target.value })
-                                        if (errors.email) setErrors({ ...errors, email: "" })
-                                        setOtpSent(false)
-                                    }}
-                                    disabled={otpSent}
-                                    className={`w-full px-5 py-3.5 bg-slate-950/50 border ${
-                                        errors.email ? "border-red-500/50" : "border-slate-700/50"
-                                    } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all disabled:opacity-50 disabled:cursor-not-allowed`}
-                                />
-                                {errors.email && <p className="mt-2 text-sm text-red-400">{errors.email}</p>}
+                        <div className={`flex items-center ${step >= 2 ? "text-blue-400" : "text-gray-600"}`}>
+                            <div
+                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
+                                    step >= 2 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
+                                }`}
+                            >
+                                2
                             </div>
-
-                            {!otpSent ? (
-                                <button
-                                    type="button"
-                                    onClick={handleSendOTP}
-                                    disabled={isSendingOTP}
-                                    className="w-full px-8 py-3.5 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
-                                >
-                                    {isSendingOTP ? (
-                                        <>
-                                            <LoaderCircle className="w-5 h-5 animate-spin" />
-                                            Sending OTP...
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Mail className="w-5 h-5" />
-                                            Send Verification Code
-                                        </>
-                                    )}
-                                </button>
-                            ) : (
-                                <>
-                                    <div className="bg-emerald-900/20 border border-emerald-700/40 rounded-xl p-4">
-                                        <p className="text-emerald-300 text-sm flex items-center gap-2">
-                                            <CheckCircle2 className="w-5 h-5" />
-                                            Verification code sent to {formData.email}
-                                        </p>
-                                    </div>
-
-                                    <div>
-                                        <label htmlFor="otp" className="block text-sm font-medium text-gray-300 mb-2">
-                                            Verification Code
-                                        </label>
-                                        <input
-                                            id="otp"
-                                            type="text"
-                                            placeholder="Enter 6-digit code"
-                                            maxLength={6}
-                                            value={formData.otp}
-                                            onChange={(e) => {
-                                                const value = e.target.value.replace(/\D/g, "")
-                                                setFormData({ ...formData, otp: value })
-                                                if (errors.otp) setErrors({ ...errors, otp: "" })
-                                            }}
-                                            className={`w-full px-6 py-4 bg-gray-900/50 border ${
-                                                errors.otp ? "border-red-500" : "border-blue-900/30"
-                                            } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-600 focus:ring-2 focus:ring-blue-600/20 transition-all text-center text-2xl tracking-widest`}
-                                        />
-                                        {errors.otp && <p className="mt-2 text-sm text-red-400">{errors.otp}</p>}
-                                    </div>
-
-                                    <div className="flex gap-3">
-                                        <button
-                                            type="button"
-                                            onClick={handleSendOTP}
-                                            disabled={isSendingOTP}
-                                            className="flex-1 px-4 py-3 bg-slate-800 hover:bg-slate-700 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-medium transition-all border border-slate-700/50"
-                                        >
-                                            Resend Code
-                                        </button>
-                                        <button
-                                            type="button"
-                                            onClick={handleVerifyOTP}
-                                            className="flex-1 px-4 py-3 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
-                                        >
-                                            Continue
-                                            <ArrowRight className="w-5 h-5" />
-                                        </button>
-                                    </div>
-                                </>
-                            )}
+                            <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Verify</span>
                         </div>
-                    ) : (
-                        <form onSubmit={handleSubmit} className="space-y-6">
-                            <div>
-                                <label htmlFor="email" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Email Address
-                                </label>
-                                <input
-                                    id="email"
-                                    type="email"
-                                    value={formData.email}
-                                    readOnly
-                                    className="w-full px-6 py-4 bg-gray-800/50 border border-gray-700 rounded-xl text-gray-400 cursor-not-allowed"
-                                />
-                            </div>
+                    </div>
+
+                    {/* Step 1: Registration Form */}
+                    {step === 1 && (
+                        <div className="space-y-3 sm:space-y-4">
+                            <FormInput
+                                label="Email"
+                                type="email"
+                                icon={Mail}
+                                id="email"
+                                value={formData.email}
+                                onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                                error={errors.email}
+                                placeholder="your@email.com"
+                            />
+
+                            <FormInput
+                                label="Username"
+                                type="text"
+                                icon={User}
+                                id="username"
+                                value={formData.username}
+                                onChange={(e) => setFormData({ ...formData, username: e.target.value })}
+                                error={errors.username}
+                                placeholder="john_doe"
+                            />
+
+                            <FormInput
+                                label="Full Name"
+                                type="text"
+                                icon={User}
+                                id="name"
+                                value={formData.name}
+                                onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                                error={errors.name}
+                                placeholder="John Doe"
+                            />
+
+                            <PhoneInput
+                                value={formData.phone}
+                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                countryCode={formData.countryCode}
+                                onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
+                                error={errors.phone}
+                            />
+
+                            <FormInput
+                                label="Password"
+                                type="password"
+                                icon={Lock}
+                                id="password"
+                                value={formData.password}
+                                onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                                error={errors.password}
+                                placeholder="Minimum 8 characters"
+                            />
+
+                            <FormInput
+                                label="Confirm Password"
+                                type="password"
+                                icon={Lock}
+                                id="confirmPassword"
+                                value={formData.confirmPassword}
+                                onChange={(e) => setFormData({ ...formData, confirmPassword: e.target.value })}
+                                error={errors.confirmPassword}
+                                placeholder="Re-enter password"
+                            />
 
                             <div>
-                                <label htmlFor="name" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Full Name
-                                </label>
-                                <input
-                                    id="name"
-                                    type="text"
-                                    placeholder="Enter your full name"
-                                    value={formData.name}
-                                    onChange={(e) => {
-                                        setFormData({ ...formData, name: e.target.value })
-                                        if (errors.name) setErrors({ ...errors, name: "" })
-                                    }}
-                                    className={`w-full px-5 py-3.5 bg-slate-950/50 border ${
-                                        errors.name ? "border-red-500/50" : "border-slate-700/50"
-                                    } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
-                                />
-                                {errors.name && <p className="mt-2 text-sm text-red-400">{errors.name}</p>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="username" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Username
-                                </label>
-                                <input
-                                    id="username"
-                                    type="text"
-                                    placeholder="Choose a unique username"
-                                    value={formData.username}
-                                    onChange={(e) => {
-                                        setFormData({ ...formData, username: e.target.value })
-                                        if (errors.username) setErrors({ ...errors, username: "" })
-                                    }}
-                                    className={`w-full px-5 py-3.5 bg-slate-950/50 border ${
-                                        errors.username ? "border-red-500/50" : "border-slate-700/50"
-                                    } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
-                                />
-                                {errors.username && <p className="mt-2 text-sm text-red-400">{errors.username}</p>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="phone" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Phone Number{" "}
-                                </label>
-                                <div className="flex gap-2">
-                                    <div className="relative">
-                                        <ChevronDown className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400 pointer-events-none" />
-                                        <select
-                                            id="phoneCountryCode"
-                                            value={formData.phoneCountryCode}
-                                            onChange={(e) => {
-                                                setFormData({ ...formData, phoneCountryCode: e.target.value })
-                                            }}
-                                            className="w-[110px] pl-9 pr-3 py-3.5 bg-slate-950/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none"
-                                        >
-                                            <option value="">Code</option>
-                                            <optgroup label="North America">
-                                                <option value="+1">+1 US/CA</option>
-                                            </optgroup>
-                                            <optgroup label="Europe">
-                                                <option value="+30">+30</option>
-                                                <option value="+31">+31</option>
-                                                <option value="+32">+32</option>
-                                                <option value="+33">+33</option>
-                                                <option value="+34">+34</option>
-                                                <option value="+39">+39</option>
-                                                <option value="+40">+40</option>
-                                                <option value="+41">+41</option>
-                                                <option value="+43">+43</option>
-                                                <option value="+44">+44</option>
-                                                <option value="+45">+45</option>
-                                                <option value="+46">+46</option>
-                                                <option value="+47">+47</option>
-                                                <option value="+48">+48</option>
-                                                <option value="+49">+49</option>
-                                                <option value="+351">+351</option>
-                                                <option value="+352">+352</option>
-                                                <option value="+353">+353</option>
-                                                <option value="+354">+354</option>
-                                                <option value="+356">+356</option>
-                                                <option value="+357">+357</option>
-                                                <option value="+358">+358</option>
-                                                <option value="+370">+370</option>
-                                                <option value="+371">+371</option>
-                                                <option value="+372">+372</option>
-                                                <option value="+380">+380</option>
-                                                <option value="+381">+381</option>
-                                                <option value="+385">+385</option>
-                                                <option value="+386">+386</option>
-                                                <option value="+420">+420</option>
-                                                <option value="+421">+421</option>
-                                            </optgroup>
-                                            <optgroup label="Asia">
-                                                <option value="+7">+7</option>
-                                                <option value="+60">+60</option>
-                                                <option value="+62">+62</option>
-                                                <option value="+63">+63</option>
-                                                <option value="+65">+65</option>
-                                                <option value="+66">+66</option>
-                                                <option value="+81">+81</option>
-                                                <option value="+82">+82</option>
-                                                <option value="+84">+84</option>
-                                                <option value="+86">+86</option>
-                                                <option value="+90">+90</option>
-                                                <option value="+91">+91</option>
-                                                <option value="+92">+92</option>
-                                                <option value="+94">+94</option>
-                                                <option value="+852">+852</option>
-                                                <option value="+880">+880</option>
-                                                <option value="+886">+886</option>
-                                                <option value="+966">+966</option>
-                                                <option value="+971">+971</option>
-                                                <option value="+972">+972</option>
-                                                <option value="+977">+977</option>
-                                            </optgroup>
-                                            <optgroup label="South America">
-                                                <option value="+51">+51</option>
-                                                <option value="+52">+52</option>
-                                                <option value="+54">+54</option>
-                                                <option value="+55">+55</option>
-                                                <option value="+56">+56</option>
-                                                <option value="+57">+57</option>
-                                            </optgroup>
-                                            <optgroup label="Africa">
-                                                <option value="+20">+20</option>
-                                                <option value="+27">+27</option>
-                                                <option value="+212">+212</option>
-                                                <option value="+234">+234</option>
-                                                <option value="+254">+254</option>
-                                            </optgroup>
-                                            <optgroup label="Oceania">
-                                                <option value="+61">+61</option>
-                                                <option value="+64">+64</option>
-                                                <option value="+679">+679</option>
-                                            </optgroup>
-                                        </select>
-                                    </div>
-                                    <input
-                                        id="phone"
-                                        type="tel"
-                                        placeholder="1234567890"
-                                        value={formData.phone}
-                                        onChange={(e) => {
-                                            const value = e.target.value.replace(/\D/g, "")
-                                            setFormData({ ...formData, phone: value })
-                                            if (errors.phone) setErrors({ ...errors, phone: "" })
-                                        }}
-                                        className={`flex-1 px-5 py-3.5 bg-slate-950/50 border ${
-                                            errors.phone ? "border-red-500/50" : "border-slate-700/50"
-                                        } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
-                                    />
-                                </div>
-                                {errors.phone && <p className="mt-2 text-sm text-red-400">{errors.phone}</p>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="country" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Country
-                                </label>
-                                <div className="relative">
-                                    <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                                    <select
-                                        id="country"
-                                        value={formData.country}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, country: e.target.value })
-                                            if (errors.country) setErrors({ ...errors, country: "" })
-                                        }}
-                                        className={`w-full pl-12 pr-5 py-3.5 bg-slate-950/50 border ${
-                                            errors.country ? "border-red-500/50" : "border-slate-700/50"
-                                        } rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none`}
-                                    >
-                                        <option value="">Select a country</option>
-                                        <option value="AR">Argentina</option>
-                                        <option value="AU">Australia</option>
-                                        <option value="AT">Austria</option>
-                                        <option value="BD">Bangladesh</option>
-                                        <option value="BE">Belgium</option>
-                                        <option value="BR">Brazil</option>
-                                        <option value="BG">Bulgaria</option>
-                                        <option value="CA">Canada</option>
-                                        <option value="CL">Chile</option>
-                                        <option value="CN">China</option>
-                                        <option value="CO">Colombia</option>
-                                        <option value="HR">Croatia</option>
-                                        <option value="CY">Cyprus</option>
-                                        <option value="CZ">Czech Republic</option>
-                                        <option value="DK">Denmark</option>
-                                        <option value="EG">Egypt</option>
-                                        <option value="EE">Estonia</option>
-                                        <option value="FI">Finland</option>
-                                        <option value="FR">France</option>
-                                        <option value="DE">Germany</option>
-                                        <option value="GR">Greece</option>
-                                        <option value="HK">Hong Kong</option>
-                                        <option value="HU">Hungary</option>
-                                        <option value="IS">Iceland</option>
-                                        <option value="IN">India</option>
-                                        <option value="ID">Indonesia</option>
-                                        <option value="IE">Ireland</option>
-                                        <option value="IT">Italy</option>
-                                        <option value="JP">Japan</option>
-                                        <option value="KE">Kenya</option>
-                                        <option value="KR">South Korea</option>
-                                        <option value="LV">Latvia</option>
-                                        <option value="LT">Lithuania</option>
-                                        <option value="LU">Luxembourg</option>
-                                        <option value="MY">Malaysia</option>
-                                        <option value="MT">Malta</option>
-                                        <option value="MX">Mexico</option>
-                                        <option value="NL">Netherlands</option>
-                                        <option value="NZ">New Zealand</option>
-                                        <option value="NG">Nigeria</option>
-                                        <option value="NO">Norway</option>
-                                        <option value="PK">Pakistan</option>
-                                        <option value="PE">Peru</option>
-                                        <option value="PH">Philippines</option>
-                                        <option value="PL">Poland</option>
-                                        <option value="PT">Portugal</option>
-                                        <option value="RO">Romania</option>
-                                        <option value="RU">Russia</option>
-                                        <option value="SA">Saudi Arabia</option>
-                                        <option value="RS">Serbia</option>
-                                        <option value="SG">Singapore</option>
-                                        <option value="SK">Slovakia</option>
-                                        <option value="SI">Slovenia</option>
-                                        <option value="ZA">South Africa</option>
-                                        <option value="ES">Spain</option>
-                                        <option value="LK">Sri Lanka</option>
-                                        <option value="SE">Sweden</option>
-                                        <option value="CH">Switzerland</option>
-                                        <option value="TW">Taiwan</option>
-                                        <option value="TH">Thailand</option>
-                                        <option value="TR">Turkey</option>
-                                        <option value="UA">Ukraine</option>
-                                        <option value="AE">United Arab Emirates</option>
-                                        <option value="GB">United Kingdom</option>
-                                        <option value="US">United States</option>
-                                        <option value="VN">Vietnam</option>
-                                    </select>
-                                </div>
-                                {errors.country && <p className="mt-2 text-sm text-red-400">{errors.country}</p>}
-                            </div>
-
-                            <div>
-                                <label htmlFor="timezone" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Timezone{" "}
-                                </label>
-                                <div className="relative">
-                                    <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                                    <select
-                                        id="timezone"
-                                        value={formData.timezone}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, timezone: e.target.value })
-                                        }}
-                                        className="w-full pl-12 pr-5 py-3.5 bg-slate-950/50 border border-slate-700/50 rounded-xl text-white focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all appearance-none"
-                                    >
-                                        <option value="">Select a timezone</option>
-                                        <optgroup label="UTC">
-                                            <option value="UTC">UTC (Coordinated Universal Time)</option>
-                                        </optgroup>
-                                        <optgroup label="America">
-                                            <option value="America/New_York">Eastern Time (New York)</option>
-                                            <option value="America/Chicago">Central Time (Chicago)</option>
-                                            <option value="America/Denver">Mountain Time (Denver)</option>
-                                            <option value="America/Los_Angeles">Pacific Time (Los Angeles)</option>
-                                            <option value="America/Anchorage">Alaska Time (Anchorage)</option>
-                                            <option value="Pacific/Honolulu">Hawaii Time (Honolulu)</option>
-                                            <option value="America/Toronto">Eastern Time (Toronto)</option>
-                                            <option value="America/Vancouver">Pacific Time (Vancouver)</option>
-                                            <option value="America/Mexico_City">Central Time (Mexico City)</option>
-                                            <option value="America/Sao_Paulo">Brasilia Time (São Paulo)</option>
-                                            <option value="America/Buenos_Aires">Argentina Time (Buenos Aires)</option>
-                                            <option value="America/Bogota">Colombia Time (Bogotá)</option>
-                                            <option value="America/Lima">Peru Time (Lima)</option>
-                                            <option value="America/Santiago">Chile Time (Santiago)</option>
-                                        </optgroup>
-                                        <optgroup label="Europe">
-                                            <option value="Europe/London">British Time (London)</option>
-                                            <option value="Europe/Dublin">Irish Time (Dublin)</option>
-                                            <option value="Europe/Paris">Central European Time (Paris)</option>
-                                            <option value="Europe/Berlin">Central European Time (Berlin)</option>
-                                            <option value="Europe/Rome">Central European Time (Rome)</option>
-                                            <option value="Europe/Madrid">Central European Time (Madrid)</option>
-                                            <option value="Europe/Amsterdam">Central European Time (Amsterdam)</option>
-                                            <option value="Europe/Brussels">Central European Time (Brussels)</option>
-                                            <option value="Europe/Vienna">Central European Time (Vienna)</option>
-                                            <option value="Europe/Zurich">Central European Time (Zurich)</option>
-                                            <option value="Europe/Stockholm">Central European Time (Stockholm)</option>
-                                            <option value="Europe/Copenhagen">
-                                                Central European Time (Copenhagen)
-                                            </option>
-                                            <option value="Europe/Oslo">Central European Time (Oslo)</option>
-                                            <option value="Europe/Helsinki">Eastern European Time (Helsinki)</option>
-                                            <option value="Europe/Athens">Eastern European Time (Athens)</option>
-                                            <option value="Europe/Istanbul">Turkey Time (Istanbul)</option>
-                                            <option value="Europe/Moscow">Moscow Time (Moscow)</option>
-                                            <option value="Europe/Warsaw">Central European Time (Warsaw)</option>
-                                            <option value="Europe/Prague">Central European Time (Prague)</option>
-                                            <option value="Europe/Budapest">Central European Time (Budapest)</option>
-                                            <option value="Europe/Bucharest">Eastern European Time (Bucharest)</option>
-                                            <option value="Europe/Kiev">Eastern European Time (Kiev)</option>
-                                        </optgroup>
-                                        <optgroup label="Asia">
-                                            <option value="Asia/Dubai">Gulf Standard Time (Dubai)</option>
-                                            <option value="Asia/Riyadh">Arabia Standard Time (Riyadh)</option>
-                                            <option value="Asia/Kolkata">India Standard Time (Kolkata)</option>
-                                            <option value="Asia/Dhaka">Bangladesh Time (Dhaka)</option>
-                                            <option value="Asia/Kathmandu">Nepal Time (Kathmandu)</option>
-                                            <option value="Asia/Bangkok">Indochina Time (Bangkok)</option>
-                                            <option value="Asia/Ho_Chi_Minh">Indochina Time (Ho Chi Minh)</option>
-                                            <option value="Asia/Jakarta">Western Indonesia Time (Jakarta)</option>
-                                            <option value="Asia/Singapore">Singapore Time (Singapore)</option>
-                                            <option value="Asia/Hong_Kong">Hong Kong Time (Hong Kong)</option>
-                                            <option value="Asia/Shanghai">China Standard Time (Shanghai)</option>
-                                            <option value="Asia/Taipei">Taipei Time (Taiwan)</option>
-                                            <option value="Asia/Manila">Philippine Time (Manila)</option>
-                                            <option value="Asia/Tokyo">Japan Standard Time (Tokyo)</option>
-                                            <option value="Asia/Seoul">Korea Standard Time (Seoul)</option>
-                                            <option value="Asia/Karachi">Pakistan Standard Time (Karachi)</option>
-                                            <option value="Asia/Tashkent">Uzbekistan Time (Tashkent)</option>
-                                            <option value="Asia/Almaty">East Kazakhstan Time (Almaty)</option>
-                                        </optgroup>
-                                        <optgroup label="Africa">
-                                            <option value="Africa/Cairo">Eastern European Time (Cairo)</option>
-                                            <option value="Africa/Johannesburg">
-                                                South Africa Time (Johannesburg)
-                                            </option>
-                                            <option value="Africa/Lagos">West Africa Time (Lagos)</option>
-                                            <option value="Africa/Nairobi">East Africa Time (Nairobi)</option>
-                                            <option value="Africa/Casablanca">
-                                                Western European Time (Casablanca)
-                                            </option>
-                                        </optgroup>
-                                        <optgroup label="Australia & Pacific">
-                                            <option value="Australia/Sydney">Australian Eastern Time (Sydney)</option>
-                                            <option value="Australia/Melbourne">
-                                                Australian Eastern Time (Melbourne)
-                                            </option>
-                                            <option value="Australia/Brisbane">
-                                                Australian Eastern Time (Brisbane)
-                                            </option>
-                                            <option value="Australia/Perth">Australian Western Time (Perth)</option>
-                                            <option value="Australia/Adelaide">
-                                                Australian Central Time (Adelaide)
-                                            </option>
-                                            <option value="Pacific/Auckland">New Zealand Time (Auckland)</option>
-                                            <option value="Pacific/Fiji">Fiji Time (Fiji)</option>
-                                        </optgroup>
-                                    </select>
-                                </div>
-                            </div>
-
-                            <div>
-                                <label htmlFor="password" className="block text-sm font-medium text-gray-300 mb-2">
-                                    Password
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        id="password"
-                                        type={showPassword ? "text" : "password"}
-                                        placeholder="Create a strong password"
-                                        value={formData.password}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, password: e.target.value })
-                                            if (errors.password) setErrors({ ...errors, password: "" })
-                                        }}
-                                        className={`w-full px-5 py-3.5 pr-12 bg-slate-950/50 border ${
-                                            errors.password ? "border-red-500/50" : "border-slate-700/50"
-                                        } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
-                                    />
+                                <label className="text-sm font-medium text-gray-300 mb-2 block">I am a</label>
+                                <div className="flex gap-3">
                                     <button
                                         type="button"
-                                        onClick={() => setShowPassword(!showPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                                        onClick={() => setFormData({ ...formData, role: "freelancer" })}
+                                        className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all font-medium ${
+                                            formData.role === "freelancer"
+                                                ? "border-blue-500 bg-blue-500/10 text-blue-300 ring-2 ring-blue-500/30"
+                                                : "border-blue-900/40 text-gray-300 hover:border-blue-700/60 hover:bg-blue-900/10"
+                                        }`}
                                     >
-                                        {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        Freelancer
                                     </button>
-                                </div>
-                                {errors.password && <p className="mt-2 text-sm text-red-400">{errors.password}</p>}
-                            </div>
-
-                            <div>
-                                <label
-                                    htmlFor="confirmPassword"
-                                    className="block text-sm font-medium text-gray-300 mb-2"
-                                >
-                                    Confirm Password
-                                </label>
-                                <div className="relative">
-                                    <input
-                                        id="confirmPassword"
-                                        type={showConfirmPassword ? "text" : "password"}
-                                        placeholder="Re-enter your password"
-                                        value={formData.confirmPassword}
-                                        onChange={(e) => {
-                                            setFormData({ ...formData, confirmPassword: e.target.value })
-                                            if (errors.confirmPassword) setErrors({ ...errors, confirmPassword: "" })
-                                        }}
-                                        className={`w-full px-5 py-3.5 pr-12 bg-slate-950/50 border ${
-                                            errors.confirmPassword ? "border-red-500/50" : "border-slate-700/50"
-                                        } rounded-xl text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-2 focus:ring-blue-500/20 transition-all`}
-                                    />
                                     <button
                                         type="button"
-                                        onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                                        className="absolute right-4 top-1/2 -translate-y-1/2 text-gray-400 hover:text-white transition-colors"
+                                        onClick={() => setFormData({ ...formData, role: "client" })}
+                                        className={`flex-1 py-3 px-4 rounded-lg border-2 transition-all font-medium ${
+                                            formData.role === "client"
+                                                ? "border-blue-500 bg-blue-500/10 text-blue-300 ring-2 ring-blue-500/30"
+                                                : "border-blue-900/40 text-gray-300 hover:border-blue-700/60 hover:bg-blue-900/10"
+                                        }`}
                                     >
-                                        {showConfirmPassword ? (
-                                            <EyeOff className="w-5 h-5" />
-                                        ) : (
-                                            <Eye className="w-5 h-5" />
-                                        )}
+                                        Client
                                     </button>
-                                </div>
-                                {errors.confirmPassword && (
-                                    <p className="mt-2 text-sm text-red-400">{errors.confirmPassword}</p>
-                                )}
-                            </div>
-
-                            <div>
-                                <label className="block text-sm font-medium text-gray-300 mb-3">I want to:</label>
-                                <div className="grid grid-cols-2 gap-3">
-                                    {[
-                                        { value: "freelancer", label: "Work" },
-                                        { value: "client", label: "Hire" }
-                                    ].map((option) => (
-                                        <button
-                                            key={option.value}
-                                            type="button"
-                                            onClick={() => setFormData({ ...formData, role: option.value as any })}
-                                            className={`px-4 py-3 rounded-xl font-medium transition-all ${
-                                                formData.role === option.value
-                                                    ? "bg-blue-600 text-white border-blue-600"
-                                                    : "bg-gray-900/50 text-gray-400 border-blue-900/30 hover:border-blue-600/50"
-                                            } border`}
-                                        >
-                                            {option.label}
-                                        </button>
-                                    ))}
                                 </div>
                             </div>
 
                             <button
-                                type="submit"
-                                disabled={isSubmitting}
-                                className="w-full px-8 py-3.5 bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 disabled:opacity-70 disabled:cursor-not-allowed rounded-xl font-semibold transition-all flex items-center justify-center gap-2 shadow-lg shadow-blue-600/30"
+                                onClick={handleSendOTP}
+                                disabled={loading}
+                                className="w-full bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-6 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-6 active:scale-95"
                             >
-                                {isSubmitting ? (
-                                    <>
-                                        <LoaderCircle className="w-5 h-5 animate-spin" />
-                                        Creating Account...
-                                    </>
+                                {loading ? (
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
                                 ) : (
                                     <>
-                                        Create Account
+                                        Continue
                                         <ArrowRight className="w-5 h-5" />
                                     </>
                                 )}
                             </button>
-
-                            <p className="text-xs text-center text-gray-400">
+                            <p className="text-xs text-center text-gray-400 mt-4 px-2">
                                 By creating an account you agree to the{" "}
-                                <Link
-                                    href="/terms"
-                                    target="_blank"
-                                    className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                                <button
+                                    onClick={() => router.push("/terms")}
+                                    className="text-blue-400 hover:text-blue-300 underline"
                                 >
                                     Terms of Service
-                                </Link>{" "}
+                                </button>{" "}
                                 and{" "}
-                                <Link
-                                    href="/privacy"
-                                    target="_blank"
-                                    className="text-blue-400 hover:text-blue-300 underline transition-colors"
+                                <button
+                                    onClick={() => router.push("/privacy")}
+                                    className="text-blue-400 hover:text-blue-300 underline"
                                 >
                                     Privacy Policy
-                                </Link>
-                                .
+                                </button>
                             </p>
-                        </form>
+                        </div>
                     )}
 
-                    <div className="mt-6 text-center">
-                        <p className="text-gray-400">
-                            Already have an account?{" "}
-                            <Link
-                                href="/login"
-                                className="text-blue-400 hover:text-blue-300 font-semibold transition-colors"
+                    {/* Step 2: OTP Verification */}
+                    {step === 2 && (
+                        <div className="space-y-5 sm:space-y-6">
+                            <div className="text-center mb-4 sm:mb-6">
+                                <CheckCircle className="w-14 h-14 sm:w-16 sm:h-16 text-blue-400 mx-auto mb-3" />
+                                <p className="text-sm sm:text-base text-gray-300 px-2">
+                                    We've sent a 6-digit code to
+                                    <br />
+                                    <span className="text-blue-400 font-medium break-all">{formData.email}</span>
+                                </p>
+                            </div>
+
+                            <div>
+                                <label className="text-sm font-medium text-gray-300 mb-2 block text-center">
+                                    Enter OTP
+                                </label>
+                                <input
+                                    type="text"
+                                    inputMode="numeric"
+                                    value={otp}
+                                    onChange={(e) => setOtp(e.target.value.replace(/\D/g, "").slice(0, 6))}
+                                    placeholder="000000"
+                                    maxLength={6}
+                                    className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-white text-center text-xl sm:text-2xl tracking-widest"
+                                />
+                            </div>
+
+                            <button
+                                onClick={handleRegister}
+                                disabled={loading || otp.length !== 6}
+                                className="w-full bg-linear-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 px-6 rounded-lg font-medium transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 active:scale-95"
                             >
-                                Sign in
-                            </Link>
-                        </p>
+                                {loading ? (
+                                    <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                                ) : (
+                                    "Create Account"
+                                )}
+                            </button>
+
+                            <div className="text-center text-sm">
+                                <button
+                                    onClick={handleResendOTP}
+                                    disabled={loading}
+                                    className="text-blue-400 hover:text-blue-300 transition-colors disabled:opacity-50 active:scale-95"
+                                >
+                                    Resend OTP
+                                </button>
+                                <span className="text-gray-500 mx-2">•</span>
+                                <button
+                                    onClick={() => setStep(1)}
+                                    className="text-blue-400 hover:text-blue-300 transition-colors active:scale-95"
+                                >
+                                    Change Details
+                                </button>
+                            </div>
+                        </div>
+                    )}
+
+                    {/* Footer */}
+                    <div className="mt-5 sm:mt-6 text-center text-sm text-gray-400">
+                        Already have an account?{" "}
+                        <button
+                            onClick={() => router.push("/login")}
+                            className="text-blue-400 hover:text-blue-300 transition-colors active:scale-95"
+                        >
+                            Sign in
+                        </button>
                     </div>
                 </Card>
             </div>
