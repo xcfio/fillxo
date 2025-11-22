@@ -5,19 +5,18 @@ import { main } from "../.."
 import { eq } from "drizzle-orm"
 import Type from "typebox"
 
-export default function Reset(fastify: Awaited<ReturnType<typeof main>>) {
+export default function ResetPassword(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "PATCH",
-        url: "/auth/reset",
+        url: "/auth/reset-password",
         config: {
             rateLimit: {
                 max: 3,
-                timeWindow: 3600000,
-                groupId: "Auth"
+                timeWindow: 3600000
             }
         },
         schema: {
-            description: "Reset user password with OTP verification",
+            description: "Reset user password using email and OTP",
             tags: ["Authentication"],
             body: Type.Object({
                 email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }),

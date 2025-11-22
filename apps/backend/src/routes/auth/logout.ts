@@ -8,7 +8,7 @@ export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
         method: "POST",
         url: "/auth/logout",
         schema: {
-            description: "Logout user and clear authentication",
+            description: "Logout the authenticated user by clearing the authentication cookie",
             tags: ["Authentication"],
             response: {
                 200: Type.Object({ success: Type.Boolean(), message: Type.String() }),

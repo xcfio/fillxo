@@ -12,24 +12,25 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
         config: {
             rateLimit: {
                 max: 3,
-                timeWindow: 3600000,
-                groupId: "Auth"
+                timeWindow: 3600000
             }
         },
         schema: {
-            description: "Register a new user account",
+            description: "Register a new user account with OTP verification",
             tags: ["Authentication"],
-            body: Type.Object({
-                password: Type.String({ minLength: 8, maxLength: 128 }),
-                otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
-                email: Type.Index(User, ["email"]),
-                username: Type.Index(User, ["username"]),
-                name: Type.Index(User, ["name"]),
-                phone: Type.Index(User, ["phone"]),
-                country: Type.Index(User, ["country"]),
-                timezone: Type.Index(User, ["timezone"]),
-                role: Type.Index(User, ["role"])
-            }),
+            body: Type.Intersect([
+                Type.Pick(User, ["email", "username", "name", "phone", "role"]),
+                Type.Object({
+                    otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
+                    password: Type.String({
+                        minLength: 8,
+                        maxLength: 128,
+                        examples: ["MySecurePassword123!"],
+                        description: "Password (minimum 8 characters)"
+                    })
+                })
+            ]),
+
             response: {
                 201: User,
                 400: ErrorResponse(400, "Bad Request - Invalid input data"),

@@ -1,4 +1,4 @@
-import createError, { FastifyError } from "@fastify/error"
+import create_error, { FastifyError } from "@fastify/error"
 
 /**
  * Type guard to check if a given error is a FastifyError.
@@ -53,7 +53,6 @@ export function CreateError(
     message: string,
     details?: Record<string, any>
 ): FastifyError {
-    // Validate inputs
     if (!Number.isInteger(statusCode) || statusCode < 100 || statusCode >= 600) {
         throw new TypeError("statusCode must be a valid HTTP status code (100-599)")
     }
@@ -66,16 +65,10 @@ export function CreateError(
         throw new TypeError("message must be a non-empty string")
     }
 
-    // Create the error class using Fastify's factory
-    const CustomError = createError(code.trim().toUpperCase(), message, statusCode)
-
-    // Create an instance of the error
-    const errorInstance = new CustomError()
-
-    // Add details if provided
+    const error = new (create_error(code.trim().toUpperCase(), message, statusCode))()
     if (details && Object.keys(details).length > 0) {
-        Object.assign(errorInstance, { details: { ...details } })
+        Object.assign(error, { details: { ...details } })
     }
 
-    return errorInstance
+    return error
 }

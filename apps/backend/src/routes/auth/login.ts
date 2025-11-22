@@ -13,12 +13,11 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
         config: {
             rateLimit: {
                 max: 3,
-                timeWindow: 3600000,
-                groupId: "Auth"
+                timeWindow: 3600000
             }
         },
         schema: {
-            description: "Login to an account",
+            description: "Authenticate user and initiate a session",
             tags: ["Authentication"],
             body: Type.Object({
                 input: Type.String(),

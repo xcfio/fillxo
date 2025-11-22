@@ -1,21 +1,20 @@
 import { CreateError, isFastifyError, SendOTP } from "../../function"
 import { ErrorResponse } from "../../type"
-import { main } from "../../"
+import { main } from "../.."
 import Type from "typebox"
 
-export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
+export default function Send_OTP(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
-        url: "/auth/verify",
+        url: "/auth/send-otp",
         config: {
             rateLimit: {
                 max: 3,
-                timeWindow: 600000,
-                groupId: "Auth-OTP"
+                timeWindow: 600000
             }
         },
         schema: {
-            description: "Verify user email",
+            description: "Send a One-Time Password (OTP) to the specified email address",
             tags: ["Authentication"],
             body: Type.Object({ email: Type.String({ format: "email", pattern: "^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$" }) }),
             response: {

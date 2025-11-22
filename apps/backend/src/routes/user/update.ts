@@ -20,37 +20,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Update user profile information",
             tags: ["User"],
             body: Type.Partial(
-                Type.Object({
-                    avatar: Type.Index(User, ["avatar"]),
-                    email: Type.Index(User, ["email"]),
-                    username: Type.Index(User, ["username"]),
-                    name: Type.Index(User, ["name"]),
-                    phone: Type.Index(User, ["phone"]),
-                    country: Type.Index(User, ["country"]),
-                    timezone: Type.Index(User, ["timezone"]),
-                    role: Type.Index(User, ["role"]),
-                    client: Type.Partial(
-                        Type.Object({
-                            companyName: Type.String(),
-                            industry: Type.String()
-                        })
-                    ),
-                    freelancer: Type.Partial(
-                        Type.Object({
-                            title: Type.String(),
-                            skills: Type.Array(Type.String()),
-                            bio: Type.String(),
-                            portfolio: Type.Array(
-                                Type.Object({
-                                    title: Type.String(),
-                                    description: Type.String(),
-                                    images: Type.Optional(Type.String()),
-                                    link: Type.Optional(Type.String())
-                                })
-                            )
-                        })
-                    )
-                })
+                Type.Pick(User, ["name", "avatar", "phone", "country", "timezone", "client", "freelancer"])
             ),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
@@ -62,29 +32,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { email, username } = request.body
                 const { id } = request.user
-
-                if (email || username) {
-                    const [existingUser] = await db
-                        .select({ id: table.users.id, email: table.users.email, username: table.users.username })
-                        .from(table.users)
-                        .where(
-                            or(
-                                email ? eq(table.users.email, email) : undefined,
-                                username ? eq(table.users.username, username) : undefined
-                            )
-                        )
-
-                    if (existingUser?.id !== id) {
-                        if (existingUser.email === email) {
-                            throw CreateError(400, "DUPLICATE_ENTRY", "Email already exists")
-                        }
-                        if (existingUser.username === username) {
-                            throw CreateError(400, "DUPLICATE_ENTRY", "Username already exists")
-                        }
-                    }
-                }
 
                 await db
                     .update(table.users)
