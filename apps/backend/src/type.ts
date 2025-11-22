@@ -149,6 +149,9 @@ export const User = Type.Object({
         examples: ["John Doe"],
         description: "Full name of the user"
     }),
+    gender: Type.Union([Type.Literal("male"), Type.Literal("female"), Type.Literal("other")], {
+        description: "Gender of the user"
+    }),
     avatar: Type.Union([
         Type.String({
             format: "uri",

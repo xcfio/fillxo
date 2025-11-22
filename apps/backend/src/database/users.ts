@@ -4,6 +4,7 @@ import { v7 } from "uuid"
 
 export const Role = pgEnum("role", ["freelancer", "client"])
 export const Privilege = pgEnum("privilege", ["moderator", "admin"])
+export const Gender = pgEnum("gender", ["male", "female", "other"])
 
 export const users = pgTable(
     "users",
@@ -14,6 +15,7 @@ export const users = pgTable(
         email: text("email").notNull().unique(),
         username: text("username").unique().notNull(),
         name: text("name").notNull(),
+        gender: Gender("gender").notNull(),
         avatar: text("avatar"),
         phone: text("phone").notNull(),
         phoneVerified: boolean("phone_verified").notNull().default(false),

@@ -35,6 +35,7 @@ interface UpdateFormData {
     email?: string
     username?: string
     name?: string
+    gender?: "male" | "female" | "other"
     role?: "freelancer" | "client"
     phone?: string
     country?: string
@@ -77,6 +78,7 @@ export default function UpdateProfilePage() {
                     email: userData.email || "",
                     username: userData.username || "",
                     name: userData.name || "",
+                    gender: userData.gender || "other",
                     role: userData.role || "freelancer",
                     phone: userData.phone || "",
                     country: userData.country || "",
@@ -113,6 +115,7 @@ export default function UpdateProfilePage() {
             if (formData.email !== user.email) updatedFields.email = formData.email
             if (formData.username !== user.username) updatedFields.username = formData.username
             if (formData.name !== user.name) updatedFields.name = formData.name
+            if (formData.gender !== user.gender) updatedFields.gender = formData.gender
             if (formData.role !== user.role) updatedFields.role = formData.role
             if (formData.phone !== user.phone) updatedFields.phone = formData.phone
             if (formData.country !== user.country) updatedFields.country = formData.country
@@ -316,6 +319,28 @@ export default function UpdateProfilePage() {
                                 placeholder="John Doe"
                                 className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
                             />
+                        </div>
+
+                        {/* Gender */}
+                        <div>
+                            <label htmlFor="gender" className="flex items-center gap-2 text-sm font-medium mb-2">
+                                <User className="w-4 h-4 text-blue-400" />
+                                Gender
+                            </label>
+                            <div className="relative">
+                                <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
+                                <select
+                                    id="gender"
+                                    name="gender"
+                                    value={formData.gender}
+                                    onChange={handleChange}
+                                    className="w-full pl-12 pr-5 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors appearance-none"
+                                >
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                            </div>
                         </div>
 
                         {/* Username */}

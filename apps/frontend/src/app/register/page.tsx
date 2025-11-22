@@ -134,11 +134,12 @@ export default function RegisterPage() {
         email: "",
         username: "",
         name: "",
+        gender: "",
         phone: "",
         countryCode: "",
         password: "",
         confirmPassword: "",
-        role: "freelancer" as "freelancer" | "client"
+        role: "freelancer"
     })
 
     // OTP
@@ -182,6 +183,10 @@ export default function RegisterPage() {
 
         if (formData.name.length < 2) {
             newErrors.name = "Name must be at least 2 characters"
+        }
+
+        if (!formData.gender || !["male", "female", "other"].includes(formData.gender)) {
+            newErrors.gender = "Please select a gender"
         }
 
         if (!formData.phone.match(/^\d{10}$/)) {
@@ -261,6 +266,7 @@ export default function RegisterPage() {
                 email: storedData.email,
                 username: storedData.username,
                 name: storedData.name,
+                gender: storedData.gender,
                 phone: fullPhone,
                 role: storedData.role,
                 password: storedData.password,
@@ -403,6 +409,33 @@ export default function RegisterPage() {
                                 error={errors.name}
                                 placeholder="John Doe"
                             />
+
+                            <div>
+                                <label
+                                    htmlFor="gender"
+                                    className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2"
+                                >
+                                    <User className="w-4 h-4 text-blue-400" />
+                                    Gender
+                                </label>
+                                <select
+                                    id="gender"
+                                    value={formData.gender}
+                                    onChange={(e) =>
+                                        setFormData({
+                                            ...formData,
+                                            gender: e.target.value as "male" | "female" | "other"
+                                        })
+                                    }
+                                    className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-white"
+                                >
+                                    <option value="">Select Gender</option>
+                                    <option value="male">Male</option>
+                                    <option value="female">Female</option>
+                                    <option value="other">Other</option>
+                                </select>
+                                {errors.gender && <p className="mt-2 text-sm text-red-400">{errors.gender}</p>}
+                            </div>
 
                             <PhoneInput
                                 value={formData.phone}

@@ -19,7 +19,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Register a new user account with OTP verification",
             tags: ["Authentication"],
             body: Type.Intersect([
-                Type.Pick(User, ["email", "username", "name", "phone", "role"]),
+                Type.Pick(User, ["email", "username", "name", "gender", "phone", "role"]),
                 Type.Object({
                     otp: Type.String({ minLength: 6, maxLength: 6, pattern: "^[0-9]{6}$" }),
                     password: Type.String({
@@ -30,7 +30,6 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
                     })
                 })
             ]),
-
             response: {
                 201: User,
                 400: ErrorResponse(400, "Bad Request - Invalid input data"),
