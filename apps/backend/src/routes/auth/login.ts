@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, HmacPassword } from "../../function"
+import { CreateError, isFastifyError, HmacPassword, toTypeBox } from "../../function"
 import { ErrorResponse, Payload, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -66,9 +66,7 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
                     path: "/"
                 })
 
-                return reply
-                    .status(200)
-                    .send({ ...user, updatedAt: user.updatedAt.toISOString(), createdAt: user.createdAt.toISOString() })
+                return reply.status(200).send(toTypeBox(user))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

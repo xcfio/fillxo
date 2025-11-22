@@ -51,12 +51,14 @@ export function ErrorResponse(code: number, description?: string) {
 // ============================================
 // USER SCHEMA
 // ============================================
+const UUID = Type.String({
+    examples: [v7()],
+    pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
+    description: "UUID Version 7"
+})
+
 const RatingSchema = Type.Object({
-    id: Type.String({
-        examples: [v7()],
-        pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-        description: "Review identifier"
-    }),
+    id: UUID,
     review: Type.Union([Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(4), Type.Literal(5)], {
         description: "Rating value from 1 to 5"
     }),
@@ -126,11 +128,7 @@ const FreelancerSchema = Type.Object({
 
 export type User = Static<typeof User>
 export const User = Type.Object({
-    id: Type.String({
-        examples: [v7()],
-        pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-        description: "Unique identifier for the user"
-    }),
+    id: UUID,
     email: Type.String({
         format: "email",
         examples: ["user@example.com"],
@@ -255,4 +253,18 @@ export const PublicUser = Type.Object({
         examples: [new Date().toISOString()],
         description: "Account creation date"
     })
+})
+
+export const Job = Type.Object({
+    id: UUID,
+    clientId: UUID,
+    title: Type.String(),
+    description: Type.String(),
+    category: Type.String(),
+    skills: Type.Array(Type.String(), { default: [] }),
+    budget: Type.String(),
+    isOpen: Type.Boolean({ default: true }),
+    closedAt: Type.String({ format: "date-time" }),
+    proposalCount: Type.Integer({ default: 0 }),
+    createdAt: Type.String({ format: "date-time" })
 })

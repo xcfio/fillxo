@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError } from "../../function"
+import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
@@ -24,12 +24,7 @@ export default function Me(fastify: Awaited<ReturnType<typeof main>>) {
             try {
                 const [user] = await db.select().from(table.users).where(eq(table.users.id, request.user.id))
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
-
-                return reply.send({
-                    ...user,
-                    createdAt: user.createdAt.toISOString(),
-                    updatedAt: user.updatedAt.toISOString()
-                })
+                return reply.send(toTypeBox(user))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

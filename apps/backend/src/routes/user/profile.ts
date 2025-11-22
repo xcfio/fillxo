@@ -1,5 +1,5 @@
-import { CreateError, isFastifyError } from "../../function"
-import { ErrorResponse, User } from "../../type"
+import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { ErrorResponse, PublicUser } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
 import { eq } from "drizzle-orm"
@@ -16,7 +16,7 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 username: Type.String()
             }),
             response: {
-                200: User,
+                200: PublicUser,
                 404: ErrorResponse(404, "Not found - User not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
@@ -27,12 +27,7 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 const { username } = request.params
                 const [user] = await db.select().from(table.users).where(eq(table.users.username, username))
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
-
-                return reply.send({
-                    ...user,
-                    updatedAt: user.updatedAt.toISOString(),
-                    createdAt: user.createdAt.toISOString()
-                })
+                return reply.send(toTypeBox(user))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

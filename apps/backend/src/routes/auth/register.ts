@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, HmacPassword, VerifyOTP } from "../../function"
+import { CreateError, isFastifyError, HmacPassword, VerifyOTP, toTypeBox } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -81,11 +81,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(500, "USER_CREATION_FAILED", "Failed to create user account")
                 }
 
-                return reply.status(201).send({
-                    ...user,
-                    createdAt: user.createdAt.toISOString(),
-                    updatedAt: user.updatedAt.toISOString()
-                })
+                return reply.status(201).send(toTypeBox(user))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error
