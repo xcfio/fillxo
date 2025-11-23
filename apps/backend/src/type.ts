@@ -1,7 +1,8 @@
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
-export { User, PublicUser } from "./database/users"
 export { Job } from "./database/jobs"
+export { Proposal } from "./database/proposals"
+export { User, PublicUser } from "./database/users"
 
 declare module "fastify" {
     interface FastifyInstance {
@@ -49,9 +50,3 @@ export function ErrorResponse(code: number, description?: string) {
         }
     )
 }
-
-export const UUID = Type.String({
-    examples: [v7()],
-    pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$",
-    description: "UUID Version 7"
-})

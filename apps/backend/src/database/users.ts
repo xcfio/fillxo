@@ -1,9 +1,8 @@
 import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean, jsonb } from "drizzle-orm/pg-core"
-import { Static } from "typebox"
+import { Static, Type } from "typebox"
 import { sql } from "drizzle-orm"
 import { v7 } from "uuid"
-import { UUID } from "../type"
-import Type from "typebox"
+import { UUID } from "../typebox"
 
 export const Role = pgEnum("role", ["freelancer", "client"])
 export const Privilege = pgEnum("privilege", ["moderator", "admin"])
