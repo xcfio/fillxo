@@ -12,10 +12,10 @@ export const jobs = pgTable("jobs", {
     title: text("title").notNull(),
     description: text("description").notNull(),
     category: text("category").notNull(),
-    skills: text("skills").array().default([]).notNull(),
+    skills: text("skills").array().notNull().default([]),
     budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
     isOpen: boolean("is_open").notNull().default(true),
     closedAt: timestamp("closed_at").notNull(),
-    proposalCount: integer("proposal_count").default(0),
+    proposalCount: integer("proposal_count").notNull().default(0),
     createdAt: timestamp("created_at").defaultNow().notNull()
 })

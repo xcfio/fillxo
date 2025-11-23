@@ -25,27 +25,43 @@ export default async function swagger(fastify: Awaited<ReturnType<typeof main>>)
             tags: [
                 {
                     name: "Authentication",
-                    description: "OAuth authentication and session management endpoints"
+                    description: "Authentication and authorization endpoints"
                 },
                 {
-                    name: "Conversations",
-                    description: "Direct conversation management endpoints"
+                    name: "User",
+                    description: "User profile management endpoints"
                 },
                 {
-                    name: "Messages",
-                    description: "Message operations and status management endpoints"
+                    name: "Job",
+                    description: "Job posting and management endpoints"
                 },
                 {
-                    name: "Users",
-                    description: "User profile management and discovery endpoints"
+                    name: "Freelancer",
+                    description: "Freelancer profile and portfolio endpoints"
+                },
+                {
+                    name: "Client",
+                    description: "Client profile and company information endpoints"
+                },
+                {
+                    name: "Proposal",
+                    description: "Job proposal submission and management endpoints"
+                },
+                {
+                    name: "Contract",
+                    description: "Contract management and completion endpoints"
+                },
+                {
+                    name: "Review",
+                    description: "Review and rating management endpoints"
+                },
+                {
+                    name: "Notification",
+                    description: "User notification endpoints"
                 },
                 {
                     name: "Search",
-                    description: "Search functionality for users and messages"
-                },
-                {
-                    name: "Sessions",
-                    description: "User session management endpoints"
+                    description: "Search functionality for freelancers and jobs"
                 }
             ]
         }
