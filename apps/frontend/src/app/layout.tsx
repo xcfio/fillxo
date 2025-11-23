@@ -65,10 +65,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 <meta name="theme-color" content="#4285f4" />
                 {process.env.NODE_ENV !== "development" && (
                     <Script
-                        src="/api/analytics/script.js"
-                        data-website-id="afd13f16-1202-42ba-8e3e-8b64335baf4f"
-                        data-host-url="/api/analytics"
-                        strategy="afterInteractive"
+                        src="https://analytics-xcfio.netlify.app/script.js"
+                        data-website-id="5d7500cf-968b-4930-b0e3-f7717cc0cbf0"
                     />
                 )}
             </head>
