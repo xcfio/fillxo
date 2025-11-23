@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { Card } from "@/components/ui/card"
 import Link from "next/link"
+import { isAuthenticated } from "@/utils/auth"
 
 export default function LoginPage() {
     const router = useRouter()
@@ -20,23 +21,8 @@ export default function LoginPage() {
     const [authCheckStatus, setAuthCheckStatus] = useState<"checking" | "done" | "error">("checking")
 
     useEffect(() => {
-        // Check if user is already authenticated via cookie
         const checkAuth = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    router.push("/dashboard")
-                } else {
-                    setAuthCheckStatus("done")
-                }
-            } catch (error) {
-                setAuthCheckStatus("error")
-                if (process.env.NODE_ENV !== "production") {
-                    console.error("Auth check failed:", error)
-                }
-            }
+            ;(await isAuthenticated()) ? router.push("/dashboard") : setAuthCheckStatus("done")
         }
         checkAuth()
     }, [router])
@@ -89,6 +75,7 @@ export default function LoginPage() {
                 }
             }
 
+            window.sessionStorage.setItem("user", JSON.stringify(await response.json()))
             router.push("/dashboard")
         } catch (err) {
             setErrors({

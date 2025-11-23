@@ -15,6 +15,7 @@ import {
     LayoutDashboard,
     ChevronDown
 } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 export default function Navbar() {
     const router = useRouter()
@@ -26,15 +27,11 @@ export default function Navbar() {
     const dropdownRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
-        // Check authentication status from backend
         const checkAuth = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    const data = await response.json()
-                    setUserData(data)
+                const user = await getUser()
+                if (user) {
+                    setUserData(user)
                     setIsLoggedIn(true)
                 } else {
                     setIsLoggedIn(false)
@@ -49,7 +46,6 @@ export default function Navbar() {
         }
         checkAuth()
 
-        // Also check when window gains focus (user might have logged in/out in another tab)
         const handleFocus = () => {
             checkAuth()
         }
@@ -83,6 +79,7 @@ export default function Navbar() {
                 method: "POST",
                 credentials: "include"
             })
+            window.sessionStorage.removeItem("user")
         } catch (error) {
             console.error("Logout error:", error)
         } finally {

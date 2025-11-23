@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { User, Briefcase, Shield } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -17,13 +18,9 @@ export default function DashboardPage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-
-                if (!response.ok) return router.push("/login")
-                const userData = await response.json()
-                setUser(userData)
+                const user = await getUser()
+                if (!user) return router.push("/login")
+                setUser(user)
             } catch (error) {
                 router.push("/login")
             } finally {

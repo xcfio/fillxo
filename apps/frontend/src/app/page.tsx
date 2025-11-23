@@ -15,6 +15,7 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { Button } from "@/components/ui/button"
 import { PageContainer } from "@/components/ui/page-container"
+import { isAuthenticated } from "@/utils/auth"
 
 export default function LandingPage() {
     const router = useRouter()
@@ -22,23 +23,7 @@ export default function LandingPage() {
     const [authCheckDone, setAuthCheckDone] = useState(false)
 
     useEffect(() => {
-        // Check authentication status from backend
-        const checkAuth = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                setIsLoggedIn(response.ok)
-            } catch (error) {
-                // Network error or auth failed, treat as not logged in
-                if (process.env.NODE_ENV !== "production") {
-                    console.error("Auth check failed:", error)
-                }
-                setIsLoggedIn(false)
-            } finally {
-                setAuthCheckDone(true)
-            }
-        }
+        const checkAuth = async () => (setIsLoggedIn(await isAuthenticated()) ?? null) || setAuthCheckDone(true)
         checkAuth()
     }, [])
 

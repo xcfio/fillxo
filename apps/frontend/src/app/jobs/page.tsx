@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Briefcase, DollarSign, Calendar, Users, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 interface Job {
     id: string
@@ -34,19 +35,7 @@ export default function JobsPage() {
     const itemsPerPage = 20
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    const userData = await response.json()
-                    setUser(userData)
-                }
-            } catch (error) {
-                // User not logged in
-            }
-        }
+        const fetchUser = async () => setUser(await getUser())
         fetchUser()
     }, [])
 

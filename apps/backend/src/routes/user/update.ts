@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError } from "../../function"
+import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
@@ -23,7 +23,7 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
                 Type.Pick(User, ["name", "gender", "avatar", "phone", "country", "timezone", "client", "freelancer"])
             ),
             response: {
-                200: Type.Object({ success: Type.Boolean() }),
+                200: User,
                 400: ErrorResponse(400, "Invalid input or duplicate username/email"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
@@ -34,12 +34,13 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
             try {
                 const { id } = request.user
 
-                await db
+                const [user] = await db
                     .update(table.users)
                     .set({ ...request.body, client: request.body.client, freelancer: request.body.freelancer })
                     .where(eq(table.users.id, id))
+                    .returning()
 
-                return reply.send({ success: true })
+                return reply.send(toTypeBox(user))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

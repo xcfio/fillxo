@@ -7,6 +7,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { FormInput } from "@/components/ui/form-input"
 import { ErrorAlert } from "@/components/ui/error-alert"
+import { isAuthenticated } from "@/utils/auth"
 
 const PhoneCodes = new Map([
     ["US", "+1"],
@@ -215,13 +216,14 @@ export default function RegisterPage() {
         role: "freelancer"
     })
 
-    // OTP
     const [otp, setOtp] = useState("")
-
-    // Field errors
     const [errors, setErrors] = useState<Record<string, string>>({})
 
-    // Detect country automatically using IP geolocation and check URL params for role
+    useEffect(() => {
+        const checkAuth = async () => (await isAuthenticated()) && router.push("/dashboard")
+        checkAuth()
+    }, [router])
+
     useEffect(() => {
         const detectCountry = async () => {
             try {
@@ -539,14 +541,6 @@ export default function RegisterPage() {
                                 {errors.gender && <p className="mt-2 text-sm text-red-400">{errors.gender}</p>}
                             </div>
 
-                            <PhoneInput
-                                value={formData.phone}
-                                onChange={(phone) => setFormData({ ...formData, phone })}
-                                countryCode={formData.countryCode}
-                                onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
-                                error={errors.phone}
-                            />
-
                             <div>
                                 <label
                                     htmlFor="country"
@@ -578,6 +572,14 @@ export default function RegisterPage() {
                                 </select>
                                 {errors.country && <p className="mt-2 text-sm text-red-400">{errors.country}</p>}
                             </div>
+
+                            <PhoneInput
+                                value={formData.phone}
+                                onChange={(phone) => setFormData({ ...formData, phone })}
+                                countryCode={formData.countryCode}
+                                onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
+                                error={errors.phone}
+                            />
 
                             <FormInput
                                 label="Password"

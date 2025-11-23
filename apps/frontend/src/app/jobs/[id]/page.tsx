@@ -19,6 +19,7 @@ import {
     Clock,
     CheckCircle2
 } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 interface Job {
     id: string
@@ -45,19 +46,7 @@ export default function JobDetailPage() {
     const [isOwner, setIsOwner] = useState(false)
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    const userData = await response.json()
-                    setUser(userData)
-                }
-            } catch (error) {
-                // User not logged in
-            }
-        }
+        const fetchUser = async () => setUser(await getUser())
         fetchUser()
     }, [])
 

@@ -8,6 +8,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { ArrowLeft, Briefcase, Save } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 export default function PostJobPage() {
     const router = useRouter()
@@ -28,22 +29,15 @@ export default function PostJobPage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
+                const user = await getUser()
+                if (!user) return router.push("/login")
 
-                if (!response.ok) {
-                    router.push("/login")
-                    return
-                }
-
-                const userData = await response.json()
-                if (userData.role !== "client" && userData.role !== "both") {
+                if (user.role !== "client" && user.role !== "both") {
                     router.push("/jobs")
                     return
                 }
 
-                setUser(userData)
+                setUser(user)
             } catch (error) {
                 router.push("/login")
             } finally {

@@ -24,6 +24,7 @@ import {
     Factory,
     Shield
 } from "lucide-react"
+import { getUser } from "@/utils/auth"
 
 interface PortfolioItem {
     title: string
@@ -71,16 +72,12 @@ export default function UserProfilePage() {
 
     useEffect(() => {
         const checkAuth = async () => {
-            try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-                if (response.ok) {
-                    const userData = await response.json()
-                    setCurrentUser(userData)
-                    setIsLoggedIn(true)
-                }
-            } catch (error) {
+            const user = await getUser()
+            if (user) {
+                setCurrentUser(user)
+                setIsLoggedIn(true)
+            } else {
+                setCurrentUser(null)
                 setIsLoggedIn(false)
             }
         }

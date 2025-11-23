@@ -10,6 +10,8 @@ import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { Card } from "@/components/ui/card"
 import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcase, Award, Shield } from "lucide-react"
+import { User as TUser } from "@/types/user"
+import { getUser } from "@/utils/auth"
 
 interface PortfolioItem {
     title: string
@@ -36,7 +38,7 @@ interface UpdateFormData {
     username?: string
     name?: string
     gender?: "male" | "female" | "other"
-    role?: "freelancer" | "client"
+    role?: "freelancer" | "client" | "both"
     phone?: string
     country?: string
     timezone?: string
@@ -64,32 +66,27 @@ export default function UpdateProfilePage() {
     useEffect(() => {
         const fetchUser = async () => {
             try {
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                    credentials: "include"
-                })
-
-                if (!response.ok) return router.push("/login")
-                const userData = await response.json()
-                setUser(userData)
+                const user = await getUser()
+                if (!user) return router.push("/login")
+                setUser(user)
 
                 // Initialize form data with current user data
                 setFormData({
-                    avatar: userData.avatar || "",
-                    email: userData.email || "",
-                    username: userData.username || "",
-                    name: userData.name || "",
-                    gender: userData.gender || "other",
-                    role: userData.role || "freelancer",
-                    phone: userData.phone || "",
-                    country: userData.country || "",
-                    timezone: userData.timezone || "",
-                    client: userData.client || {},
-                    freelancer: userData.freelancer || {}
+                    avatar: user.avatar || "",
+                    email: user.email || "",
+                    username: user.username || "",
+                    name: user.name || "",
+                    gender: user.gender || "other",
+                    role: user.role || "freelancer",
+                    phone: user.phone || "",
+                    country: user.country || "",
+                    client: user.client || {},
+                    freelancer: user.freelancer || {}
                 })
 
                 // Initialize portfolio items if they exist
-                if (userData.freelancer?.portfolio) {
-                    setPortfolioItems(userData.freelancer.portfolio)
+                if (user.freelancer?.portfolio) {
+                    setPortfolioItems(user.freelancer.portfolio)
                 }
             } catch (error) {
                 router.push("/login")
@@ -155,19 +152,15 @@ export default function UpdateProfilePage() {
             })
 
             const data = await response.json()
-
             if (!response.ok) {
-                throw new Error(data.message || "Failed to update profile")
+                // Extract error message from API response, falling back to a default if not present
+                const errorMsg = data?.message || data?.error || "Failed to update profile"
+                throw new Error(errorMsg)
             }
 
             setSuccess("Profile updated successfully!")
-
-            // Refresh user data
-            const userResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/users/me`, {
-                credentials: "include"
-            })
-            const updatedUser = await userResponse.json()
-            setUser(updatedUser)
+            window.sessionStorage.setItem("user", JSON.stringify(data))
+            setUser(data)
 
             // Redirect to dashboard after 2 seconds
             setTimeout(() => {
@@ -502,7 +495,7 @@ export default function UpdateProfilePage() {
                         </div>
 
                         {/* Timezone */}
-                        <div>
+                        {/* <div>
                             <label htmlFor="timezone" className="flex items-center gap-2 text-sm font-medium mb-2">
                                 <Clock className="w-4 h-4 text-blue-400" />
                                 Timezone
@@ -598,7 +591,7 @@ export default function UpdateProfilePage() {
                                     </optgroup>
                                 </select>
                             </div>
-                        </div>
+                        </div> */}
 
                         {/* Client Profile Fields */}
                         {formData.role === "client" && (
