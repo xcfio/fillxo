@@ -7,12 +7,6 @@ export default function Send_OTP(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
         url: "/auth/send-otp",
-        config: {
-            rateLimit: {
-                max: 3,
-                timeWindow: 600000
-            }
-        },
         schema: {
             description: "Send a One-Time Password (OTP) to the specified email address",
             tags: ["Authentication"],

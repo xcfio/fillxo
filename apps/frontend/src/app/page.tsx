@@ -23,7 +23,7 @@ export default function LandingPage() {
     const [authCheckDone, setAuthCheckDone] = useState(false)
 
     useEffect(() => {
-        const checkAuth = async () => (setIsLoggedIn(await isAuthenticated()) ?? null) || setAuthCheckDone(true)
+        const checkAuth = async () => setIsLoggedIn(await isAuthenticated()) ?? setAuthCheckDone(true)
         checkAuth()
     }, [])
 

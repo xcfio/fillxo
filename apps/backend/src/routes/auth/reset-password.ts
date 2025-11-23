@@ -9,12 +9,6 @@ export default function ResetPassword(fastify: Awaited<ReturnType<typeof main>>)
     fastify.route({
         method: "PATCH",
         url: "/auth/reset-password",
-        config: {
-            rateLimit: {
-                max: 3,
-                timeWindow: 3600000
-            }
-        },
         schema: {
             description: "Reset user password using email and OTP",
             tags: ["Authentication"],

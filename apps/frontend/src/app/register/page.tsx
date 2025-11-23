@@ -385,19 +385,15 @@ export default function RegisterPage() {
                 throw new Error(errorData.message || "Registration failed")
             }
 
-            const userData = await response.json()
-
-            // Clear session storage
+            const data = await response.json()
             sessionStorage.removeItem("fillxo_registration")
 
             setOtp("")
-            setStep(3) // Hide OTP form
+            setStep(3)
             setSuccess("Registration successful! Redirecting to dashboard...")
 
-            // Redirect after 2 seconds
-            setTimeout(() => {
-                router.push("/dashboard")
-            }, 2000)
+            window.sessionStorage.setItem("user", JSON.stringify(data))
+            setTimeout(() => router.push("/dashboard"), 2000)
         } catch (err: any) {
             setError(err.message)
         } finally {
