@@ -205,18 +205,18 @@ export default function Navbar() {
                                                 <Settings className="w-4 h-4" />
                                                 Edit Profile
                                             </button>
-                                            {userData.role === "freelancer" && (
+                                            {(userData.role === "freelancer" || userData.role === "both") && (
                                                 <button
-                                                    onClick={() => handleNavigation("/dashboard")}
+                                                    onClick={() => handleNavigation("/jobs")}
                                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
                                                 >
                                                     <Briefcase className="w-4 h-4" />
                                                     Browse Jobs
                                                 </button>
                                             )}
-                                            {userData.role === "client" && (
+                                            {(userData.role === "client" || userData.role === "both") && (
                                                 <button
-                                                    onClick={() => handleNavigation("/dashboard")}
+                                                    onClick={() => handleNavigation("/jobs/post")}
                                                     className="w-full flex items-center gap-3 px-4 py-2 text-sm text-gray-300 hover:bg-gray-800/50 hover:text-white transition-colors"
                                                 >
                                                     <Briefcase className="w-4 h-4" />
@@ -271,6 +271,15 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-gray-900/95 backdrop-blur-md border-t border-blue-900/20">
                     <div className="px-4 py-4 space-y-3">
+                        <button
+                            onClick={() => {
+                                router.push("/jobs")
+                                setIsMobileMenuOpen(false)
+                            }}
+                            className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
+                        >
+                            Browse Jobs
+                        </button>
                         <button
                             onClick={() => {
                                 router.push("/terms")

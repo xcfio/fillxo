@@ -91,7 +91,7 @@ export default function LandingPage() {
                                 Join as Freelancer
                             </Button>
                             <Button
-                                onClick={() => router.push("/register")}
+                                onClick={() => router.push("/register?role=client")}
                                 variant="secondary"
                                 icon={Briefcase}
                                 className="text-lg"
@@ -433,14 +433,14 @@ export default function LandingPage() {
                     ) : (
                         <div className="flex flex-col sm:flex-row gap-4 justify-center">
                             <Button
-                                onClick={() => router.push("/register")}
+                                onClick={() => router.push("/register?role=freelancer")}
                                 icon={ArrowRight}
                                 className="text-lg shadow-lg shadow-blue-600/20"
                             >
                                 Join as Freelancer
                             </Button>
                             <Button
-                                onClick={() => router.push("/register")}
+                                onClick={() => router.push("/register?role=client")}
                                 variant="secondary"
                                 icon={Briefcase}
                                 className="text-lg"

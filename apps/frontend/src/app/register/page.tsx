@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, User, Phone, Lock, Send, CheckCircle, ArrowRight } from "lucide-react"
+import { Mail, User, Phone, Lock, Send, CheckCircle, ArrowRight, Globe } from "lucide-react"
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { FormInput } from "@/components/ui/form-input"
@@ -70,7 +70,6 @@ const PhoneCodes = new Map([
     ["PK", "+92"],
     ["LK", "+94"],
     ["MY", "+60"],
-    ["IL", "+972"],
     ["EG", "+20"],
     ["ZA", "+27"],
     ["NG", "+234"],
@@ -80,6 +79,79 @@ const PhoneCodes = new Map([
     ["NZ", "+64"],
     ["FJ", "+679"]
 ])
+
+const Countries = [
+    { code: "BD", name: "Bangladesh" },
+    { code: "US", name: "United States" },
+    { code: "GB", name: "United Kingdom" },
+    { code: "CA", name: "Canada" },
+    { code: "AU", name: "Australia" },
+    { code: "IN", name: "India" },
+    { code: "PK", name: "Pakistan" },
+    { code: "AF", name: "Afghanistan" },
+    { code: "AE", name: "United Arab Emirates" },
+    { code: "AR", name: "Argentina" },
+    { code: "AT", name: "Austria" },
+    { code: "BE", name: "Belgium" },
+    { code: "BR", name: "Brazil" },
+    { code: "BG", name: "Bulgaria" },
+    { code: "CH", name: "Switzerland" },
+    { code: "CL", name: "Chile" },
+    { code: "CN", name: "China" },
+    { code: "CO", name: "Colombia" },
+    { code: "HR", name: "Croatia" },
+    { code: "CY", name: "Cyprus" },
+    { code: "CZ", name: "Czech Republic" },
+    { code: "DE", name: "Germany" },
+    { code: "DK", name: "Denmark" },
+    { code: "EE", name: "Estonia" },
+    { code: "EG", name: "Egypt" },
+    { code: "ES", name: "Spain" },
+    { code: "FI", name: "Finland" },
+    { code: "FJ", name: "Fiji" },
+    { code: "FR", name: "France" },
+    { code: "GR", name: "Greece" },
+    { code: "HK", name: "Hong Kong" },
+    { code: "HU", name: "Hungary" },
+    { code: "ID", name: "Indonesia" },
+    { code: "IE", name: "Ireland" },
+    { code: "IS", name: "Iceland" },
+    { code: "IT", name: "Italy" },
+    { code: "JP", name: "Japan" },
+    { code: "KE", name: "Kenya" },
+    { code: "KR", name: "South Korea" },
+    { code: "LK", name: "Sri Lanka" },
+    { code: "LT", name: "Lithuania" },
+    { code: "LU", name: "Luxembourg" },
+    { code: "LV", name: "Latvia" },
+    { code: "MA", name: "Morocco" },
+    { code: "MT", name: "Malta" },
+    { code: "MX", name: "Mexico" },
+    { code: "MY", name: "Malaysia" },
+    { code: "NG", name: "Nigeria" },
+    { code: "NL", name: "Netherlands" },
+    { code: "NO", name: "Norway" },
+    { code: "NP", name: "Nepal" },
+    { code: "NZ", name: "New Zealand" },
+    { code: "PE", name: "Peru" },
+    { code: "PH", name: "Philippines" },
+    { code: "PL", name: "Poland" },
+    { code: "PT", name: "Portugal" },
+    { code: "RO", name: "Romania" },
+    { code: "RS", name: "Serbia" },
+    { code: "RU", name: "Russia" },
+    { code: "SA", name: "Saudi Arabia" },
+    { code: "SE", name: "Sweden" },
+    { code: "SG", name: "Singapore" },
+    { code: "SI", name: "Slovenia" },
+    { code: "SK", name: "Slovakia" },
+    { code: "TH", name: "Thailand" },
+    { code: "TR", name: "Turkey" },
+    { code: "TW", name: "Taiwan" },
+    { code: "UA", name: "Ukraine" },
+    { code: "VN", name: "Vietnam" },
+    { code: "ZA", name: "South Africa" }
+]
 
 // Phone Input Component with Country Code
 function PhoneInput({
@@ -124,7 +196,7 @@ function PhoneInput({
 
 export default function RegisterPage() {
     const router = useRouter()
-    const [step, setStep] = useState(1) // 1: Form, 2: OTP
+    const [step, setStep] = useState(1) // 1: Form, 2: OTP, 3: Success
     const [loading, setLoading] = useState(false)
     const [error, setError] = useState("")
     const [success, setSuccess] = useState("")
@@ -137,6 +209,7 @@ export default function RegisterPage() {
         gender: "",
         phone: "",
         countryCode: "",
+        country: "",
         password: "",
         confirmPassword: "",
         role: "freelancer"
@@ -148,23 +221,42 @@ export default function RegisterPage() {
     // Field errors
     const [errors, setErrors] = useState<Record<string, string>>({})
 
-    // Detect country automatically using IP geolocation
+    // Detect country automatically using IP geolocation and check URL params for role
     useEffect(() => {
         const detectCountry = async () => {
             try {
                 const response = await fetch(`https://ipapi.co/country/`)
-                const country = await response.text()
-
+                const country = (await response.text()).trim().toUpperCase()
                 const detectedCode = PhoneCodes.get(country) ?? ""
+
+                if (country === "IL") {
+                    setStep(3)
+                    setError("Registration is not available in your country.")
+                }
 
                 setFormData((prev) => ({
                     ...prev,
-                    countryCode: detectedCode
+                    countryCode: detectedCode,
+                    country: country || "BD" // Store country code (ISO 3166-1 alpha-2)
                 }))
             } catch (err) {
                 // Default to Bangladesh if detection fails
-                console.log("Country detection failed, defaulting to +880")
+                console.log("Country detection failed, defaulting to BD")
+                setFormData((prev) => ({
+                    ...prev,
+                    country: "BD"
+                }))
             }
+        }
+
+        // Check URL params for role
+        const urlParams = new URLSearchParams(window.location.search)
+        const roleParam = urlParams.get("role")
+        if (roleParam === "client" || roleParam === "freelancer") {
+            setFormData((prev) => ({
+                ...prev,
+                role: roleParam
+            }))
         }
 
         detectCountry()
@@ -189,8 +281,12 @@ export default function RegisterPage() {
             newErrors.gender = "Please select a gender"
         }
 
-        if (!formData.phone.match(/^\d{10}$/)) {
-            newErrors.phone = "Phone must be 10 digits"
+        if (!formData.country || formData.country.length !== 2) {
+            newErrors.country = "Please select a country"
+        }
+
+        if (!`${formData.countryCode}${formData.phone}`.match(/^\+[1-9]\d{1,14}$/)) {
+            newErrors.phone = "Invalid phone number format"
         }
 
         if (formData.password.length < 8) {
@@ -269,6 +365,7 @@ export default function RegisterPage() {
                 gender: storedData.gender,
                 phone: fullPhone,
                 role: storedData.role,
+                country: storedData.country || "BD",
                 password: storedData.password,
                 otp: otp
             }
@@ -291,6 +388,8 @@ export default function RegisterPage() {
             // Clear session storage
             sessionStorage.removeItem("fillxo_registration")
 
+            setOtp("")
+            setStep(3) // Hide OTP form
             setSuccess("Registration successful! Redirecting to dashboard...")
 
             // Redirect after 2 seconds
@@ -305,6 +404,7 @@ export default function RegisterPage() {
     }
 
     const handleResendOTP = async () => {
+        setOtp("")
         setError("")
         setSuccess("")
         setLoading(true)
@@ -335,12 +435,12 @@ export default function RegisterPage() {
 
     return (
         <PageContainer>
-            <div className="max-w-md mx-auto px-4 sm:px-6 py-6 sm:py-8">
-                <div className="text-center mb-6 sm:mb-8">
-                    <h1 className="text-3xl sm:text-4xl font-bold mb-2 sm:mb-3 bg-linear-to-r from-blue-400 to-blue-600 bg-clip-text text-transparent">
-                        Create Account
+            <div className="max-w-md mx-auto">
+                <div className="text-center mb-12">
+                    <h1 className="text-4xl md:text-5xl font-bold mb-4">
+                        Create <span className="text-blue-400">Account</span>
                     </h1>
-                    <p className="text-sm sm:text-base text-gray-400">Join Bangladesh's freelance marketplace</p>
+                    <p className="text-lg text-gray-400">Join Bangladesh's freelance marketplace</p>
                 </div>
 
                 <Card>
@@ -348,31 +448,33 @@ export default function RegisterPage() {
                     {success && <ErrorAlert message={success} variant="info" />}
 
                     {/* Step Indicator */}
-                    <div className="flex items-center justify-center mb-6 sm:mb-8">
-                        <div className={`flex items-center ${step >= 1 ? "text-blue-400" : "text-gray-600"}`}>
-                            <div
-                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
-                                    step >= 1 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
-                                }`}
-                            >
-                                1
+                    {step !== 3 && (
+                        <div className="flex items-center justify-center mb-6 sm:mb-8">
+                            <div className={`flex items-center ${step >= 1 ? "text-blue-400" : "text-gray-600"}`}>
+                                <div
+                                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
+                                        step >= 1 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
+                                    }`}
+                                >
+                                    1
+                                </div>
+                                <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Details</span>
                             </div>
-                            <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Details</span>
-                        </div>
-                        <div
-                            className={`w-8 sm:w-12 h-0.5 mx-1.5 sm:mx-2 ${step >= 2 ? "bg-blue-400" : "bg-gray-600"}`}
-                        />
-                        <div className={`flex items-center ${step >= 2 ? "text-blue-400" : "text-gray-600"}`}>
                             <div
-                                className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
-                                    step >= 2 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
-                                }`}
-                            >
-                                2
+                                className={`w-8 sm:w-12 h-0.5 mx-1.5 sm:mx-2 ${step >= 2 ? "bg-blue-400" : "bg-gray-600"}`}
+                            />
+                            <div className={`flex items-center ${step >= 2 ? "text-blue-400" : "text-gray-600"}`}>
+                                <div
+                                    className={`w-7 h-7 sm:w-8 sm:h-8 rounded-full flex items-center justify-center border-2 text-sm ${
+                                        step >= 2 ? "border-blue-400 bg-blue-400/20" : "border-gray-600"
+                                    }`}
+                                >
+                                    2
+                                </div>
+                                <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Verify</span>
                             </div>
-                            <span className="ml-1.5 sm:ml-2 text-xs sm:text-sm">Verify</span>
                         </div>
-                    </div>
+                    )}
 
                     {/* Step 1: Registration Form */}
                     {step === 1 && (
@@ -444,6 +546,38 @@ export default function RegisterPage() {
                                 onCountryCodeChange={(code) => setFormData({ ...formData, countryCode: code })}
                                 error={errors.phone}
                             />
+
+                            <div>
+                                <label
+                                    htmlFor="country"
+                                    className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2"
+                                >
+                                    <Globe className="w-4 h-4 text-blue-400" />
+                                    Country
+                                </label>
+                                <select
+                                    id="country"
+                                    value={formData.country}
+                                    onChange={(e) => {
+                                        const selectedCountry = e.target.value
+                                        const phoneCode = PhoneCodes.get(selectedCountry) || ""
+                                        setFormData({
+                                            ...formData,
+                                            country: selectedCountry,
+                                            countryCode: phoneCode
+                                        })
+                                    }}
+                                    className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-white"
+                                >
+                                    <option value="">Select Country</option>
+                                    {Countries.map((country) => (
+                                        <option key={country.code} value={country.code}>
+                                            {country.name}
+                                        </option>
+                                    ))}
+                                </select>
+                                {errors.country && <p className="mt-2 text-sm text-red-400">{errors.country}</p>}
+                            </div>
 
                             <FormInput
                                 label="Password"
@@ -577,7 +711,10 @@ export default function RegisterPage() {
                                 </button>
                                 <span className="text-gray-500 mx-2">•</span>
                                 <button
-                                    onClick={() => setStep(1)}
+                                    onClick={() => {
+                                        setOtp("")
+                                        setStep(1)
+                                    }}
                                     className="text-blue-400 hover:text-blue-300 transition-colors active:scale-95"
                                 >
                                     Change Details

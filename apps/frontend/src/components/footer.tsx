@@ -70,7 +70,7 @@ export default function Footer() {
                             <h4 className="m-0 mb-2 p-0 text-[1.1rem] font-semibold text-white">Quick Links</h4>
                             <div className="flex flex-col gap-2.5 md:items-start items-center">
                                 <a
-                                    href="/browse-jobs"
+                                    href="/jobs"
                                     className="flex min-h-8 w-fit items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[0.9rem] leading-snug text-gray-400 no-underline transition-all duration-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white"
                                 >
                                     <Briefcase
@@ -78,16 +78,6 @@ export default function Footer() {
                                         className="shrink-0 transition-transform duration-300 hover:scale-110"
                                     />
                                     <span className="shrink-0 overflow-visible whitespace-nowrap">Browse Jobs</span>
-                                </a>
-                                <a
-                                    href="/post-job"
-                                    className="flex min-h-8 w-fit items-center gap-2.5 rounded-md px-2.5 py-1.5 text-[0.9rem] leading-snug text-gray-400 no-underline transition-all duration-300 hover:translate-x-1 hover:bg-blue-500/10 hover:text-white"
-                                >
-                                    <Plus
-                                        size={18}
-                                        className="shrink-0 transition-transform duration-300 hover:scale-110"
-                                    />
-                                    <span className="shrink-0 overflow-visible whitespace-nowrap">Post a Job</span>
                                 </a>
                                 <a
                                     href="/how-it-works"
