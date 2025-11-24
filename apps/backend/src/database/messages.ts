@@ -16,7 +16,7 @@ export const messages = pgTable(
             .references(() => users.id),
         content: text("content").notNull(),
         isRead: boolean("is_read").default(false),
-        createdAt: timestamp("created_at").defaultNow().notNull()
+        createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
     },
     (table) => [index("message_sender_idx").on(table.senderId), index("message_receiver_idx").on(table.receiverId)]
 )

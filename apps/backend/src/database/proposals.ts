@@ -21,7 +21,7 @@ export const proposals = pgTable("proposals", {
     bidAmount: decimal("bid_amount", { precision: 10, scale: 2 }).notNull(),
     deliveryDays: integer("delivery_days").notNull(),
     status: ProposalStatus("status").default("pending").notNull(),
-    createdAt: timestamp("created_at").defaultNow().notNull()
+    createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
 })
 
 const ProposalStatusEnum = Type.Union([Type.Literal("pending"), Type.Literal("accepted"), Type.Literal("rejected")], {

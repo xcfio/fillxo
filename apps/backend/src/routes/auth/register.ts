@@ -68,7 +68,7 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [user] = await db
                     .insert(table.users)
-                    .values({ ...request.body, password: HmacPassword(password) })
+                    .values({ ...request.body, password: HmacPassword(password), createdAt: new Date() })
                     .returning()
 
                 if (!user) {

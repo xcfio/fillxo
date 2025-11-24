@@ -4,6 +4,7 @@ import { db, table } from "../../database"
 import { main } from "../.."
 import { eq } from "drizzle-orm"
 import Type from "typebox"
+import { UUID } from "../../typebox"
 
 export default function DeleteJob(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -12,7 +13,7 @@ export default function DeleteJob(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Delete a job by ID",
             tags: ["Job"],
-            params: Type.Object({ id: Type.String() }),
+            params: Type.Object({ id: UUID }),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
                 404: ErrorResponse(404, "Not Found - Job Not found"),

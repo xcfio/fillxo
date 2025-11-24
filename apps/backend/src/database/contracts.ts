@@ -26,9 +26,9 @@ export const contracts = pgTable(
             .references(() => users.id),
         amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
         status: contractStatusEnum("status").default("active"),
-        startDate: timestamp("start_date").defaultNow(),
-        completedAt: timestamp("completed_at"),
-        createdAt: timestamp("created_at").defaultNow().notNull()
+        completedAt: timestamp("completed_at", { withTimezone: false }),
+        startDate: timestamp("start_date", { withTimezone: false }).defaultNow(),
+        createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
     },
     (table) => [
         index("contract_client_idx").on(table.clientId),

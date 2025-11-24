@@ -4,6 +4,7 @@ import { db, table } from "../../database"
 import { main } from "../.."
 import { eq } from "drizzle-orm"
 import Type from "typebox"
+import { UUID } from "../../typebox"
 
 export default function GetJobProposals(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -12,7 +13,7 @@ export default function GetJobProposals(fastify: Awaited<ReturnType<typeof main>
         schema: {
             description: "Get all proposals for a specific job by ID",
             tags: ["Job"],
-            params: Type.Object({ id: Type.String() }),
+            params: Type.Object({ id: UUID }),
             response: {
                 200: Type.Array(Proposal),
                 403: ErrorResponse(403, "Forbidden - You do not have permission to view these proposals"),

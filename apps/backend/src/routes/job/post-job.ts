@@ -27,7 +27,7 @@ export default function PostJob(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [job] = await db
                     .insert(table.jobs)
-                    .values({ ...request.body, clientId: id, closedAt: new Date(closedAt) })
+                    .values({ ...request.body, clientId: id, createdAt: new Date(), closedAt: new Date(closedAt) })
                     .returning()
 
                 return reply.status(201).send(toTypeBox(job))

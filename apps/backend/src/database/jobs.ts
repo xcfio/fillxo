@@ -17,9 +17,9 @@ export const jobs = pgTable("jobs", {
     skills: text("skills").array().notNull().default([]),
     budget: decimal("budget", { precision: 10, scale: 2 }).notNull(),
     isOpen: boolean("is_open").notNull().default(true),
-    closedAt: timestamp("closed_at").notNull(),
     proposalCount: integer("proposal_count").notNull().default(0),
-    createdAt: timestamp("created_at").defaultNow().notNull()
+    closedAt: timestamp("closed_at", { withTimezone: false }).notNull(),
+    createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
 })
 
 export type Job = Static<typeof Job>

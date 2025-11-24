@@ -12,9 +12,7 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Get user profile by username",
             tags: ["User"],
-            params: Type.Object({
-                username: Type.String()
-            }),
+            params: Type.Object({ username: Type.String() }),
             response: {
                 200: PublicUser,
                 404: ErrorResponse(404, "Not found - User not found"),

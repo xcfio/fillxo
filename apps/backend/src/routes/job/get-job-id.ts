@@ -4,6 +4,7 @@ import { db, table } from "../../database"
 import { main } from "../.."
 import { eq } from "drizzle-orm"
 import Type from "typebox"
+import { UUID } from "../../typebox"
 
 export default function GetJobWithID(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -12,7 +13,7 @@ export default function GetJobWithID(fastify: Awaited<ReturnType<typeof main>>) 
         schema: {
             description: "Get job details by ID",
             tags: ["Job"],
-            params: Type.Object({ id: Type.String() }),
+            params: Type.Object({ id: UUID }),
             response: {
                 200: Job,
                 404: ErrorResponse(404, "Not Found - Job Not found"),
