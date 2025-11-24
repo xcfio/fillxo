@@ -25,6 +25,7 @@ import {
     Shield
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
+import { formatDate } from "@/utils/time"
 
 interface PortfolioItem {
     title: string
@@ -227,9 +228,7 @@ export default function UserProfilePage() {
                                     <Calendar className="w-5 h-5 text-blue-400" />
                                     <div>
                                         <p className="text-sm text-gray-400">Member Since</p>
-                                        <p className="font-medium">
-                                            {new Date(profile.createdAt).toLocaleDateString()}
-                                        </p>
+                                        <p className="font-medium">{formatDate(profile.createdAt)}</p>
                                     </div>
                                 </div>
                             </div>

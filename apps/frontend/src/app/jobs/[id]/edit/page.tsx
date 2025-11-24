@@ -1,6 +1,6 @@
 "use client"
 
-import { useRouter } from "next/navigation"
+import { useRouter, useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
@@ -9,11 +9,26 @@ import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { ArrowLeft, Briefcase, Save } from "lucide-react"
 import { getUser } from "@/utils/auth"
-import { localToISO, getMinDateTime } from "@/utils/time"
+import { localToISO, isoToLocal, getMinDateTime } from "@/utils/time"
 
-export default function PostJobPage() {
+interface Job {
+    id: string
+    clientId: string
+    title: string
+    description: string
+    category: string
+    skills: string[]
+    budget: string
+    closedAt: string
+}
+
+export default function EditJobPage() {
     const router = useRouter()
+    const params = useParams()
+    const jobId = params.id as string
+
     const [user, setUser] = useState<any>(null)
+    const [job, setJob] = useState<Job | null>(null)
     const [loading, setLoading] = useState(true)
     const [submitting, setSubmitting] = useState(false)
     const [error, setError] = useState<string>("")
@@ -32,22 +47,62 @@ export default function PostJobPage() {
             try {
                 const user = await getUser()
                 if (!user) return router.push("/login")
-
-                if (user.role !== "client" && user.role !== "both") {
-                    router.push("/jobs")
-                    return
-                }
-
                 setUser(user)
             } catch (error) {
                 router.push("/login")
-            } finally {
-                setLoading(false)
             }
         }
 
         fetchUser()
     }, [router])
+
+    useEffect(() => {
+        const fetchJob = async () => {
+            if (!user) return
+
+            setLoading(true)
+            try {
+                const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/job/${jobId}`, {
+                    credentials: "include"
+                })
+
+                if (response.ok) {
+                    const jobData = await response.json()
+
+                    // Check if user is the owner
+                    if (jobData.clientId !== user.id) {
+                        router.push(`/jobs/${jobId}`)
+                        return
+                    }
+
+                    setJob(jobData)
+
+                    // Pre-fill form with existing data
+                    setFormData({
+                        title: jobData.title,
+                        description: jobData.description,
+                        category: jobData.category,
+                        skills: jobData.skills.join(", "),
+                        budget: jobData.budget,
+                        closedAt: isoToLocal(jobData.closedAt)
+                    })
+                } else if (response.status === 404) {
+                    router.push("/jobs")
+                } else {
+                    setError("Failed to load job")
+                }
+            } catch (error) {
+                console.error("Error fetching job:", error)
+                setError("An error occurred while loading the job")
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        if (jobId && user) {
+            fetchJob()
+        }
+    }, [jobId, user, router])
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault()
@@ -106,8 +161,8 @@ export default function PostJobPage() {
                 return
             }
 
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/job`, {
-                method: "POST",
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/job/${jobId}`, {
+                method: "PATCH",
                 headers: {
                     "Content-Type": "application/json"
                 },
@@ -123,15 +178,14 @@ export default function PostJobPage() {
             })
 
             if (response.ok) {
-                const job = await response.json()
-                router.push(`/jobs/${job.id}`)
+                router.push(`/jobs/${jobId}`)
             } else {
                 const errorData = await response.json()
-                setError(errorData.message || "Failed to create job posting")
+                setError(errorData.message || "Failed to update job posting")
             }
         } catch (error) {
-            console.error("Error creating job:", error)
-            setError("An error occurred while creating the job posting")
+            console.error("Error updating job:", error)
+            setError("An error occurred while updating the job posting")
         } finally {
             setSubmitting(false)
         }
@@ -148,12 +202,12 @@ export default function PostJobPage() {
         return <LoadingSpinner />
     }
 
-    if (!user) {
+    if (!user || !job) {
         return null
     }
 
-    // Get minimum date (tomorrow)
-    const minDate = getMinDateTime(1)
+    // Get minimum date (current time)
+    const minDate = getMinDateTime(0)
 
     const categories = [
         "Web Development",
@@ -174,12 +228,12 @@ export default function PostJobPage() {
                 {/* Back Button */}
                 <Button
                     variant="secondary"
-                    onClick={() => router.push("/jobs")}
+                    onClick={() => router.push(`/jobs/${jobId}`)}
                     icon={ArrowLeft}
                     iconPosition="left"
                     className="mb-6"
                 >
-                    Back to Jobs
+                    Back to Job
                 </Button>
 
                 {/* Header */}
@@ -190,9 +244,9 @@ export default function PostJobPage() {
                         </div>
                         <div>
                             <h1 className="text-4xl font-bold">
-                                Post a <span className="text-blue-400">Job</span>
+                                Edit <span className="text-blue-400">Job</span>
                             </h1>
-                            <p className="text-gray-400">Find the perfect freelancer for your project</p>
+                            <p className="text-gray-400">Update your job posting details</p>
                         </div>
                     </div>
                 </div>
@@ -320,12 +374,12 @@ export default function PostJobPage() {
                         {/* Submit Button */}
                         <div className="flex gap-4 pt-4">
                             <Button type="submit" isLoading={submitting} icon={Save} className="flex-1">
-                                {submitting ? "Creating..." : "Post Job"}
+                                {submitting ? "Saving..." : "Save Changes"}
                             </Button>
                             <Button
                                 type="button"
                                 variant="secondary"
-                                onClick={() => router.push("/jobs")}
+                                onClick={() => router.push(`/jobs/${jobId}`)}
                                 disabled={submitting}
                             >
                                 Cancel

@@ -20,6 +20,7 @@ import {
     CheckCircle2
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
+import { formatDateTime, isWithinHours } from "@/utils/time"
 
 interface Job {
     id: string
@@ -79,17 +80,6 @@ export default function JobDetailPage() {
         }
     }, [jobId, user, router])
 
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return date.toLocaleDateString("en-US", {
-            year: "numeric",
-            month: "long",
-            day: "numeric",
-            hour: "2-digit",
-            minute: "2-digit"
-        })
-    }
-
     const formatBudget = (budget: string) => {
         return new Intl.NumberFormat("en-US", {
             style: "currency",
@@ -140,7 +130,7 @@ export default function JobDetailPage() {
         )
     }
 
-    const isClosingSoon = new Date(job.closedAt).getTime() - Date.now() < 24 * 60 * 60 * 1000
+    const isClosingSoon = isWithinHours(job.closedAt, 24)
     const isClosed = !job.isOpen || new Date(job.closedAt) < new Date()
 
     return (
@@ -230,14 +220,14 @@ export default function JobDetailPage() {
                                 <Calendar className="w-4 h-4" />
                                 <span>Posted</span>
                             </div>
-                            <p className="text-sm font-medium">{formatDate(job.createdAt)}</p>
+                            <p className="text-sm font-medium">{formatDateTime(job.createdAt)}</p>
                         </div>
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
                                 <Calendar className="w-4 h-4" />
                                 <span>Closes</span>
                             </div>
-                            <p className="text-sm font-medium">{formatDate(job.closedAt)}</p>
+                            <p className="text-sm font-medium">{formatDateTime(job.closedAt)}</p>
                         </div>
                     </div>
 

@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import { Briefcase, DollarSign, Calendar, Users, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { getUser } from "@/utils/auth"
+import { formatDate } from "@/utils/time"
 
 interface Job {
     id: string
@@ -65,11 +66,6 @@ export default function JobsPage() {
 
         fetchJobs()
     }, [currentPage])
-
-    const formatDate = (dateString: string) => {
-        const date = new Date(dateString)
-        return date.toLocaleDateString("en-US", { year: "numeric", month: "short", day: "numeric" })
-    }
 
     const formatBudget = (budget: string) => {
         return new Intl.NumberFormat("en-US", {

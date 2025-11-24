@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
 import { User, Briefcase, Shield } from "lucide-react"
 import { getUser } from "@/utils/auth"
+import { formatDate } from "@/utils/time"
 
 export default function DashboardPage() {
     const router = useRouter()
@@ -99,7 +100,7 @@ export default function DashboardPage() {
                                 </div>
                                 <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                                     <p className="text-gray-400 text-sm mb-1">Member Since</p>
-                                    <p className="font-medium">{new Date(user.createdAt).toLocaleDateString()}</p>
+                                    <p className="font-medium">{formatDate(user.createdAt)}</p>
                                 </div>
                             </div>
                         </div>
@@ -108,21 +109,21 @@ export default function DashboardPage() {
 
                 {/* Quick Actions */}
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {user.role === "freelancer" ? (
-                        <Card hover className="cursor-pointer p-6">
+                    {(user.role === "freelancer" || user.role === "both") && (
+                        <Card hover onClick={() => router.push("/jobs")} className="cursor-pointer p-6">
                             <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Browse Jobs</h3>
                             <p className="text-gray-400">Find your next opportunity</p>
                         </Card>
-                    ) : null}
+                    )}
 
-                    {user.role === "client" ? (
-                        <Card hover className="cursor-pointer p-6">
+                    {(user.role === "client" || user.role === "both") && (
+                        <Card hover onClick={() => router.push("/jobs/post")} className="cursor-pointer p-6">
                             <Briefcase className="w-8 h-8 text-blue-400 mb-4" />
                             <h3 className="text-xl font-semibold mb-2">Post a Job</h3>
                             <p className="text-gray-400">Find talented freelancers</p>
                         </Card>
-                    ) : null}
+                    )}
 
                     {/* Edit Profile - Available for all roles */}
                     <Card hover onClick={() => router.push("/profile/update")} className="cursor-pointer p-6">
