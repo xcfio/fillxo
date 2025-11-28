@@ -60,8 +60,8 @@ importers:
         specifier: ^3.4.7
         version: 3.4.7
       resend:
-        specifier: ^6.4.1
-        version: 6.4.1
+        specifier: ^6.5.2
+        version: 6.5.2
       snowtransfer:
         specifier: ^0.15.0
         version: 0.15.0
@@ -1745,9 +1745,9 @@ packages:
   requires-port@1.0.0:
     resolution: {integrity: sha512-KigOCHcocU3XODJxsu8i/j8T9tzT4adHiecwORRQ0ZZFcp7ahwXuRU1m+yuO90C5ZUyGeGfocHDI14M3L3yDAQ==}
 
-  resend@6.4.1:
-    resolution: {integrity: sha512-+P1gF6bYT0lKd0vsYyKKTHd6PfMH37yDgNRA6wAARQgQbYlc2BZYuo9sB/uZKkVg1oGSh0cgpnxNKGsZJutXMg==}
-    engines: {node: '>=18'}
+  resend@6.5.2:
+    resolution: {integrity: sha512-Yl83UvS8sYsjgmF8dVbNPzlfpmb3DkLUk3VwsAbkaEFo9UMswpNuPGryHBXGk+Ta4uYMv5HmjVk3j9jmNkcEDg==}
+    engines: {node: '>=20'}
     peerDependencies:
       '@react-email/render': '*'
     peerDependenciesMeta:
@@ -3452,7 +3452,7 @@ snapshots:
 
   requires-port@1.0.0: {}
 
-  resend@6.4.1:
+  resend@6.5.2:
     dependencies:
       svix: 1.76.1
 
