@@ -18,5 +18,7 @@ export const reviews = pgTable("reviews", {
         .references(() => users.id),
     rating: integer("rating").notNull(),
     comment: text("comment").notNull(),
-    createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
+    createdAt: timestamp("created_at", { withTimezone: false })
+        .notNull()
+        .$defaultFn(() => new Date())
 })

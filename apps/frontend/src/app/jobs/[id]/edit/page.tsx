@@ -83,7 +83,7 @@ export default function EditJobPage() {
                         description: jobData.description,
                         category: jobData.category,
                         skills: jobData.skills.join(", "),
-                        budget: jobData.budget,
+                        budget: (jobData.budget / 100).toFixed(2),
                         closedAt: isoToLocal(jobData.closedAt)
                     })
                 } else if (response.status === 404) {
@@ -172,7 +172,7 @@ export default function EditJobPage() {
                     description: formData.description.trim(),
                     category: formData.category.trim(),
                     skills: skillsArray,
-                    budget: formData.budget,
+                    budget: Math.round(parseFloat(formData.budget) * 100),
                     closedAt: localToISO(formData.closedAt)
                 })
             })

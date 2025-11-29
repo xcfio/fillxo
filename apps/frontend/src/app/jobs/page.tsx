@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button"
 import { Briefcase, DollarSign, Calendar, Users, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
+import { formatBudget } from "@/utils/format"
 
 interface Job {
     id: string
@@ -18,7 +19,7 @@ interface Job {
     description: string
     category: string
     skills: string[]
-    budget: string
+    budget: number
     isOpen: boolean
     closedAt: string
     proposalCount: number
@@ -66,15 +67,6 @@ export default function JobsPage() {
 
         fetchJobs()
     }, [currentPage])
-
-    const formatBudget = (budget: string) => {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(parseFloat(budget))
-    }
 
     const categories = ["all", ...Array.from(new Set(jobs.map((job) => job.category)))]
 

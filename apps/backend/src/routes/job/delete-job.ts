@@ -1,5 +1,5 @@
 import { CreateError, isFastifyError } from "../../function"
-import { ErrorResponse, Job } from "../../type"
+import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
 import { eq } from "drizzle-orm"

@@ -21,6 +21,7 @@ import {
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime, isWithinHours } from "@/utils/time"
+import { formatBudget } from "@/utils/format"
 
 interface Job {
     id: string
@@ -29,7 +30,7 @@ interface Job {
     description: string
     category: string
     skills: string[]
-    budget: string
+    budget: number
     isOpen: boolean
     closedAt: string
     proposalCount: number
@@ -79,15 +80,6 @@ export default function JobDetailPage() {
             fetchJob()
         }
     }, [jobId, user, router])
-
-    const formatBudget = (budget: string) => {
-        return new Intl.NumberFormat("en-US", {
-            style: "currency",
-            currency: "USD",
-            minimumFractionDigits: 0,
-            maximumFractionDigits: 0
-        }).format(parseFloat(budget))
-    }
 
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this job posting?")) return

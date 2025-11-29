@@ -40,7 +40,7 @@ declare global {
 export function ErrorResponse(code: number, description?: string) {
     return Type.Object(
         {
-            statusCode: Type.Number({ examples: [code], description: "HTTP status code of the error" }),
+            statusCode: Type.Integer({ examples: [code], description: "HTTP status code of the error" }),
             error: Type.String({ description: "Error type or category" }),
             message: Type.String({ description: "Human-readable error message" })
         },

@@ -1,4 +1,4 @@
-import { pgTable, timestamp, decimal, uuid, index, pgEnum } from "drizzle-orm/pg-core"
+import { pgTable, timestamp, bigint, uuid, index, pgEnum } from "drizzle-orm/pg-core"
 import { proposals } from "./proposals"
 import { users } from "./users"
 import { jobs } from "./jobs"
@@ -24,11 +24,13 @@ export const contracts = pgTable(
         freelancerId: uuid("freelancer_id")
             .notNull()
             .references(() => users.id),
-        amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+        amount: bigint("amount", { mode: "number" }).notNull(),
         status: contractStatusEnum("status").default("active"),
         completedAt: timestamp("completed_at", { withTimezone: false }),
         startDate: timestamp("start_date", { withTimezone: false }).defaultNow(),
-        createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
+        createdAt: timestamp("created_at", { withTimezone: false })
+            .notNull()
+            .$defaultFn(() => new Date())
     },
     (table) => [
         index("contract_client_idx").on(table.clientId),

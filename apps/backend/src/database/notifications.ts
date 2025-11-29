@@ -15,7 +15,9 @@ export const notifications = pgTable(
         message: text("message").notNull(),
         link: text("link"),
         isRead: boolean("is_read").default(false),
-        createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull()
+        createdAt: timestamp("created_at", { withTimezone: false })
+            .notNull()
+            .$defaultFn(() => new Date())
     },
     (table) => [index("notification_user_idx").on(table.userId)]
 )

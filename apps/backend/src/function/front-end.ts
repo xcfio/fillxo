@@ -218,6 +218,12 @@ export const SCSS = `
     min-width: 60px;
 }
 
+.swagger-ui .opblock.opblock-patch .opblock-summary-method,
+.swagger-ui .opblock.opblock-patch .opblock-summary .opblock-summary-method {
+    background: #9333ea !important;
+    background-color: #9333ea !important;
+}
+
 .swagger-ui .opblock .opblock-summary {
     color: var(--text-primary) !important;
     padding: 18px 24px !important;

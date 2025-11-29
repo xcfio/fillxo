@@ -117,7 +117,7 @@ export default function PostJobPage() {
                     description: formData.description.trim(),
                     category: formData.category.trim(),
                     skills: skillsArray,
-                    budget: formData.budget,
+                    budget: Math.round(parseFloat(formData.budget) * 100),
                     closedAt: localToISO(formData.closedAt)
                 })
             })

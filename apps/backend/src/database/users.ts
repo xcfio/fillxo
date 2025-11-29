@@ -34,7 +34,9 @@ export const users = pgTable(
             skills?: Array<string>
             portfolio?: Array<{ title: string; description: string; images?: string; link?: string }>
         }>(),
-        createdAt: timestamp("created_at", { withTimezone: false }).defaultNow().notNull(),
+        createdAt: timestamp("created_at", { withTimezone: false })
+            .notNull()
+            .$defaultFn(() => new Date()),
         updatedAt: timestamp("updated_at", { withTimezone: false })
             .notNull()
             .$onUpdateFn(() => new Date())

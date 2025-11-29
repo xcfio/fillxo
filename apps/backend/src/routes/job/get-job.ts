@@ -14,8 +14,8 @@ export default function GetJob(fastify: Awaited<ReturnType<typeof main>>) {
             tags: ["Job"],
             querystring: Type.Partial(
                 Type.Object({
-                    page: Type.Number({ minimum: 1, default: 1, description: "Page number" }),
-                    limit: Type.Number({ minimum: 1, maximum: 100, default: 20, description: "Jobs per page" })
+                    page: Type.Integer({ minimum: 1, default: 1, description: "Page number" }),
+                    limit: Type.Integer({ minimum: 1, maximum: 100, default: 20, description: "Jobs per page" })
                 })
             ),
             response: {

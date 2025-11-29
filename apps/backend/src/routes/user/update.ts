@@ -2,7 +2,7 @@ import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
-import { eq, or } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import Type from "typebox"
 
 export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
