@@ -6,10 +6,10 @@ import { main } from "../.."
 import { eq } from "drizzle-orm"
 import { Type } from "typebox"
 
-export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>) {
+export default function GetProposalID(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
-        method: "PUT",
-        url: "/proposal/:id/accept",
+        method: "GET",
+        url: "/proposal/:id",
         schema: {
             description: "",
             tags: ["Proposal"],
@@ -17,7 +17,7 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
             response: {
                 200: Proposal,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
-                403: ErrorResponse(403, "Forbidden - You do not have permission to accept this proposal"),
+                403: ErrorResponse(403, "Forbidden - You do not have permission to reject this proposal"),
                 404: ErrorResponse(404, "Not Found - Proposal Not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
@@ -26,27 +26,21 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { id: clientId } = request.user
-                const { id } = request.params
+                const { id } = request.user
+                const { id: proposal } = request.params
 
-                const [OldProposal] = await db
+                const [query] = await db
                     .select()
                     .from(table.proposals)
                     .leftJoin(table.jobs, eq(table.proposals.jobId, table.jobs.id))
-                    .where(eq(table.proposals.id, id))
+                    .where(eq(table.proposals.id, proposal))
 
-                if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
-                if (OldProposal.jobs?.clientId !== clientId) {
-                    throw CreateError(403, "FORBIDDEN", "You do not have permission to accept this proposal")
+                if (!query) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
+                if (query.jobs?.clientId !== id && query.proposals.freelancerId !== id) {
+                    throw CreateError(403, "FORBIDDEN", "You do not have permission to view this proposal")
                 }
 
-                const [proposal] = await db
-                    .update(table.proposals)
-                    .set({ status: "accepted" })
-                    .where(eq(table.proposals.id, id))
-                    .returning()
-
-                return reply.status(200).send(toTypeBox(proposal))
+                return reply.status(200).send(toTypeBox(query.proposals))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

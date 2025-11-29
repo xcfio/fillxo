@@ -1,5 +1,5 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
-import { ErrorResponse, Proposal } from "../../type"
+import { CreateError, isFastifyError } from "../../function"
+import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
 import { main } from "../.."
@@ -8,14 +8,14 @@ import { Type } from "typebox"
 
 export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
-        method: "PUT",
-        url: "/proposal/:id/accept",
+        method: "DELETE",
+        url: "/proposal/:id",
         schema: {
             description: "",
             tags: ["Proposal"],
             params: Type.Object({ id: UUID }),
             response: {
-                200: Proposal,
+                200: Type.Object({ success: Type.Boolean() }),
                 400: ErrorResponse(400, "Bad Request - Validation error"),
                 403: ErrorResponse(403, "Forbidden - You do not have permission to accept this proposal"),
                 404: ErrorResponse(404, "Not Found - Proposal Not found"),
@@ -26,27 +26,18 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { id: clientId } = request.user
+                const { id: freelancer } = request.user
                 const { id } = request.params
 
-                const [OldProposal] = await db
-                    .select()
-                    .from(table.proposals)
-                    .leftJoin(table.jobs, eq(table.proposals.jobId, table.jobs.id))
-                    .where(eq(table.proposals.id, id))
-
+                const [OldProposal] = await db.select().from(table.proposals).where(eq(table.proposals.id, id))
                 if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
-                if (OldProposal.jobs?.clientId !== clientId) {
-                    throw CreateError(403, "FORBIDDEN", "You do not have permission to accept this proposal")
+
+                if (OldProposal.freelancerId !== freelancer) {
+                    throw CreateError(403, "FORBIDDEN", "You do not have permission to delete this proposal")
                 }
 
-                const [proposal] = await db
-                    .update(table.proposals)
-                    .set({ status: "accepted" })
-                    .where(eq(table.proposals.id, id))
-                    .returning()
-
-                return reply.status(200).send(toTypeBox(proposal))
+                await db.delete(table.proposals).where(eq(table.proposals.id, id))
+                return reply.status(200).send({ success: true })
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error
