@@ -1,7 +1,7 @@
 import { randomInt, timingSafeEqual } from "node:crypto"
+import { CreateError } from "./error"
 import { Email } from "./front-end"
 import { Resend } from "resend"
-import { CreateError } from "./error"
 
 const resend = new Resend(process.env.RESEND_API_KEY)
 const map = new Map<string, { otp: string; expires: number }>()

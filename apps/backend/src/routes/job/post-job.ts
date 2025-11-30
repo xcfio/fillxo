@@ -1,8 +1,8 @@
 import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../.."
-import Type from "typebox"
+import { main } from "../../"
+import { Type } from "typebox"
 
 export default function PostJob(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

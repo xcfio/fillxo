@@ -2,7 +2,7 @@ import { uuid, pgTable, text, timestamp, pgEnum, char, check, boolean, jsonb } f
 import { Static, Type } from "typebox"
 import { sql } from "drizzle-orm"
 import { v7 } from "uuid"
-import { UUID } from "../typebox"
+import { UUID, Nullable } from "../typebox"
 
 export const Role = pgEnum("role", ["freelancer", "client"])
 export const Privilege = pgEnum("privilege", ["moderator", "admin"])
@@ -157,30 +157,29 @@ export const User = Type.Object({
     role: Type.Union([Type.Literal("freelancer"), Type.Literal("client")], {
         description: "User role"
     }),
-    privilege: Type.Union([Type.Literal("moderator"), Type.Literal("admin"), Type.Null()], {
+    privilege: Nullable(Type.Union([Type.Literal("moderator"), Type.Literal("admin")]), {
         description: "User privilege level"
     }),
     isBanned: Type.Boolean({
         default: false,
         description: "Whether user is banned"
     }),
-    country: Type.Union([
+    country: Nullable(
         Type.String({
             minLength: 2,
             maxLength: 2,
             pattern: "^[A-Z]{2}$",
             examples: ["BD", "US"],
             description: "Country code (ISO 3166-1 alpha-2)"
-        }),
-        Type.Null()
-    ]),
-    rating: Type.Union([RatingSchema, Type.Null()], {
+        })
+    ),
+    rating: Nullable(RatingSchema, {
         description: "User rating information"
     }),
-    client: Type.Union([ClientSchema, Type.Null()], {
+    client: Nullable(ClientSchema, {
         description: "Client-specific profile data"
     }),
-    freelancer: Type.Union([FreelancerSchema, Type.Null()], {
+    freelancer: Nullable(FreelancerSchema, {
         description: "Freelancer-specific profile data"
     }),
     createdAt: Type.String({

@@ -1,10 +1,10 @@
 import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../.."
-import { eq } from "drizzle-orm"
-import Type from "typebox"
 import { UUID } from "../../typebox"
+import { main } from "../../"
+import { eq } from "drizzle-orm"
+import { Type } from "typebox"
 
 export default function GetJobWithID(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

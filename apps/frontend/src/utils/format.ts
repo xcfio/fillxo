@@ -15,3 +15,12 @@ export function formatBudget(cents: number): string {
         maximumFractionDigits: 2
     }).format(Number(amount))
 }
+
+export function formatBDTBudget(amount: number): string {
+    return new Intl.NumberFormat("en-US", {
+        style: "currency",
+        currency: "BDT",
+        minimumFractionDigits: 0,
+        maximumFractionDigits: 0
+    }).format(amount)
+}

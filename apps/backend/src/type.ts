@@ -1,9 +1,10 @@
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
-export { Job } from "./database/jobs"
-export { Proposal } from "./database/proposals"
-export { User, PublicUser } from "./database/users"
 export { Notifications } from "./database/notifications"
+export { User, PublicUser } from "./database/users"
+export { Proposal } from "./database/proposals"
+export { Payments } from "./database/payments"
+export { Job } from "./database/jobs"
 
 declare module "fastify" {
     interface FastifyInstance {

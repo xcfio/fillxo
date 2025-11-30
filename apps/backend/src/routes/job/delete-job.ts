@@ -1,10 +1,10 @@
 import { CreateError, isFastifyError } from "../../function"
 import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../.."
-import { eq } from "drizzle-orm"
-import Type from "typebox"
 import { UUID } from "../../typebox"
+import { main } from "../../"
+import { eq } from "drizzle-orm"
+import { Type } from "typebox"
 
 export default function DeleteJob(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

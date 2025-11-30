@@ -1,7 +1,7 @@
 import { CreateError, isFastifyError } from "../../function"
 import { ErrorResponse } from "../../type"
 import { main } from "../../"
-import Type from "typebox"
+import { Type } from "typebox"
 
 export default function Logout(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

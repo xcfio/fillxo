@@ -1,7 +1,7 @@
 import { CreateError, isFastifyError, SendOTP } from "../../function"
 import { ErrorResponse } from "../../type"
-import { main } from "../.."
-import Type from "typebox"
+import { main } from "../../"
+import { Type } from "typebox"
 
 export default function Send_OTP(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

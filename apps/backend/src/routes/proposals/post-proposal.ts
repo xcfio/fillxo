@@ -4,7 +4,7 @@ import { amount, UUID } from "../../typebox"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { and, eq } from "drizzle-orm"
-import Type from "typebox"
+import { Type } from "typebox"
 
 export default function PostProposal(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

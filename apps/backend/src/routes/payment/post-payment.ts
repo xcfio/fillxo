@@ -10,7 +10,7 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         method: "POST",
         url: "/payments",
         schema: {
-            description: "Create a new job posting",
+            description: "Create a new payment for an accepted proposal",
             tags: ["Payments"],
             body: Type.Pick(Payments, ["proposalId", "paymentMethod", "transactionId"]),
             response: {
@@ -51,14 +51,17 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(400, "PAYMENT_EXISTS", "Payment already exists for this proposal")
                 }
 
-                const [payment] = await db.insert(table.payments).values({
-                    clientId: id,
-                    freelancerId: query.proposals.freelancerId,
-                    paymentMethod,
-                    proposalId,
-                    transactionId,
-                    amount: query.proposals.bidAmount
-                })
+                const [payment] = await db
+                    .insert(table.payments)
+                    .values({
+                        clientId: id,
+                        freelancerId: query.proposals.freelancerId,
+                        paymentMethod,
+                        proposalId,
+                        transactionId,
+                        amount: query.proposals.bidAmount
+                    })
+                    .returning()
 
                 return reply.status(201).send(toTypeBox(payment))
             } catch (error) {

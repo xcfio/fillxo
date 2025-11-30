@@ -2,7 +2,7 @@ import { CreateError, isFastifyError } from "../../function"
 import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
-import { main } from "../.."
+import { main } from "../../"
 import { eq } from "drizzle-orm"
 import { Type } from "typebox"
 

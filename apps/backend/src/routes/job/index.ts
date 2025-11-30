@@ -1,4 +1,4 @@
-import { main } from "../.."
+import { main } from "../../"
 import GetJobWithID from "./get-job-id"
 import DeleteJob from "./delete-job"
 import UpdateJob from "./update-job"

@@ -1,9 +1,9 @@
 import { pgTable, pgEnum, text, integer, timestamp, bigint, uuid } from "drizzle-orm/pg-core"
+import { amount, UUID } from "../typebox"
+import { users } from "./users"
+import { jobs } from "./jobs"
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
-import { users } from "./users"
-import { amount, UUID } from "../typebox"
-import { jobs } from "./jobs"
 
 export const ProposalStatus = pgEnum("proposal", ["pending", "accepted", "rejected"])
 

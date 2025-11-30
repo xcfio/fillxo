@@ -1,9 +1,9 @@
 import { CreateError, isFastifyError, HmacPassword, VerifyOTP } from "../../function"
 import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../.."
+import { main } from "../../"
 import { eq } from "drizzle-orm"
-import Type from "typebox"
+import { Type } from "typebox"
 
 export default function ResetPassword(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

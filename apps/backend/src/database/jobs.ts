@@ -1,8 +1,8 @@
-import { pgTable, boolean, text, integer, timestamp, bigint, uuid } from "drizzle-orm/pg-core"
+import { pgTable, boolean, text, timestamp, bigint, uuid } from "drizzle-orm/pg-core"
+import { amount, UUID } from "../typebox"
+import { users } from "./users"
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
-import { users } from "./users"
-import { amount, UUID } from "../typebox"
 
 export const jobs = pgTable("jobs", {
     id: uuid("id")

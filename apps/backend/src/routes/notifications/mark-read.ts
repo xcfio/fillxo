@@ -1,10 +1,10 @@
 import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Notifications } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../.."
+import { UUID } from "../../typebox"
+import { main } from "../../"
 import { eq, and } from "drizzle-orm"
 import { Type } from "typebox"
-import { UUID } from "../../typebox"
 
 export default function MarkReadNotifications(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({

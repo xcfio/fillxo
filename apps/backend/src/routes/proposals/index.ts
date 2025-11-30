@@ -1,4 +1,4 @@
-import { main } from "../.."
+import { main } from "../../"
 import GetProposalReceived from "./get-proposal-received"
 import GetProposalSent from "./get-proposal-sent"
 import DeleteProposal from "./delete-proposal"

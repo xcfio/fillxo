@@ -1,8 +1,8 @@
 import { pgTable, text, boolean, timestamp, uuid, index } from "drizzle-orm/pg-core"
-import { users } from "./users"
-import { v7 } from "uuid"
-import { Type, Static } from "typebox"
 import { UUID } from "../typebox"
+import { users } from "./users"
+import { Type, Static } from "typebox"
+import { v7 } from "uuid"
 
 export const notifications = pgTable(
     "notifications",

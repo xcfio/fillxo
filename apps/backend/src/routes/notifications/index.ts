@@ -1,4 +1,4 @@
-import { main } from "../.."
+import { main } from "../../"
 import DeleteNotifications from "./delete-notifications"
 import MarkAllReadNotifications from "./mark-all-read"
 import GetNotifications from "./get-notifications"

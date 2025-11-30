@@ -3,7 +3,7 @@ import { ErrorResponse, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { eq, or } from "drizzle-orm"
-import Type from "typebox"
+import { Type } from "typebox"
 
 export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
