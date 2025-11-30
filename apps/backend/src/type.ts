@@ -3,6 +3,7 @@ import { v7 } from "uuid"
 export { Job } from "./database/jobs"
 export { Proposal } from "./database/proposals"
 export { User, PublicUser } from "./database/users"
+export { Notifications } from "./database/notifications"
 
 declare module "fastify" {
     interface FastifyInstance {
