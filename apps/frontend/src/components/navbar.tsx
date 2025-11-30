@@ -13,7 +13,8 @@ import {
     Settings,
     Briefcase,
     LayoutDashboard,
-    ChevronDown
+    ChevronDown,
+    Check
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { Notification } from "@/types/notification"
@@ -85,6 +86,21 @@ export default function Navbar() {
             }
         } catch (error) {
             console.error("Error fetching notifications:", error)
+        }
+    }
+
+    const markAllRead = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/notifications/read-all`, {
+                method: "PUT",
+                credentials: "include"
+            })
+            if (response.ok) {
+                setNotifications((prev) => prev.map((n) => ({ ...n, isRead: true })))
+                setUnreadCount(0)
+            }
+        } catch (error) {
+            console.error("Error marking all as read:", error)
         }
     }
 
@@ -184,9 +200,27 @@ export default function Navbar() {
                                     <div className="absolute top-full right-0 mt-1 w-80 bg-gray-900 border border-blue-900/30 rounded-xl shadow-xl overflow-hidden z-50">
                                         <div className="px-4 py-3 border-b border-blue-900/20 flex justify-between items-center">
                                             <h3 className="font-semibold">Notifications</h3>
-                                            {unreadCount > 0 && (
-                                                <span className="text-xs text-red-400">{unreadCount} unread</span>
-                                            )}
+                                            <div className="flex items-center gap-2">
+                                                {unreadCount > 0 && (
+                                                    <>
+                                                        <button
+                                                            onClick={(e) => {
+                                                                e.stopPropagation()
+                                                                markAllRead()
+                                                            }}
+                                                            className="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1"
+                                                            title="Mark all as read"
+                                                        >
+                                                            <Check className="w-3 h-3" />
+                                                            Mark read
+                                                        </button>
+                                                        <span className="text-xs text-gray-500">•</span>
+                                                        <span className="text-xs text-red-400">
+                                                            {unreadCount} unread
+                                                        </span>
+                                                    </>
+                                                )}
+                                            </div>
                                         </div>
                                         <div className="max-h-80 overflow-y-auto">
                                             {notifications.length === 0 ? (

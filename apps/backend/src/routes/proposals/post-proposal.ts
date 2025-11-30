@@ -1,9 +1,9 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, isFastifyError, SendNotification, toTypeBox } from "../../function"
 import { ErrorResponse, Proposal } from "../../type"
 import { amount, UUID } from "../../typebox"
 import { db, table } from "../../database"
 import { main } from "../../"
-import { eq } from "drizzle-orm"
+import { and, eq } from "drizzle-orm"
 import Type from "typebox"
 
 export default function PostProposal(fastify: Awaited<ReturnType<typeof main>>) {
@@ -46,11 +46,26 @@ export default function PostProposal(fastify: Awaited<ReturnType<typeof main>>) 
                 const [job] = await db.select().from(table.jobs).where(eq(table.jobs.id, jobId))
                 if (!job) throw CreateError(404, "JOB_NOT_FOUND", "Job not found")
 
+                const [query] = await db
+                    .select()
+                    .from(table.proposals)
+                    .where(and(eq(table.proposals.freelancerId, id), eq(table.proposals.jobId, jobId)))
+
+                if (query) {
+                    throw CreateError(400, "PROPOSAL_EXISTS", "You have already submitted a proposal for this job")
+                }
+
                 const [proposal] = await db
                     .insert(table.proposals)
                     .values({ bidAmount, coverLetter, deliveryDays, freelancerId: id, jobId: job.id })
                     .returning()
 
+                await SendNotification(
+                    job.clientId,
+                    "New Proposal Received",
+                    `You have received a new proposal for your job posting "${job.title}".`,
+                    `/jobs/${job.id}/proposals`
+                )
                 return reply.status(201).send(toTypeBox(proposal))
             } catch (error) {
                 if (isFastifyError(error)) {

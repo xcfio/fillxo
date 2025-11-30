@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, isFastifyError, SendNotification, toTypeBox } from "../../function"
 import { ErrorResponse, Proposal } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -48,6 +48,13 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
                     .set({ status: "accepted" })
                     .where(eq(table.proposals.id, id))
                     .returning()
+
+                await SendNotification(
+                    OldProposal.proposals.freelancerId,
+                    "Proposal Accepted",
+                    `Your proposal for the job "${OldProposal.jobs?.title}" has been accepted.`,
+                    `/jobs/${OldProposal.jobs?.id}`
+                )
 
                 return reply.status(200).send(toTypeBox(proposal))
             } catch (error) {

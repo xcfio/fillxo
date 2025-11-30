@@ -1,6 +1,7 @@
 export * from "./discord"
 export * from "./email"
 export * from "./error"
+export * from "./notification"
 export * from "./license"
 export * from "./front-end"
 export * from "./password"

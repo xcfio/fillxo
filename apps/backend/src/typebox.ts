@@ -8,7 +8,7 @@ export const UUID = Type.String({
 })
 
 export const amount = Type.Integer({
-    minimum: 1,
+    minimum: 100,
     maximum: Number.MAX_SAFE_INTEGER,
     examples: [500, 1250],
     description: "Amount in cents (e.g., 50000 for $500.00)"

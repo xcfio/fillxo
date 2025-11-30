@@ -249,7 +249,9 @@ function ReceivedProposalsContent() {
                                                 {getStatusBadge(proposal.status)}
                                             </div>
 
-                                            <p className="text-gray-400 mb-4 line-clamp-2">{proposal.coverLetter}</p>
+                                            <p className="text-gray-400 mb-4 line-clamp-2 break-all">
+                                                {proposal.coverLetter}
+                                            </p>
 
                                             <div className="flex flex-wrap gap-6 text-sm text-gray-400">
                                                 <div className="flex items-center gap-2">

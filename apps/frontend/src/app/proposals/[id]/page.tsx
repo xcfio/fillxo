@@ -278,8 +278,10 @@ export default function ProposalDetailPage() {
                     {/* Cover Letter */}
                     <div className="mb-6">
                         <h2 className="text-xl font-bold mb-3">Cover Letter</h2>
-                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-6">
-                            <p className="text-gray-300 whitespace-pre-wrap leading-relaxed">{proposal.coverLetter}</p>
+                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-6 overflow-hidden">
+                            <p className="text-gray-300 whitespace-pre-wrap leading-relaxed break-words">
+                                {proposal.coverLetter}
+                            </p>
                         </div>
                     </div>
 
