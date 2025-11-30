@@ -3,7 +3,7 @@ import { ErrorResponse, Notifications } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
 import { main } from "../../"
-import { eq, and } from "drizzle-orm"
+import { eq } from "drizzle-orm"
 import { Type } from "typebox"
 
 export default function MarkReadNotifications(fastify: Awaited<ReturnType<typeof main>>) {

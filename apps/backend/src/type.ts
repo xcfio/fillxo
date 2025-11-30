@@ -28,6 +28,7 @@ declare global {
             NODE_ENV: "development" | "production"
             DATABASE_URI: string
 
+            PAYMENT_SECRET: string
             HMAC_SECRET: string
             COOKIE_SECRET: string
             JWT_SECRET: string

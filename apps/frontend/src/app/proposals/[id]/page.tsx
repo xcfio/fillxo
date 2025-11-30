@@ -20,12 +20,14 @@ import {
     AlertCircle,
     Check,
     X,
-    Briefcase
+    Briefcase,
+    CreditCard
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
 import { Proposal, ProposalStatus } from "@/types/proposal"
+import { Payment } from "@/types/payment"
 
 export default function ProposalDetailPage() {
     const router = useRouter()
@@ -33,6 +35,7 @@ export default function ProposalDetailPage() {
     const proposalId = params.id as string
 
     const [proposal, setProposal] = useState<Proposal | null>(null)
+    const [payment, setPayment] = useState<Payment | null>(null)
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<any>(null)
     const [actionLoading, setActionLoading] = useState(false)
@@ -64,6 +67,10 @@ export default function ProposalDetailPage() {
                     // Note: isJobOwner would need to be determined from the job data
                     // For now, we'll allow clients to see accept/reject buttons
                     setIsJobOwner(user.role === "client" || user.role === "both")
+                    // Fetch payment if proposal is accepted
+                    if (data.status === "accepted") {
+                        fetchPayment()
+                    }
                 } else if (response.status === 404) {
                     router.push("/proposals")
                 } else if (response.status === 403) {
@@ -80,6 +87,20 @@ export default function ProposalDetailPage() {
 
         fetchProposal()
     }, [proposalId, user, router])
+
+    const fetchPayment = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments/proposal/${proposalId}`, {
+                credentials: "include"
+            })
+            if (response.ok) {
+                const data = await response.json()
+                setPayment(data)
+            }
+        } catch (error) {
+            console.error("Error fetching payment:", error)
+        }
+    }
 
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this proposal?")) return
@@ -296,13 +317,64 @@ export default function ProposalDetailPage() {
                     <Card className="bg-emerald-600/10 border-emerald-600/30">
                         <div className="flex items-start gap-4">
                             <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
-                            <div>
+                            <div className="flex-1">
                                 <h3 className="text-lg font-bold mb-2 text-emerald-400">Proposal Accepted!</h3>
-                                <p className="text-gray-300">
-                                    {isOwner
-                                        ? "Congratulations! Your proposal has been accepted. The client will contact you soon to discuss the project details."
-                                        : "You have accepted this proposal. A contract will be created and you can start working with the freelancer."}
-                                </p>
+                                {payment ? (
+                                    <div>
+                                        <p className="text-gray-300 mb-3">
+                                            {isOwner
+                                                ? "The client has submitted payment for this project."
+                                                : "You have submitted payment for this project."}
+                                        </p>
+                                        <div className="bg-gray-900/50 border border-emerald-900/20 rounded-lg p-4">
+                                            <div className="flex items-center justify-between flex-wrap gap-2">
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Payment Status</p>
+                                                    <p className="font-semibold capitalize">
+                                                        {payment.status === "pending" && (
+                                                            <span className="text-yellow-400">
+                                                                ⏳ Pending Verification
+                                                            </span>
+                                                        )}
+                                                        {payment.status === "verified" && (
+                                                            <span className="text-emerald-400">✓ Verified</span>
+                                                        )}
+                                                        {payment.status === "rejected" && (
+                                                            <span className="text-red-400">✗ Rejected</span>
+                                                        )}
+                                                        {payment.status === "refunded" && (
+                                                            <span className="text-blue-400">↩ Refunded</span>
+                                                        )}
+                                                    </p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Transaction ID</p>
+                                                    <p className="font-mono text-sm">{payment.transactionId}</p>
+                                                </div>
+                                                <div>
+                                                    <p className="text-sm text-gray-400">Method</p>
+                                                    <p className="font-semibold capitalize">{payment.paymentMethod}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="text-gray-300 mb-4">
+                                            {isOwner
+                                                ? "Congratulations! Your proposal has been accepted. The client will contact you soon to discuss the project details."
+                                                : "You have accepted this proposal. Complete the payment to start working with the freelancer."}
+                                        </p>
+                                        {isJobOwner && !isOwner && (
+                                            <Button
+                                                icon={CreditCard}
+                                                onClick={() => router.push(`/proposals/${proposalId}/pay`)}
+                                            >
+                                                Make Payment
+                                            </Button>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </Card>

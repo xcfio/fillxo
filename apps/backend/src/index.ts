@@ -12,8 +12,16 @@ export async function main() {
     const fastify = Fastify({
         trustProxy: true,
         logger: {
-            formatters: { level: (level, number) => ({ level: `${level} (${number})` }) },
-            file: isDevelopment ? "./log.json" : undefined
+            timestamp: () => `,"time":"${new Date().toISOString()}"`,
+            file: isDevelopment ? "./log.json" : undefined,
+            transport: {
+                target: "pino-pretty",
+                options: {
+                    // translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
+                    ignore: "pid,hostname",
+                    singleLine: false
+                }
+            }
         },
         schemaErrorFormatter: ValidationErrorHandler
     }).withTypeProvider<TypeBoxTypeProvider>()

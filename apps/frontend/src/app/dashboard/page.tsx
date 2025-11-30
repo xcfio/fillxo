@@ -143,6 +143,14 @@ export default function DashboardPage() {
                         </Card>
                     )}
 
+                    {(user.role === "client" || user.role === "both") && (
+                        <Card hover onClick={() => router.push("/jobs/my")} className="cursor-pointer p-6">
+                            <Briefcase className="w-8 h-8 text-green-400 mb-4" />
+                            <h3 className="text-xl font-semibold mb-2">My Posted Jobs</h3>
+                            <p className="text-gray-400">View and manage your job listings</p>
+                        </Card>
+                    )}
+
                     {/* Edit Profile - Available for all roles */}
                     <Card hover onClick={() => router.push("/profile/update")} className="cursor-pointer p-6">
                         <User className="w-8 h-8 text-blue-400 mb-4" />

@@ -2,8 +2,9 @@ import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
-import { desc } from "drizzle-orm"
+import { desc, eq } from "drizzle-orm"
 import { Type } from "typebox"
+import { UUID } from "../../typebox"
 
 export default function GetJob(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -14,6 +15,7 @@ export default function GetJob(fastify: Awaited<ReturnType<typeof main>>) {
             tags: ["Job"],
             querystring: Type.Partial(
                 Type.Object({
+                    clientId: UUID,
                     page: Type.Integer({ minimum: 1, default: 1, description: "Page number" }),
                     limit: Type.Integer({ minimum: 1, maximum: 100, default: 20, description: "Jobs per page" })
                 })
@@ -26,10 +28,11 @@ export default function GetJob(fastify: Awaited<ReturnType<typeof main>>) {
         },
         handler: async (request, reply) => {
             try {
-                const { page = 1, limit = 20 } = request.query
+                const { clientId, page = 1, limit = 20 } = request.query
                 const jobs = await db
                     .select()
                     .from(table.jobs)
+                    .where(clientId ? eq(table.jobs.clientId, clientId) : undefined)
                     .orderBy(desc(table.jobs.createdAt))
                     .limit(limit)
                     .offset((page - 1) * limit)
