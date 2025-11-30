@@ -22,7 +22,6 @@ interface Job {
     budget: number
     isOpen: boolean
     closedAt: string
-    proposalCount: number
     createdAt: string
 }
 
@@ -184,12 +183,6 @@ export default function JobsPage() {
                                                 <DollarSign className="w-4 h-4" />
                                                 <span className="font-semibold text-blue-400">
                                                     {formatBudget(job.budget)}
-                                                </span>
-                                            </div>
-                                            <div className="flex items-center gap-2">
-                                                <Users className="w-4 h-4" />
-                                                <span>
-                                                    {job.proposalCount} proposal{job.proposalCount !== 1 ? "s" : ""}
                                                 </span>
                                             </div>
                                             <div className="flex items-center gap-2">

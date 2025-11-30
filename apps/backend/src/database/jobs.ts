@@ -17,7 +17,6 @@ export const jobs = pgTable("jobs", {
     skills: text("skills").array().notNull().default([]),
     budget: bigint("budget", { mode: "number" }).notNull(),
     isOpen: boolean("is_open").notNull().default(true),
-    proposalCount: integer("proposal_count").notNull().default(0),
     closedAt: timestamp("closed_at", { withTimezone: false }).notNull(),
     createdAt: timestamp("created_at", { withTimezone: false })
         .notNull()
@@ -35,6 +34,5 @@ export const Job = Type.Object({
     budget: amount,
     isOpen: Type.Boolean({ default: true }),
     closedAt: Type.String({ format: "date-time" }),
-    proposalCount: Type.Integer({ default: 0 }),
     createdAt: Type.String({ format: "date-time" })
 })

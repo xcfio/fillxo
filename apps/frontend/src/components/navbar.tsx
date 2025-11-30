@@ -16,6 +16,7 @@ import {
     ChevronDown
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
+import { Notification } from "@/types/notification"
 
 export default function Navbar() {
     const router = useRouter()
@@ -24,7 +25,11 @@ export default function Navbar() {
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false)
     const [isDropdownOpen, setIsDropdownOpen] = useState(false)
     const [userData, setUserData] = useState<any>(null)
+    const [unreadCount, setUnreadCount] = useState(0)
+    const [notifications, setNotifications] = useState<Notification[]>([])
+    const [isNotificationOpen, setIsNotificationOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
+    const notificationRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -33,13 +38,17 @@ export default function Navbar() {
                 if (user) {
                     setUserData(user)
                     setIsLoggedIn(true)
+                    // Fetch unread notification count
+                    fetchUnreadCount()
                 } else {
                     setIsLoggedIn(false)
                     setUserData(null)
+                    setUnreadCount(0)
                 }
             } catch (error) {
                 setIsLoggedIn(false)
                 setUserData(null)
+                setUnreadCount(0)
             } finally {
                 setAuthCheckDone(true)
             }
@@ -56,22 +65,48 @@ export default function Navbar() {
         }
     }, [])
 
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/notifications?limit=5`, {
+                credentials: "include"
+            })
+            if (response.ok) {
+                const data = await response.json()
+                setNotifications(data)
+                // Count unread
+                const countResponse = await fetch(
+                    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/notifications?isRead=false&limit=100`,
+                    { credentials: "include" }
+                )
+                if (countResponse.ok) {
+                    const countData = await countResponse.json()
+                    setUnreadCount(countData.length)
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching notifications:", error)
+        }
+    }
+
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
             if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsDropdownOpen(false)
             }
+            if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
+                setIsNotificationOpen(false)
+            }
         }
 
-        if (isDropdownOpen) {
+        if (isDropdownOpen || isNotificationOpen) {
             document.addEventListener("mousedown", handleClickOutside)
         }
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
-    }, [isDropdownOpen])
+    }, [isDropdownOpen, isNotificationOpen])
 
     const handleLogout = async () => {
         try {
@@ -130,13 +165,73 @@ export default function Navbar() {
                         </div>
                     ) : isLoggedIn && userData ? (
                         <>
-                            <button
-                                onClick={() => router.push("/dashboard")}
-                                className="text-gray-400 hover:text-white transition-colors"
-                                title="Notifications"
-                            >
-                                <Bell className="w-5 h-5" />
-                            </button>
+                            {/* Notifications Dropdown */}
+                            <div className="relative" ref={notificationRef}>
+                                <button
+                                    onClick={() => setIsNotificationOpen(!isNotificationOpen)}
+                                    className="relative p-2 text-gray-400 hover:text-white transition-colors"
+                                    title="Notifications"
+                                >
+                                    <Bell className="w-5 h-5" />
+                                    {unreadCount > 0 && (
+                                        <span className="absolute top-0 right-0 w-4 h-4 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                                            {unreadCount > 9 ? "9+" : unreadCount}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {isNotificationOpen && (
+                                    <div className="absolute top-full right-0 mt-1 w-80 bg-gray-900 border border-blue-900/30 rounded-xl shadow-xl overflow-hidden z-50">
+                                        <div className="px-4 py-3 border-b border-blue-900/20 flex justify-between items-center">
+                                            <h3 className="font-semibold">Notifications</h3>
+                                            {unreadCount > 0 && (
+                                                <span className="text-xs text-red-400">{unreadCount} unread</span>
+                                            )}
+                                        </div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {notifications.length === 0 ? (
+                                                <div className="px-4 py-8 text-center text-gray-400">
+                                                    <Bell className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                                                    <p className="text-sm">No notifications yet</p>
+                                                </div>
+                                            ) : (
+                                                notifications.map((notification) => (
+                                                    <button
+                                                        key={notification.id}
+                                                        onClick={() => {
+                                                            setIsNotificationOpen(false)
+                                                            if (notification.link) {
+                                                                router.push(notification.link)
+                                                            }
+                                                        }}
+                                                        className={`w-full px-4 py-3 text-left hover:bg-gray-800/50 transition-colors border-b border-blue-900/10 last:border-0 ${
+                                                            !notification.isRead ? "bg-blue-900/10" : ""
+                                                        }`}
+                                                    >
+                                                        <p
+                                                            className={`text-sm font-medium ${!notification.isRead ? "text-white" : "text-gray-300"}`}
+                                                        >
+                                                            {notification.title}
+                                                        </p>
+                                                        <p className="text-xs text-gray-400 mt-1 line-clamp-2">
+                                                            {notification.message}
+                                                        </p>
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                setIsNotificationOpen(false)
+                                                router.push("/notifications")
+                                            }}
+                                            className="w-full px-4 py-3 text-center text-sm text-blue-400 hover:bg-gray-800/50 transition-colors border-t border-blue-900/20"
+                                        >
+                                            See all notifications
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
                             <button
                                 onClick={() => router.push("/dashboard")}
                                 className="text-gray-400 hover:text-white transition-colors"
@@ -330,12 +425,17 @@ export default function Navbar() {
                                     </div>
                                 </button>
                                 <button
-                                    onClick={() => handleNavigation("/dashboard")}
+                                    onClick={() => handleNavigation("/notifications")}
                                     className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
                                 >
                                     <div className="flex items-center gap-3">
                                         <Bell className="w-4 h-4" />
                                         Notifications
+                                        {unreadCount > 0 && (
+                                            <span className="ml-auto bg-red-500 text-white text-xs px-2 py-0.5 rounded-full">
+                                                {unreadCount > 9 ? "9+" : unreadCount}
+                                            </span>
+                                        )}
                                     </div>
                                 </button>
                                 <button

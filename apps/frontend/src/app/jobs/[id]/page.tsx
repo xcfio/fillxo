@@ -33,7 +33,6 @@ interface Job {
     budget: number
     isOpen: boolean
     closedAt: string
-    proposalCount: number
     createdAt: string
 }
 
@@ -45,7 +44,9 @@ export default function JobDetailPage() {
     const [job, setJob] = useState<Job | null>(null)
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<any>(null)
-    const [isOwner, setIsOwner] = useState(false)
+
+    // Calculate isOwner based on current user and job
+    const isOwner = Boolean(user && job && user.id === job.clientId)
 
     useEffect(() => {
         const fetchUser = async () => setUser(await getUser())
@@ -63,7 +64,6 @@ export default function JobDetailPage() {
                 if (response.ok) {
                     const jobData = await response.json()
                     setJob(jobData)
-                    setIsOwner(user?.id === jobData.clientId)
                 } else if (response.status === 404) {
                     router.push("/jobs")
                 } else {
@@ -79,7 +79,7 @@ export default function JobDetailPage() {
         if (jobId) {
             fetchJob()
         }
-    }, [jobId, user, router])
+    }, [jobId, router])
 
     const handleDelete = async () => {
         if (!confirm("Are you sure you want to delete this job posting?")) return
@@ -103,6 +103,10 @@ export default function JobDetailPage() {
 
     const handleSubmitProposal = () => {
         router.push(`/proposals/submit?jobId=${jobId}`)
+    }
+
+    const handleViewProposals = () => {
+        router.push(`/jobs/${jobId}/proposals`)
     }
 
     if (loading) {
@@ -192,20 +196,13 @@ export default function JobDetailPage() {
                     </div>
 
                     {/* Job Stats */}
-                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
                                 <DollarSign className="w-4 h-4" />
                                 <span>Budget</span>
                             </div>
                             <p className="text-2xl font-bold text-blue-400">{formatBudget(job.budget)}</p>
-                        </div>
-                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                                <Users className="w-4 h-4" />
-                                <span>Proposals</span>
-                            </div>
-                            <p className="text-2xl font-bold">{job.proposalCount}</p>
                         </div>
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
@@ -242,28 +239,18 @@ export default function JobDetailPage() {
                     </div>
                 </Card>
 
-                {/* Proposals Section (for job owner) */}
+                {/* View Proposals Section (for job owner) */}
                 {isOwner && (
                     <Card>
-                        <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-bold">Proposals ({job.proposalCount})</h2>
-                            {job.proposalCount > 0 && (
-                                <Button variant="secondary" onClick={() => router.push(`/jobs/${jobId}/proposals`)}>
-                                    View All Proposals
-                                </Button>
-                            )}
-                        </div>
-                        {job.proposalCount === 0 ? (
-                            <div className="text-center py-8 text-gray-400">
-                                <Users className="w-12 h-12 mx-auto mb-3 opacity-50" />
-                                <p>No proposals yet. Share your job posting to get started!</p>
+                        <div className="flex justify-between items-center">
+                            <div>
+                                <h2 className="text-xl font-bold">Proposals</h2>
+                                <p className="text-gray-400 text-sm mt-1">View and manage proposals for this job</p>
                             </div>
-                        ) : (
-                            <p className="text-gray-400">
-                                You have received {job.proposalCount} proposal{job.proposalCount !== 1 ? "s" : ""} for
-                                this job.
-                            </p>
-                        )}
+                            <Button icon={Users} onClick={() => router.push(`/jobs/${jobId}/proposals`)}>
+                                View Proposals
+                            </Button>
+                        </div>
                     </Card>
                 )}
 

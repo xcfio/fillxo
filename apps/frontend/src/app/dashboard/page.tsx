@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { User, Briefcase, Shield } from "lucide-react"
+import { User, Briefcase, Shield, FileText, Bell } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
 
@@ -15,6 +15,7 @@ export default function DashboardPage() {
     const router = useRouter()
     const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
+    const [unreadCount, setUnreadCount] = useState(0)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -22,6 +23,8 @@ export default function DashboardPage() {
                 const user = await getUser()
                 if (!user) return router.push("/login")
                 setUser(user)
+                // Fetch unread notifications count
+                fetchUnreadCount()
             } catch (error) {
                 router.push("/login")
             } finally {
@@ -31,6 +34,21 @@ export default function DashboardPage() {
 
         fetchUser()
     }, [router])
+
+    const fetchUnreadCount = async () => {
+        try {
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_API_ENDPOINT}/notifications?isRead=false&limit=100`,
+                { credentials: "include" }
+            )
+            if (response.ok) {
+                const data = await response.json()
+                setUnreadCount(data.length)
+            }
+        } catch (error) {
+            console.error("Error fetching unread count:", error)
+        }
+    }
 
     if (loading || !user) {
         return <LoadingSpinner />
@@ -132,6 +150,38 @@ export default function DashboardPage() {
                         <p className="text-gray-400">
                             {user.role === "freelancer" ? "Update your portfolio" : "Update your information"}
                         </p>
+                    </Card>
+
+                    {/* Proposals - Available for all roles */}
+                    <Card hover onClick={() => router.push("/proposals")} className="cursor-pointer p-6">
+                        <FileText className="w-8 h-8 text-blue-400 mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Proposals</h3>
+                        <p className="text-gray-400">
+                            {user.role === "freelancer"
+                                ? "View your sent proposals"
+                                : user.role === "client"
+                                  ? "Review received proposals"
+                                  : "Manage all your proposals"}
+                        </p>
+                    </Card>
+
+                    {/* Notifications - Available for all roles */}
+                    <Card hover onClick={() => router.push("/notifications")} className="cursor-pointer p-6">
+                        <div className="relative w-fit">
+                            <Bell className="w-8 h-8 text-blue-400 mb-4" />
+                            {unreadCount > 0 && (
+                                <span className="absolute -top-1 -right-1 w-5 h-5 bg-red-500 text-white text-xs rounded-full flex items-center justify-center">
+                                    {unreadCount > 9 ? "9+" : unreadCount}
+                                </span>
+                            )}
+                        </div>
+                        <h3 className="text-xl font-semibold mb-2">
+                            Notifications
+                            {unreadCount > 0 && (
+                                <span className="ml-2 text-sm text-red-400">({unreadCount} unread)</span>
+                            )}
+                        </h3>
+                        <p className="text-gray-400">Stay updated on your activity</p>
                     </Card>
                 </div>
 
