@@ -6,12 +6,12 @@ import { main } from "../.."
 import { eq } from "drizzle-orm"
 import { Type } from "typebox"
 
-export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>) {
+export default function EditProposal(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "PATCH",
         url: "/proposal/:id",
         schema: {
-            description: "",
+            description: "Update an existing proposal",
             tags: ["Proposal"],
             params: Type.Object({ id: UUID }),
             body: Type.Partial(
@@ -35,7 +35,7 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
                 200: Proposal,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
                 403: ErrorResponse(403, "Forbidden - You do not have permission to edit this proposal"),
-                404: ErrorResponse(404, "Not Found - Proposal Not found"),
+                404: ErrorResponse(404, "Not Found - Proposal not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -47,7 +47,7 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
                 const { id } = request.params
 
                 const [OldProposal] = await db.select().from(table.proposals).where(eq(table.proposals.id, id))
-                if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
+                if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal not found")
 
                 if (OldProposal.freelancerId !== freelancer) {
                     throw CreateError(403, "FORBIDDEN", "You do not have permission to edit this proposal")

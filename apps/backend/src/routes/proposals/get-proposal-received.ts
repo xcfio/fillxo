@@ -11,7 +11,7 @@ export default function GetProposalReceived(fastify: Awaited<ReturnType<typeof m
         method: "GET",
         url: "/proposal/received",
         schema: {
-            description: "",
+            description: "Get proposals received for jobs posted by the authenticated user",
             tags: ["Proposal"],
             querystring: Type.Partial(
                 Type.Object({

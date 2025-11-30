@@ -10,7 +10,7 @@ export default function GetProposalSent(fastify: Awaited<ReturnType<typeof main>
         method: "GET",
         url: "/proposal/sent",
         schema: {
-            description: "",
+            description: "Get proposals sent by the authenticated freelancer",
             tags: ["Proposal"],
             querystring: Type.Partial(
                 Type.Object({

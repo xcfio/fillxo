@@ -11,7 +11,7 @@ export default function PostProposal(fastify: Awaited<ReturnType<typeof main>>) 
         method: "POST",
         url: "/proposal",
         schema: {
-            description: "",
+            description: "Create a new proposal for a job",
             tags: ["Proposal"],
             body: Type.Object({
                 jobId: UUID,
@@ -32,6 +32,7 @@ export default function PostProposal(fastify: Awaited<ReturnType<typeof main>>) 
             response: {
                 201: Proposal,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
+                404: ErrorResponse(404, "Job not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }

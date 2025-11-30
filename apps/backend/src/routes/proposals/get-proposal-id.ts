@@ -11,14 +11,14 @@ export default function GetProposalID(fastify: Awaited<ReturnType<typeof main>>)
         method: "GET",
         url: "/proposal/:id",
         schema: {
-            description: "",
+            description: "Get a proposal by ID",
             tags: ["Proposal"],
             params: Type.Object({ id: UUID }),
             response: {
                 200: Proposal,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
                 403: ErrorResponse(403, "Forbidden - You do not have permission to reject this proposal"),
-                404: ErrorResponse(404, "Not Found - Proposal Not found"),
+                404: ErrorResponse(404, "Not Found - Proposal not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -35,7 +35,7 @@ export default function GetProposalID(fastify: Awaited<ReturnType<typeof main>>)
                     .leftJoin(table.jobs, eq(table.proposals.jobId, table.jobs.id))
                     .where(eq(table.proposals.id, proposal))
 
-                if (!query) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
+                if (!query) throw CreateError(404, "NOT_FOUND", "Proposal not found")
                 if (query.jobs?.clientId !== id && query.proposals.freelancerId !== id) {
                     throw CreateError(403, "FORBIDDEN", "You do not have permission to view this proposal")
                 }

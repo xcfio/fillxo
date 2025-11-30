@@ -6,19 +6,19 @@ import { main } from "../.."
 import { eq } from "drizzle-orm"
 import { Type } from "typebox"
 
-export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>) {
+export default function DeleteProposal(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "DELETE",
         url: "/proposal/:id",
         schema: {
-            description: "",
+            description: "Delete a proposal",
             tags: ["Proposal"],
             params: Type.Object({ id: UUID }),
             response: {
                 200: Type.Object({ success: Type.Boolean() }),
                 400: ErrorResponse(400, "Bad Request - Validation error"),
-                403: ErrorResponse(403, "Forbidden - You do not have permission to accept this proposal"),
-                404: ErrorResponse(404, "Not Found - Proposal Not found"),
+                403: ErrorResponse(403, "Forbidden - You do not have permission to delete this proposal"),
+                404: ErrorResponse(404, "Not Found - Proposal not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -30,7 +30,7 @@ export default function AcceptProposal(fastify: Awaited<ReturnType<typeof main>>
                 const { id } = request.params
 
                 const [OldProposal] = await db.select().from(table.proposals).where(eq(table.proposals.id, id))
-                if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal Not found")
+                if (!OldProposal) throw CreateError(404, "NOT_FOUND", "Proposal not found")
 
                 if (OldProposal.freelancerId !== freelancer) {
                     throw CreateError(403, "FORBIDDEN", "You do not have permission to delete this proposal")
