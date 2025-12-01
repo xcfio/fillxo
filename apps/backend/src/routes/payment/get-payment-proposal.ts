@@ -11,14 +11,14 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
         method: "GET",
         url: "/payments/contract/:contractId",
         schema: {
-            description: "Get a payment for a proposal by contractId for the authenticated user (client or freelancer)",
+            description:
+                "Get all payments for a contract by contractId for the authenticated user (client or freelancer)",
             tags: ["Payments"],
             params: Type.Object({ contractId: UUID }),
             response: {
-                200: Payments,
+                200: Type.Array(Payments),
                 400: ErrorResponse(400, "Bad Request - Validation error"),
                 403: ErrorResponse(403, "Forbidden - You are not authorized to view this payment"),
-                404: ErrorResponse(404, "Not Found - No payment found for this contract"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -29,7 +29,7 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
                 const { id: userId } = request.user
                 const { contractId } = request.params
 
-                const [payment] = await db
+                const payments = await db
                     .select()
                     .from(table.payments)
                     .where(
@@ -38,10 +38,9 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
                             or(eq(table.payments.clientId, userId), eq(table.payments.freelancerId, userId))
                         )
                     )
+                    .orderBy(table.payments.createdAt)
 
-                if (!payment) throw CreateError(404, "NOT_FOUND", "No payment found for this contract")
-
-                return reply.status(200).send(toTypeBox(payment))
+                return reply.status(200).send(payments.map(toTypeBox))
             } catch (error) {
                 if (isFastifyError(error)) {
                     throw error

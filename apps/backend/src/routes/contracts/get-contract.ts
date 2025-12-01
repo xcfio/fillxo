@@ -11,7 +11,7 @@ export default function GetContract(fastify: Awaited<ReturnType<typeof main>>) {
         url: "/contracts",
         schema: {
             description: "Get paginated list of contracts",
-            tags: ["Contracts"],
+            tags: ["Contract"],
             querystring: Type.Partial(
                 Type.Object({
                     status: Type.Union([

@@ -11,7 +11,7 @@ export default function PostContract(fastify: Awaited<ReturnType<typeof main>>) 
         url: "/contracts/",
         schema: {
             description: "Create a new contract for an accepted proposal",
-            tags: ["Contracts"],
+            tags: ["Contract"],
             body: Type.Pick(Contract, ["proposalId"]),
             response: {
                 201: Contract,

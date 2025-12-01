@@ -21,12 +21,14 @@ import {
     Check,
     X,
     Briefcase,
-    CreditCard
+    CreditCard,
+    Plus
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
 import { Proposal, ProposalStatus } from "@/types/proposal"
+import { Contract } from "@/types/contract"
 import { Payment } from "@/types/payment"
 
 export default function ProposalDetailPage() {
@@ -35,6 +37,7 @@ export default function ProposalDetailPage() {
     const proposalId = params.id as string
 
     const [proposal, setProposal] = useState<Proposal | null>(null)
+    const [contract, setContract] = useState<Contract | null>(null)
     const [payment, setPayment] = useState<Payment | null>(null)
     const [loading, setLoading] = useState(true)
     const [user, setUser] = useState<any>(null)
@@ -67,9 +70,9 @@ export default function ProposalDetailPage() {
                     // Note: isJobOwner would need to be determined from the job data
                     // For now, we'll allow clients to see accept/reject buttons
                     setIsJobOwner(user.role === "client" || user.role === "both")
-                    // Fetch payment if proposal is accepted
+                    // Fetch contract if proposal is accepted
                     if (data.status === "accepted") {
-                        fetchPayment()
+                        fetchContract(data.id)
                     }
                 } else if (response.status === 404) {
                     router.push("/proposals")
@@ -88,9 +91,41 @@ export default function ProposalDetailPage() {
         fetchProposal()
     }, [proposalId, user, router])
 
-    const fetchPayment = async () => {
+    const fetchContract = async (proposalId: string) => {
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments/proposal/${proposalId}`, {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/contracts?status=payment-required`, {
+                credentials: "include"
+            })
+            if (response.ok) {
+                const contracts: Contract[] = await response.json()
+                const foundContract = contracts.find((c) => c.proposalId === proposalId)
+                if (foundContract) {
+                    setContract(foundContract)
+                    // Fetch payment for the contract
+                    fetchPayment(foundContract.id)
+                } else {
+                    // Also check for active/completed contracts
+                    const activeResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/contracts`, {
+                        credentials: "include"
+                    })
+                    if (activeResponse.ok) {
+                        const allContracts: Contract[] = await activeResponse.json()
+                        const existingContract = allContracts.find((c) => c.proposalId === proposalId)
+                        if (existingContract) {
+                            setContract(existingContract)
+                            fetchPayment(existingContract.id)
+                        }
+                    }
+                }
+            }
+        } catch (error) {
+            console.error("Error fetching contract:", error)
+        }
+    }
+
+    const fetchPayment = async (contractId: string) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments/contract/${contractId}`, {
                 credentials: "include"
             })
             if (response.ok) {
@@ -137,6 +172,20 @@ export default function ProposalDetailPage() {
 
             if (response.ok) {
                 setProposal((prev) => (prev ? { ...prev, status: "accepted" } : null))
+                // Create a contract for the accepted proposal
+                const contractResponse = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/contracts/`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    credentials: "include",
+                    body: JSON.stringify({ proposalId })
+                })
+
+                if (contractResponse.ok) {
+                    const contractData = await contractResponse.json()
+                    setContract(contractData)
+                } else {
+                    console.error("Failed to create contract")
+                }
             } else {
                 alert("Failed to accept proposal")
             }
@@ -166,6 +215,33 @@ export default function ProposalDetailPage() {
         } catch (error) {
             console.error("Error rejecting proposal:", error)
             alert("An error occurred while rejecting the proposal")
+        } finally {
+            setActionLoading(false)
+        }
+    }
+
+    const handleCreateContract = async () => {
+        if (!confirm("Are you sure you want to create a contract for this proposal?")) return
+
+        setActionLoading(true)
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/contracts/`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                credentials: "include",
+                body: JSON.stringify({ proposalId })
+            })
+
+            if (response.ok) {
+                const contractData = await response.json()
+                setContract(contractData)
+            } else {
+                const data = await response.json()
+                alert(data.message || "Failed to create contract")
+            }
+        } catch (error) {
+            console.error("Error creating contract:", error)
+            alert("An error occurred while creating the contract")
         } finally {
             setActionLoading(false)
         }
@@ -363,15 +439,29 @@ export default function ProposalDetailPage() {
                                         <p className="text-gray-300 mb-4">
                                             {isOwner
                                                 ? "Congratulations! Your proposal has been accepted. The client will contact you soon to discuss the project details."
-                                                : "You have accepted this proposal. Complete the payment to start working with the freelancer."}
+                                                : contract
+                                                  ? "You have accepted this proposal. Complete the payment to start working with the freelancer."
+                                                  : "You have accepted this proposal. Create a contract to proceed with payment."}
                                         </p>
                                         {isJobOwner && !isOwner && (
-                                            <Button
-                                                icon={CreditCard}
-                                                onClick={() => router.push(`/proposals/${proposalId}/pay`)}
-                                            >
-                                                Make Payment
-                                            </Button>
+                                            <div className="flex gap-3">
+                                                {contract ? (
+                                                    <Button
+                                                        icon={CreditCard}
+                                                        onClick={() => router.push(`/contracts/${contract.id}/pay`)}
+                                                    >
+                                                        Make Payment
+                                                    </Button>
+                                                ) : (
+                                                    <Button
+                                                        icon={Plus}
+                                                        onClick={handleCreateContract}
+                                                        disabled={actionLoading}
+                                                    >
+                                                        {actionLoading ? "Creating..." : "Create Contract"}
+                                                    </Button>
+                                                )}
+                                            </div>
                                         )}
                                     </>
                                 )}

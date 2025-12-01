@@ -3,12 +3,15 @@ export type PaymentStatus = "pending" | "verified" | "rejected" | "refunded"
 
 export interface Payment {
     id: string
-    proposalId: string
+    contractId: string
+    clientId: string
+    freelancerId: string
     amount: number
     paymentMethod: PaymentMethod
     transactionId: string
-    notes: string | null
     status: PaymentStatus
+    rejectReason: string | null
+    notes: string | null
     isPaidOut: boolean
     verifiedBy: string | null
     verifiedAt: string | null

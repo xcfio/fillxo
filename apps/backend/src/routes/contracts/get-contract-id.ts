@@ -12,7 +12,7 @@ export default function GetContractId(fastify: Awaited<ReturnType<typeof main>>)
         url: "/contracts/:id",
         schema: {
             description: "Get a contract by ID",
-            tags: ["Contracts"],
+            tags: ["Contract"],
             params: Type.Object({ id: UUID }),
             response: {
                 200: Contract,

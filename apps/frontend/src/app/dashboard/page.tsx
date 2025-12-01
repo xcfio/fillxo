@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { User, Briefcase, Shield, FileText, Bell } from "lucide-react"
+import { User, Briefcase, Shield, FileText, Bell, CreditCard, Receipt } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
 
@@ -170,6 +170,32 @@ export default function DashboardPage() {
                                 : user.role === "client"
                                   ? "Review received proposals"
                                   : "Manage all your proposals"}
+                        </p>
+                    </Card>
+
+                    {/* Contracts - Available for all roles */}
+                    <Card hover onClick={() => router.push("/contracts")} className="cursor-pointer p-6">
+                        <CreditCard className="w-8 h-8 text-emerald-400 mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Contracts</h3>
+                        <p className="text-gray-400">
+                            {user.role === "freelancer"
+                                ? "View your active contracts"
+                                : user.role === "client"
+                                  ? "Manage payments & contracts"
+                                  : "View all your contracts"}
+                        </p>
+                    </Card>
+
+                    {/* Payments - Available for all roles */}
+                    <Card hover onClick={() => router.push("/payments")} className="cursor-pointer p-6">
+                        <Receipt className="w-8 h-8 text-yellow-400 mb-4" />
+                        <h3 className="text-xl font-semibold mb-2">Payments</h3>
+                        <p className="text-gray-400">
+                            {user.role === "freelancer"
+                                ? "View received payments"
+                                : user.role === "client"
+                                  ? "View payment history"
+                                  : "View all transactions"}
                         </p>
                     </Card>
 

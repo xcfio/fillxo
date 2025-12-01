@@ -47,17 +47,17 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(403, "FORBIDDEN", "You are not authorized to make payment for this contract")
                 }
 
-                const [exist] = await db
+                if (query.contracts.status !== "payment-required") {
+                    throw CreateError(400, "INVALID_STATUS", "Contract is not awaiting payment")
+                }
+
+                const exist = await db
                     .select()
                     .from(table.payments)
                     .where(eq(table.payments.contractId, query.contracts.id))
 
-                if (exist) {
-                    throw CreateError(409, "CONFLICT", "Payment already exists for this contract")
-                }
-
-                if (query.contracts.status !== "payment-required") {
-                    throw CreateError(400, "INVALID_STATUS", "Contract is not awaiting payment")
+                if (exist.filter((x) => x.status === "pending").length > 0) {
+                    throw CreateError(409, "PAYMENT_EXISTS", "Payment already exists for this contract")
                 }
 
                 const [payment] = await db

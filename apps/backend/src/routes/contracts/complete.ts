@@ -12,7 +12,7 @@ export default function Complete(fastify: Awaited<ReturnType<typeof main>>) {
         url: "/contracts/:id/complete",
         schema: {
             description: "Mark a contract as completed",
-            tags: ["Contracts"],
+            tags: ["Contract"],
             params: Type.Object({ id: UUID }),
             response: {
                 200: Contract,

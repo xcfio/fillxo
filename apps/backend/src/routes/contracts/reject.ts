@@ -6,13 +6,13 @@ import { main } from "../.."
 import { eq, and } from "drizzle-orm"
 import { Type } from "typebox"
 
-export default function Rejected(fastify: Awaited<ReturnType<typeof main>>) {
+export default function Reject(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "PUT",
         url: "/contracts/:id/reject",
         schema: {
             description: "Reject a contract that requires payment",
-            tags: ["Contracts"],
+            tags: ["Contract"],
             params: Type.Object({ id: UUID }),
             response: {
                 200: Contract,
