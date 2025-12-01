@@ -1,6 +1,6 @@
 import { pgTable, uuid, timestamp, text, bigint, boolean, index, pgEnum } from "drizzle-orm/pg-core"
 import { UUID, Nullable } from "../typebox"
-import { proposals } from "./proposals"
+import { contracts } from "./contracts"
 import { users } from "./users"
 import { Type, Static } from "typebox"
 import { v7 } from "uuid"
@@ -14,9 +14,9 @@ export const payments = pgTable(
         id: uuid("id")
             .primaryKey()
             .$defaultFn(() => v7()),
-        proposalId: uuid("proposal_id")
+        contractId: uuid("contract_id")
             .notNull()
-            .references(() => proposals.id, { onDelete: "cascade" }),
+            .references(() => contracts.id, { onDelete: "cascade" }),
         clientId: uuid("client_id")
             .notNull()
             .references(() => users.id),
@@ -26,8 +26,9 @@ export const payments = pgTable(
         amount: bigint("amount", { mode: "number" }).notNull(),
         paymentMethod: paymentMethodEnum("payment_method").notNull(),
         transactionId: text("transaction_id").notNull(),
-        notes: text("notes"),
         status: paymentStatusEnum("status").notNull().default("pending"),
+        rejectReason: text("reject_reason"),
+        notes: text("notes"),
         verifiedBy: uuid("verified_by").references(() => users.id),
         verifiedAt: timestamp("verified_at"),
         isPaidOut: boolean("is_paid_out").notNull().default(false),
@@ -36,23 +37,26 @@ export const payments = pgTable(
             .notNull()
             .$defaultFn(() => new Date())
     },
-    (table) => [index("payments_proposal_idx").on(table.proposalId), index("payments_status_idx").on(table.status)]
+    (table) => [index("payments_contract_idx").on(table.contractId), index("payments_status_idx").on(table.status)]
 )
 
 export type Payments = Static<typeof Payments>
 export const Payments = Type.Object({
     id: UUID,
-    proposalId: UUID,
+    contractId: UUID,
+    clientId: UUID,
+    freelancerId: UUID,
     amount: Type.Integer({ minimum: 100 }),
     paymentMethod: Type.Union([Type.Literal("bkash"), Type.Literal("mcash"), Type.Literal("rocket")]),
     transactionId: Type.String({ minLength: 5, maxLength: 50 }),
-    notes: Nullable(Type.String({ maxLength: 500 })),
     status: Type.Union([
         Type.Literal("pending"),
         Type.Literal("verified"),
         Type.Literal("rejected"),
         Type.Literal("refunded")
     ]),
+    rejectReason: Nullable(Type.String()),
+    notes: Nullable(Type.String()),
     isPaidOut: Type.Boolean({ default: false }),
     verifiedBy: Nullable(UUID),
     verifiedAt: Nullable(Type.String({ format: "date-time" })),

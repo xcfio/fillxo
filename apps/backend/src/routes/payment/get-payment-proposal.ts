@@ -9,16 +9,16 @@ import { Type } from "typebox"
 export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "GET",
-        url: "/payments/proposal/:proposalId",
+        url: "/payments/contract/:contractId",
         schema: {
-            description: "Get a payment by proposal ID for the authenticated user (client or freelancer)",
+            description: "Get a payment for a proposal by contractId for the authenticated user (client or freelancer)",
             tags: ["Payments"],
-            params: Type.Object({ proposalId: UUID }),
+            params: Type.Object({ contractId: UUID }),
             response: {
                 200: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
                 403: ErrorResponse(403, "Forbidden - You are not authorized to view this payment"),
-                404: ErrorResponse(404, "Not Found - No payment found for this proposal"),
+                404: ErrorResponse(404, "Not Found - No payment found for this contract"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -27,19 +27,19 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
         handler: async (request, reply) => {
             try {
                 const { id: userId } = request.user
-                const { proposalId } = request.params
+                const { contractId } = request.params
 
                 const [payment] = await db
                     .select()
                     .from(table.payments)
                     .where(
                         and(
-                            eq(table.payments.proposalId, proposalId),
+                            eq(table.payments.contractId, contractId),
                             or(eq(table.payments.clientId, userId), eq(table.payments.freelancerId, userId))
                         )
                     )
 
-                if (!payment) throw CreateError(404, "NOT_FOUND", "No payment found for this proposal")
+                if (!payment) throw CreateError(404, "NOT_FOUND", "No payment found for this contract")
 
                 return reply.status(200).send(toTypeBox(payment))
             } catch (error) {

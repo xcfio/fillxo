@@ -2,16 +2,16 @@ import { CreateError, isFastifyError, SendNotification, toTypeBox } from "../../
 import { ErrorResponse, Contract } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
-import { main } from "../../"
+import { main } from "../.."
 import { eq, and } from "drizzle-orm"
 import { Type } from "typebox"
 
-export default function Complete(fastify: Awaited<ReturnType<typeof main>>) {
+export default function Rejected(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "PUT",
-        url: "/contracts/:id/complete",
+        url: "/contracts/:id/reject",
         schema: {
-            description: "Mark a contract as completed",
+            description: "Reject a contract that requires payment",
             tags: ["Contracts"],
             params: Type.Object({ id: UUID }),
             response: {
@@ -34,20 +34,20 @@ export default function Complete(fastify: Awaited<ReturnType<typeof main>>) {
                     .where(and(eq(table.contracts.id, id), eq(table.contracts.clientId, clientId)))
 
                 if (!OldContract) throw CreateError(404, "NOT_FOUND", "No contracts found")
-                if (OldContract.status !== "active") {
-                    throw CreateError(400, "INVALID_STATUS", "Contract cannot be completed because it is not active")
+                if (OldContract.status !== "payment-required") {
+                    throw CreateError(400, "INVALID_STATUS", "Contract cannot be rejected because it is already active")
                 }
 
                 const [contract] = await db
                     .update(table.contracts)
-                    .set({ status: "completed", completedAt: new Date() })
+                    .set({ status: "cancelled" })
                     .where(and(eq(table.contracts.id, id), eq(table.contracts.clientId, clientId)))
                     .returning()
 
                 await SendNotification(
                     contract.freelancerId,
-                    "Contract Completed",
-                    `Your contract ${contract.id} has been completed by the client. You will receive your payment shortly.`,
+                    "Contract Rejected",
+                    `Your contract ${contract.id} has been rejected by the client.`,
                     `/contracts/${contract.id}`
                 )
 

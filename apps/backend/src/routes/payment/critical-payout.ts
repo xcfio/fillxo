@@ -20,10 +20,7 @@ export default function Payout(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Payout a payment (Critical - Protected by auth key)",
             tags: ["Payments"],
             params: Type.Object({ id: UUID }),
-            querystring: Type.Object({
-                auth: UUID,
-                status: Type.Optional(Type.Boolean())
-            }),
+            querystring: Type.Object({ auth: UUID }),
             response: {
                 200: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
@@ -37,7 +34,7 @@ export default function Payout(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { id } = request.params
-                const { auth, status = true } = request.query
+                const { auth } = request.query
 
                 if (auth !== process.env.PAYMENT_SECRET) {
                     return reply.status(404).send({
@@ -56,20 +53,22 @@ export default function Payout(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [payment] = await db
                     .update(table.payments)
-                    .set({ isPaidOut: status, paidOutAt: new Date() })
+                    .set({ isPaidOut: true, paidOutAt: new Date() })
                     .where(eq(table.payments.id, id))
                     .returning()
 
                 await SendNotification(
-                    payment.clientId,
-                    `Payment Payout ${status ? "Completed" : "Reverted"}`,
-                    `Your payment for proposal ${payment.proposalId} has been ${status ? "completed" : "reverted"}.`
+                    exist.freelancerId,
+                    "Payment Payout Successful",
+                    `Your payment of amount ${exist.amount} has been successfully paid out.`,
+                    `/payments/${exist.id}`
                 )
 
                 await SendNotification(
-                    payment.freelancerId,
-                    `Payment Payout ${status ? "Completed" : "Reverted"}`,
-                    `The payout for your payment on proposal ${payment.proposalId} has been ${status ? "completed" : "reverted"}.`
+                    payment.clientId,
+                    "Payment Payout Successful",
+                    `Your payment of amount ${payment.amount} has been successfully paid out.`,
+                    `/payments/${payment.id}`
                 )
 
                 return reply.status(200).send(toTypeBox(payment))

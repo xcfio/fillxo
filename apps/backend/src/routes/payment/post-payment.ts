@@ -12,12 +12,13 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Create a new payment for an accepted proposal",
             tags: ["Payments"],
-            body: Type.Pick(Payments, ["proposalId", "paymentMethod", "transactionId"]),
+            body: Type.Pick(Payments, ["contractId", "paymentMethod", "transactionId"]),
             response: {
                 201: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
-                403: ErrorResponse(403, "Forbidden - You are not authorized to make payment for this proposal"),
-                404: ErrorResponse(404, "Not Found - Proposal not found"),
+                403: ErrorResponse(403, "Forbidden - You are not authorized to make payment for this contract"),
+                404: ErrorResponse(404, "Not Found - Contract not found"),
+                409: ErrorResponse(409, "Conflict - Payment already exists for this contract"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
@@ -26,38 +27,46 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { id } = request.user
-                const { paymentMethod, proposalId, transactionId } = request.body
+                const { paymentMethod, contractId, transactionId } = request.body
 
                 const [query] = await db
                     .select()
-                    .from(table.proposals)
-                    .where(eq(table.proposals.id, proposalId))
-                    .leftJoin(table.jobs, eq(table.proposals.jobId, table.jobs.id))
+                    .from(table.contracts)
+                    .where(eq(table.contracts.id, contractId))
+                    .leftJoin(table.proposals, eq(table.contracts.proposalId, table.proposals.id))
 
                 if (!query) {
+                    throw CreateError(404, "CONTRACT_NOT_FOUND", "Contract not found")
+                }
+
+                if (!query.proposals) {
                     throw CreateError(404, "PROPOSAL_NOT_FOUND", "Proposal not found")
                 }
 
-                if (query.jobs?.clientId !== id) {
-                    throw CreateError(403, "FORBIDDEN", "You are not authorized to make payment for this proposal")
+                if (query.contracts.clientId !== id) {
+                    throw CreateError(403, "FORBIDDEN", "You are not authorized to make payment for this contract")
                 }
 
                 const [exist] = await db
                     .select()
                     .from(table.payments)
-                    .where(eq(table.payments.proposalId, query.proposals.id))
+                    .where(eq(table.payments.contractId, query.contracts.id))
 
                 if (exist) {
-                    throw CreateError(400, "PAYMENT_EXISTS", "Payment already exists for this proposal")
+                    throw CreateError(409, "CONFLICT", "Payment already exists for this contract")
+                }
+
+                if (query.contracts.status !== "payment-required") {
+                    throw CreateError(400, "INVALID_STATUS", "Contract is not awaiting payment")
                 }
 
                 const [payment] = await db
                     .insert(table.payments)
                     .values({
                         clientId: id,
-                        freelancerId: query.proposals.freelancerId,
+                        freelancerId: query.contracts.freelancerId,
                         paymentMethod,
-                        proposalId,
+                        contractId,
                         transactionId,
                         amount: query.proposals.bidAmount
                     })

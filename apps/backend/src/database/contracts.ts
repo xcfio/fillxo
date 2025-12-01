@@ -1,10 +1,12 @@
 import { pgTable, timestamp, bigint, uuid, index, pgEnum } from "drizzle-orm/pg-core"
+import { UUID, Nullable, amount } from "../typebox"
 import { proposals } from "./proposals"
 import { users } from "./users"
 import { jobs } from "./jobs"
+import { Type, Static } from "typebox"
 import { v7 } from "uuid"
 
-export const contractStatusEnum = pgEnum("contract", ["active", "completed", "cancelled"])
+export const contractStatusEnum = pgEnum("contract", ["payment-required", "active", "completed", "cancelled"])
 
 export const contracts = pgTable(
     "contracts",
@@ -25,7 +27,7 @@ export const contracts = pgTable(
             .notNull()
             .references(() => users.id),
         amount: bigint("amount", { mode: "number" }).notNull(),
-        status: contractStatusEnum("status").default("active"),
+        status: contractStatusEnum("status").notNull().default("payment-required"),
         completedAt: timestamp("completed_at", { withTimezone: false }),
         startDate: timestamp("start_date", { withTimezone: false }).defaultNow(),
         createdAt: timestamp("created_at", { withTimezone: false })
@@ -37,3 +39,22 @@ export const contracts = pgTable(
         index("contract_freelancer_idx").on(table.freelancerId)
     ]
 )
+
+export type Contract = Static<typeof Contract>
+export const Contract = Type.Object({
+    id: UUID,
+    jobId: UUID,
+    proposalId: UUID,
+    clientId: UUID,
+    freelancerId: UUID,
+    amount: amount,
+    status: Type.Union([
+        Type.Literal("payment-required"),
+        Type.Literal("active"),
+        Type.Literal("completed"),
+        Type.Literal("cancelled")
+    ]),
+    completedAt: Nullable(Type.String({ format: "date-time" })),
+    startDate: Nullable(Type.String({ format: "date-time" })),
+    createdAt: Type.String({ format: "date-time" })
+})

@@ -1,6 +1,7 @@
 import { Static, Type } from "typebox"
 import { v7 } from "uuid"
 export { Notifications } from "./database/notifications"
+export { Contract } from "./database/contracts"
 export { User, PublicUser } from "./database/users"
 export { Proposal } from "./database/proposals"
 export { Payments } from "./database/payments"
