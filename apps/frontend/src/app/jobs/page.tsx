@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import { Briefcase, DollarSign, Calendar, Users, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
+import { Briefcase, Calendar, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
@@ -180,7 +180,6 @@ export default function JobsPage() {
 
                                         <div className="flex flex-wrap gap-6 text-sm text-gray-400">
                                             <div className="flex items-center gap-2">
-                                                <DollarSign className="w-4 h-4" />
                                                 <span className="font-semibold text-blue-400">
                                                     {formatBudget(job.budget)}
                                                 </span>

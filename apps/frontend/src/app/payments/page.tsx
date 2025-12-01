@@ -7,17 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-    CreditCard,
-    DollarSign,
-    Calendar,
-    ArrowLeft,
-    CheckCircle2,
-    XCircle,
-    AlertCircle,
-    Clock,
-    FileText
-} from "lucide-react"
+import { CreditCard, Calendar, ArrowLeft, CheckCircle2, XCircle, AlertCircle, Clock, FileText } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"

@@ -6,7 +6,6 @@ import { useState } from "react"
 import { FormInput } from "@/components/ui/form-input"
 import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
-import { Card } from "@/components/ui/card"
 import Footer from "@/components/footer"
 import Image from "next/image"
 

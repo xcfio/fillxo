@@ -17,7 +17,6 @@ import {
     AlertCircle,
     Clock,
     FileText,
-    User,
     Copy,
     Check
 } from "lucide-react"

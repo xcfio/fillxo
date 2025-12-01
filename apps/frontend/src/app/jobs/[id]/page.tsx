@@ -105,10 +105,6 @@ export default function JobDetailPage() {
         router.push(`/proposals/submit?jobId=${jobId}`)
     }
 
-    const handleViewProposals = () => {
-        router.push(`/jobs/${jobId}/proposals`)
-    }
-
     if (loading) {
         return <LoadingSpinner />
     }

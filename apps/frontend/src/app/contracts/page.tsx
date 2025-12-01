@@ -7,17 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
-import {
-    FileText,
-    DollarSign,
-    Calendar,
-    ArrowLeft,
-    CheckCircle2,
-    XCircle,
-    AlertCircle,
-    Clock,
-    CreditCard
-} from "lucide-react"
+import { FileText, Calendar, ArrowLeft, CheckCircle2, XCircle, AlertCircle, Clock, CreditCard } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
@@ -184,7 +174,6 @@ export default function ContractsPage() {
                                             </div>
                                             <div className="flex items-center gap-4 text-sm text-gray-400 flex-wrap">
                                                 <span className="flex items-center gap-1">
-                                                    <DollarSign className="w-4 h-4" />
                                                     {formatBudget(contract.amount)}
                                                 </span>
                                                 <span className="flex items-center gap-1">

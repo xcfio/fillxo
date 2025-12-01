@@ -1,19 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import {
-    Plus,
-    FileText,
-    HelpCircle,
-    Info,
-    Github,
-    MessageCircle,
-    Sun,
-    Moon,
-    Shield,
-    Briefcase,
-    Facebook
-} from "lucide-react"
+import { FileText, HelpCircle, Info, Shield, Briefcase, Facebook } from "lucide-react"
 
 export default function Footer() {
     const [isLight, setIsLight] = useState(false)
@@ -30,6 +18,7 @@ export default function Footer() {
         }
     }, [])
 
+    // @ts-ignore
     const toggleTheme = () => {
         const newTheme = !isLight
         setIsLight(newTheme)

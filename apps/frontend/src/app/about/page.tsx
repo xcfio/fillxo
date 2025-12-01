@@ -8,43 +8,37 @@ export default function AboutPage() {
         frontend: [
             {
                 name: "Next.js",
-                version: "16.0.3",
+                version: "16.x.x",
                 description: "The React Framework for Production",
                 url: "https://nextjs.org"
             },
             {
                 name: "React",
-                version: "19.2.0",
+                version: "19.x.x",
                 description: "A JavaScript library for building user interfaces",
                 url: "https://react.dev"
             },
             {
                 name: "Tailwind CSS",
-                version: "4.1.17",
+                version: "4.x.x",
                 description: "A utility-first CSS framework",
                 url: "https://tailwindcss.com"
             },
             {
-                name: "Mantine",
-                version: "8.3.6",
-                description: "A fully featured React components library",
-                url: "https://mantine.dev"
-            },
-            {
                 name: "Lucide React",
-                version: "0.553.0",
+                version: "0.553.x",
                 description: "Beautiful & consistent icon toolkit",
                 url: "https://lucide.dev"
             },
             {
                 name: "Socket.IO Client",
-                version: "4.8.1",
+                version: "4.x.x",
                 description: "Realtime application framework",
                 url: "https://socket.io"
             },
             {
                 name: "Vercel Analytics",
-                version: "1.5.0",
+                version: "1.x.x",
                 description: "Privacy-friendly analytics for Next.js",
                 url: "https://vercel.com/analytics"
             }
@@ -52,61 +46,109 @@ export default function AboutPage() {
         backend: [
             {
                 name: "Fastify",
-                version: "5.6.2",
+                version: "5.x.x",
                 description: "Fast and low overhead web framework",
                 url: "https://fastify.dev"
             },
             {
                 name: "Drizzle ORM",
-                version: "0.44.7",
+                version: "0.44.x",
                 description: "TypeScript ORM for SQL databases",
                 url: "https://orm.drizzle.team"
             },
             {
                 name: "PostgreSQL (postgres.js)",
-                version: "3.4.7",
+                version: "3.x.x",
                 description: "PostgreSQL client for Node.js",
                 url: "https://github.com/porsager/postgres"
             },
             {
                 name: "TypeBox",
-                version: "1.0.51",
+                version: "1.x.x",
                 description: "JSON Schema Type Builder with Static Type Resolution",
                 url: "https://github.com/sinclairzx81/typebox"
             },
             {
                 name: "Fastify JWT",
-                version: "10.0.0",
+                version: "10.x.x",
                 description: "JWT authentication for Fastify",
                 url: "https://github.com/fastify/fastify-jwt"
             },
             {
                 name: "Fastify CORS",
-                version: "11.1.0",
+                version: "11.x.x",
                 description: "CORS plugin for Fastify",
                 url: "https://github.com/fastify/fastify-cors"
             },
             {
+                name: "Fastify Cookie",
+                version: "11.x.x",
+                description: "Cookie plugin for Fastify",
+                url: "https://github.com/fastify/fastify-cookie"
+            },
+            {
+                name: "Fastify Error",
+                version: "4.x.x",
+                description: "Error utilities for Fastify",
+                url: "https://github.com/fastify/fastify-error"
+            },
+            {
+                name: "Fastify Rate Limit",
+                version: "10.x.x",
+                description: "Rate limiting plugin for Fastify",
+                url: "https://github.com/fastify/fastify-rate-limit"
+            },
+            {
                 name: "Fastify Swagger",
-                version: "9.5.2",
+                version: "9.x.x",
                 description: "Swagger documentation generator for Fastify",
                 url: "https://github.com/fastify/fastify-swagger"
             },
             {
+                name: "Fastify Swagger UI",
+                version: "5.x.x",
+                description: "Swagger UI for Fastify",
+                url: "https://github.com/fastify/fastify-swagger-ui"
+            },
+            {
+                name: "Fastify Type Provider TypeBox",
+                version: "6.x.x",
+                description: "TypeBox type provider for Fastify",
+                url: "https://github.com/fastify/fastify-type-provider-typebox"
+            },
+            {
+                name: "Socket.IO",
+                version: "4.x.x",
+                description: "Realtime application framework (server)",
+                url: "https://socket.io"
+            },
+            {
+                name: "Fastify Socket.IO",
+                version: "5.x.x",
+                description: "Socket.IO plugin for Fastify",
+                url: "https://github.com/alemagio/fastify-socket.io"
+            },
+            {
+                name: "Snowtransfer",
+                version: "0.15.x",
+                description: "Discord API library for Node.js",
+                url: "https://github.com/DasWolke/SnowTransfer"
+            },
+            {
                 name: "Resend",
-                version: "6.4.1",
+                version: "6.x.x",
                 description: "Email API for developers",
                 url: "https://resend.com"
             },
             {
                 name: "TypeScript",
-                version: "5.9.3",
+                version: "5.x.x",
                 description: "TypeScript is JavaScript with syntax for types",
                 url: "https://www.typescriptlang.org"
             },
             {
                 name: "UUID",
-                version: "13.0.0",
+                version: "13.x.x",
                 description: "Generate RFC-compliant UUIDs",
                 url: "https://github.com/uuidjs/uuid"
             }
@@ -114,27 +156,33 @@ export default function AboutPage() {
         devTools: [
             {
                 name: "Turbo",
-                version: "2.6.1",
+                version: "2.x.x",
                 description: "Incremental bundler and build system",
                 url: "https://turbo.build"
             },
             {
                 name: "PNPM",
-                version: "10.20.0",
+                version: "10.x.x",
                 description: "Fast, disk space efficient package manager",
                 url: "https://pnpm.io"
             },
             {
                 name: "Prettier",
-                version: "3.6.2",
+                version: "3.x.x",
                 description: "An opinionated code formatter",
                 url: "https://prettier.io"
             },
             {
                 name: "Drizzle Kit",
-                version: "0.31.7",
+                version: "0.31.x",
                 description: "CLI companion for Drizzle ORM",
                 url: "https://orm.drizzle.team/kit-docs/overview"
+            },
+            {
+                name: "Pino Pretty",
+                version: "13.x.x",
+                description: "Pretty logging for Pino",
+                url: "https://github.com/pinojs/pino-pretty"
             }
         ]
     }

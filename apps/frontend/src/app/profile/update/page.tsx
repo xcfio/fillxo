@@ -4,13 +4,11 @@ import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
-import { FormInput } from "@/components/ui/form-input"
-import { Select } from "@/components/ui/select"
 import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { Card } from "@/components/ui/card"
-import { User, Mail, Phone, Globe, Clock, ArrowLeft, Save, ChevronDown, Briefcase, Award, Shield } from "lucide-react"
-import { User as TUser } from "@/types/user"
+import { User, Mail, Phone, Globe, ArrowLeft, Save, ChevronDown, Briefcase, Award, Shield } from "lucide-react"
+
 import { getUser } from "@/utils/auth"
 
 interface PortfolioItem {

@@ -89,6 +89,24 @@ export default function TermsPage() {
                             <li>Refund policies apply as specified in individual agreements</li>
                             <li>Disputes must be reported within 14 days of transaction</li>
                         </ul>
+                        <div className="mt-4 p-4 bg-yellow-900/20 border border-yellow-700/50 rounded-lg">
+                            <p className="text-yellow-300 font-semibold mb-2">Important Payment Disclaimer:</p>
+                            <p className="text-gray-300 leading-relaxed mb-3">
+                                fillxo is <strong className="text-white">only responsible</strong> for your funds from
+                                the moment a payment is marked as <strong className="text-white">"Verified"</strong>{" "}
+                                until it is <strong className="text-white">"Paid to Freelancer"</strong>. We will{" "}
+                                <strong className="text-white">not take any responsibility</strong> if a client sends
+                                payment to <strong className="text-white">incorrect information</strong> or{" "}
+                                <strong className="text-white">fails to send payment at all</strong>.
+                            </p>
+                            <p className="text-gray-300 leading-relaxed">
+                                Freelancers must ensure their{" "}
+                                <strong className="text-white">payment details are correct</strong>. If payment is sent
+                                to <strong className="text-white">incorrect details provided by the freelancer</strong>,
+                                fillxo will <strong className="text-white">not be held responsible</strong> for any loss
+                                of funds.
+                            </p>
+                        </div>
                     </section>
 
                     <section>

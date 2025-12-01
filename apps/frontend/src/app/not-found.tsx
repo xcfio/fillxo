@@ -1,6 +1,6 @@
 "use client"
 
-import React, { useState, useEffect } from "react"
+import { useState, useEffect } from "react"
 import { ArrowLeft, Wifi } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui"

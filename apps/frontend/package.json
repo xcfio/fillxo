@@ -10,10 +10,6 @@
         "test": "tsc --noEmit"
     },
     "dependencies": {
-        "@emotion/react": "^11.14.0",
-        "@mantine/core": "^8.3.6",
-        "@mantine/hooks": "^8.3.8",
-        "@mantine/notifications": "^8.3.6",
         "@tailwindcss/postcss": "^4.1.17",
         "@vercel/analytics": "^1.5.0",
         "lucide-react": "^0.553.0",

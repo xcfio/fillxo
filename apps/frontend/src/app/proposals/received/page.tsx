@@ -9,7 +9,6 @@ import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
 import {
     FileText,
-    DollarSign,
     Calendar,
     Clock,
     ArrowLeft,
@@ -255,7 +254,6 @@ function ReceivedProposalsContent() {
 
                                             <div className="flex flex-wrap gap-6 text-sm text-gray-400">
                                                 <div className="flex items-center gap-2">
-                                                    <DollarSign className="w-4 h-4" />
                                                     <span className="font-semibold text-blue-400">
                                                         {formatBudget(proposal.bidAmount)}
                                                     </span>

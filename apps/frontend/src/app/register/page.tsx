@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react"
 import { useRouter } from "next/navigation"
-import { Mail, User, Phone, Lock, Send, CheckCircle, ArrowRight, Globe } from "lucide-react"
+import { Mail, User, Phone, Lock, CheckCircle, ArrowRight, Globe } from "lucide-react"
 import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { FormInput } from "@/components/ui/form-input"
