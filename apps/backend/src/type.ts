@@ -1,15 +1,25 @@
-import { Static, Type } from "typebox"
-import { v7 } from "uuid"
+import { ClientToServerEvents, ServerToClientEvents } from "./socket"
 export { Notifications } from "./database/notifications"
-export { Contract } from "./database/contracts"
 export { User, PublicUser } from "./database/users"
 export { Proposal } from "./database/proposals"
+export { Contract } from "./database/contracts"
 export { Payments } from "./database/payments"
+export { Message } from "./database/messages"
 export { Job } from "./database/jobs"
+import { table } from "./database"
+import { Socket } from "socket.io"
+import { Static, Type } from "typebox"
+import { v7 } from "uuid"
+
+export interface AuthenticatedSocket extends Socket<ClientToServerEvents, ServerToClientEvents> {
+    user?: typeof table.users.$inferSelect
+    contract?: typeof table.contracts.$inferSelect
+}
 
 declare module "fastify" {
     interface FastifyInstance {
         auth: (request: FastifyRequest, reply: FastifyReply) => void
+        io: AuthenticatedSocket
     }
     interface FastifyRequest {
         user: Payload

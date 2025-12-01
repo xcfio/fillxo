@@ -36,6 +36,10 @@ export default async function swagger(fastify: Awaited<ReturnType<typeof main>>)
                     description: "Job posting and management endpoints"
                 },
                 {
+                    name: "Message",
+                    description: "Messaging and communication endpoints"
+                },
+                {
                     name: "Proposal",
                     description: "Job proposal submission and management endpoints"
                 },

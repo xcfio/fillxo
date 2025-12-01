@@ -5,6 +5,7 @@ import { Value } from "typebox/value"
 import { Payload } from "./type"
 import Fastify from "fastify"
 import Plugin from "./plugin"
+import Socket from "./socket"
 import Routes from "./routes"
 
 export async function main() {
@@ -17,7 +18,6 @@ export async function main() {
             transport: {
                 target: "pino-pretty",
                 options: {
-                    // translateTime: "SYS:yyyy-mm-dd HH:MM:ss",
                     ignore: "pid,hostname",
                     singleLine: false
                 }
@@ -81,6 +81,8 @@ export async function main() {
     await fastify.listen({ host: "0.0.0.0", port: 7200 })
     console.log(`Server listening at http://localhost:7200`)
 
+    // @ts-ignore
+    fastify.io.on("connection", Socket(fastify))
     return fastify
 }
 
