@@ -5,7 +5,7 @@ export default async function TypingStatusChanged(socket: Required<Authenticated
         try {
             const { contract, user } = socket
             const toSend = user.id === contract.clientId ? contract.freelancerId : contract.clientId
-            socket.to(toSend).emit("typing", toSend, status)
+            socket.to(toSend).emit("typing", user.id, status)
         } catch (error) {
             console.error(error)
             socket.emit("error", { message: "Internal Server Error", code: "INTERNAL_SERVER_ERROR" })

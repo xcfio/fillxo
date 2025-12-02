@@ -20,12 +20,14 @@ export default function EditMessages(fastify: Awaited<ReturnType<typeof main>>) 
             response: {
                 200: Message,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
+                401: ErrorResponse(401, "Unauthorized - Authentication required"),
                 403: ErrorResponse(403, "Forbidden - You are not authorized to send message for this contract"),
                 404: ErrorResponse(404, "Not Found - Contract not found"),
                 429: ErrorResponse(429, "Too many requests - rate limit exceeded"),
                 500: ErrorResponse(500, "Internal server error")
             }
         },
+        preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
                 const { id } = request.user

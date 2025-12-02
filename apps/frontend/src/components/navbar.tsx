@@ -18,6 +18,7 @@ import {
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { Notification } from "@/types/notification"
+import { Conversation, ConversationsResponse } from "@/types/message"
 
 export default function Navbar() {
     const router = useRouter()
@@ -29,8 +30,12 @@ export default function Navbar() {
     const [unreadCount, setUnreadCount] = useState(0)
     const [notifications, setNotifications] = useState<Notification[]>([])
     const [isNotificationOpen, setIsNotificationOpen] = useState(false)
+    const [conversations, setConversations] = useState<Conversation[]>([])
+    const [unreadMessages, setUnreadMessages] = useState(0)
+    const [isMessagesOpen, setIsMessagesOpen] = useState(false)
     const dropdownRef = useRef<HTMLDivElement>(null)
     const notificationRef = useRef<HTMLDivElement>(null)
+    const messagesRef = useRef<HTMLDivElement>(null)
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -41,15 +46,19 @@ export default function Navbar() {
                     setIsLoggedIn(true)
                     // Fetch unread notification count
                     fetchUnreadCount()
+                    // Fetch conversations
+                    fetchConversations()
                 } else {
                     setIsLoggedIn(false)
                     setUserData(null)
                     setUnreadCount(0)
+                    setUnreadMessages(0)
                 }
             } catch (error) {
                 setIsLoggedIn(false)
                 setUserData(null)
                 setUnreadCount(0)
+                setUnreadMessages(0)
             } finally {
                 setAuthCheckDone(true)
             }
@@ -61,8 +70,15 @@ export default function Navbar() {
         }
         window.addEventListener("focus", handleFocus)
 
+        // Listen for custom event to refresh messages (dispatched from chat page)
+        const handleMessagesRead = () => {
+            fetchConversations()
+        }
+        window.addEventListener("messages-read", handleMessagesRead)
+
         return () => {
             window.removeEventListener("focus", handleFocus)
+            window.removeEventListener("messages-read", handleMessagesRead)
         }
     }, [])
 
@@ -104,6 +120,21 @@ export default function Navbar() {
         }
     }
 
+    const fetchConversations = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/messages/conversations?limit=5`, {
+                credentials: "include"
+            })
+            if (response.ok) {
+                const data: ConversationsResponse = await response.json()
+                setConversations(data.conversations)
+                setUnreadMessages(data.conversations.reduce((sum, conv) => sum + conv.unreadCount, 0))
+            }
+        } catch (error) {
+            console.error("Error fetching conversations:", error)
+        }
+    }
+
     // Close dropdown when clicking outside
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {
@@ -113,16 +144,19 @@ export default function Navbar() {
             if (notificationRef.current && !notificationRef.current.contains(event.target as Node)) {
                 setIsNotificationOpen(false)
             }
+            if (messagesRef.current && !messagesRef.current.contains(event.target as Node)) {
+                setIsMessagesOpen(false)
+            }
         }
 
-        if (isDropdownOpen || isNotificationOpen) {
+        if (isDropdownOpen || isNotificationOpen || isMessagesOpen) {
             document.addEventListener("mousedown", handleClickOutside)
         }
 
         return () => {
             document.removeEventListener("mousedown", handleClickOutside)
         }
-    }, [isDropdownOpen, isNotificationOpen])
+    }, [isDropdownOpen, isNotificationOpen, isMessagesOpen])
 
     const handleLogout = async () => {
         try {
@@ -266,13 +300,100 @@ export default function Navbar() {
                                     </div>
                                 )}
                             </div>
-                            <button
-                                onClick={() => router.push("/dashboard")}
-                                className="text-gray-400 hover:text-white transition-colors"
-                                title="Messages"
-                            >
-                                <MessageSquare className="w-5 h-5" />
-                            </button>
+
+                            {/* Messages Dropdown */}
+                            <div className="relative" ref={messagesRef}>
+                                <button
+                                    onClick={() => setIsMessagesOpen(!isMessagesOpen)}
+                                    className="relative p-2 text-gray-400 hover:text-white transition-colors"
+                                    title="Messages"
+                                >
+                                    <MessageSquare className="w-5 h-5" />
+                                    {unreadMessages > 0 && (
+                                        <span className="absolute top-0 right-0 w-4 h-4 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center">
+                                            {unreadMessages > 9 ? "9+" : unreadMessages}
+                                        </span>
+                                    )}
+                                </button>
+
+                                {isMessagesOpen && (
+                                    <div className="absolute top-full right-0 mt-1 w-80 bg-gray-900 border border-blue-900/30 rounded-xl shadow-xl overflow-hidden z-50">
+                                        <div className="px-4 py-3 border-b border-blue-900/20 flex justify-between items-center">
+                                            <h3 className="font-semibold">Messages</h3>
+                                            {unreadMessages > 0 && (
+                                                <span className="text-xs text-blue-400">{unreadMessages} unread</span>
+                                            )}
+                                        </div>
+                                        <div className="max-h-80 overflow-y-auto">
+                                            {conversations.length === 0 ? (
+                                                <div className="px-4 py-8 text-center text-gray-400">
+                                                    <MessageSquare className="w-8 h-8 mx-auto mb-2 opacity-50" />
+                                                    <p className="text-sm">No conversations yet</p>
+                                                </div>
+                                            ) : (
+                                                conversations.map((conversation) => (
+                                                    <button
+                                                        key={conversation.contract.id}
+                                                        onClick={() => {
+                                                            setIsMessagesOpen(false)
+                                                            router.push(`/messages/${conversation.contract.id}`)
+                                                        }}
+                                                        className={`w-full px-4 py-3 text-left hover:bg-gray-800/50 transition-colors border-b border-blue-900/10 last:border-0 ${
+                                                            conversation.unreadCount > 0 ? "bg-blue-900/10" : ""
+                                                        }`}
+                                                    >
+                                                        <div className="flex items-center gap-3">
+                                                            <div className="w-10 h-10 bg-blue-600/20 border border-blue-700/50 rounded-full flex items-center justify-center shrink-0">
+                                                                {conversation.otherUser.avatar ? (
+                                                                    <Image
+                                                                        src={conversation.otherUser.avatar}
+                                                                        alt={conversation.otherUser.name}
+                                                                        width={40}
+                                                                        height={40}
+                                                                        className="rounded-full"
+                                                                    />
+                                                                ) : (
+                                                                    <User className="w-5 h-5 text-blue-400" />
+                                                                )}
+                                                            </div>
+                                                            <div className="flex-1 min-w-0">
+                                                                <div className="flex items-center justify-between">
+                                                                    <p
+                                                                        className={`text-sm font-medium truncate ${conversation.unreadCount > 0 ? "text-white" : "text-gray-300"}`}
+                                                                    >
+                                                                        {conversation.otherUser.name}
+                                                                    </p>
+                                                                    {conversation.unreadCount > 0 && (
+                                                                        <span className="w-5 h-5 bg-blue-500 text-white text-xs rounded-full flex items-center justify-center shrink-0">
+                                                                            {conversation.unreadCount}
+                                                                        </span>
+                                                                    )}
+                                                                </div>
+                                                                {conversation.lastMessage && (
+                                                                    <p className="text-xs text-gray-400 mt-0.5 truncate">
+                                                                        {conversation.lastMessage.sender ===
+                                                                            userData?.id && "You: "}
+                                                                        {conversation.lastMessage.content}
+                                                                    </p>
+                                                                )}
+                                                            </div>
+                                                        </div>
+                                                    </button>
+                                                ))
+                                            )}
+                                        </div>
+                                        <button
+                                            onClick={() => {
+                                                setIsMessagesOpen(false)
+                                                router.push("/messages")
+                                            }}
+                                            className="w-full px-4 py-3 text-center text-sm text-blue-400 hover:bg-gray-800/50 transition-colors border-t border-blue-900/20"
+                                        >
+                                            See all messages
+                                        </button>
+                                    </div>
+                                )}
+                            </div>
 
                             {/* Avatar Dropdown */}
                             <div className="relative" ref={dropdownRef}>
@@ -473,7 +594,7 @@ export default function Navbar() {
                                     </div>
                                 </button>
                                 <button
-                                    onClick={() => handleNavigation("/dashboard")}
+                                    onClick={() => handleNavigation("/messages")}
                                     className="block w-full text-left px-4 py-3 text-sm text-gray-300 hover:text-white hover:bg-gray-800/50 rounded-lg transition-colors font-medium"
                                 >
                                     <div className="flex items-center gap-3">

@@ -17,7 +17,7 @@ export const messages = pgTable("message", {
         .notNull()
         .references(() => contracts.id, { onDelete: "cascade" }),
     status: MessageStatus("status").notNull().default("sent"),
-    editedAt: timestamp("edited_at", { withTimezone: false }).$onUpdateFn(() => new Date()),
+    editedAt: timestamp("edited_at", { withTimezone: false }),
     createdAt: timestamp("created_at", { withTimezone: false })
         .notNull()
         .$defaultFn(() => new Date())
