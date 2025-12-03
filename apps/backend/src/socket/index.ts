@@ -8,7 +8,7 @@ import TypingStatusChanged from "./typing"
 
 export interface ClientToServerEvents {
     mark_as_read: (data: { contractId: string; messageIds: string[] }) => void
-    typing: (status: "started" | "stopped") => void
+    typing: (contractId: string, status: "started" | "stopped") => void
 }
 
 export interface ServerToClientEvents {

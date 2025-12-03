@@ -123,7 +123,7 @@ interface ChatState {
 
 export interface ClientToServerEvents {
     mark_as_read: (data: { contractId: string; messageIds: string[] }) => void
-    typing: (status: "started" | "stopped") => void
+    typing: (contractId: string, status: "started" | "stopped") => void
 }
 
 export interface ServerToClientEvents {
@@ -363,14 +363,14 @@ export default function ChatPage() {
     const handleTyping = () => {
         if (!socketRef.current) return
 
-        socketRef.current.emit("typing", "started")
+        socketRef.current.emit("typing", contractId, "started")
 
         if (typingTimeoutRef.current) {
             clearTimeout(typingTimeoutRef.current)
         }
 
         typingTimeoutRef.current = setTimeout(() => {
-            socketRef.current?.emit("typing", "stopped")
+            socketRef.current?.emit("typing", contractId, "stopped")
         }, 2000)
     }
 
