@@ -65,12 +65,12 @@ export default (fastify: Awaited<ReturnType<typeof main>>) => async (socket: Aut
             return
         }
 
-        const [contract] = await db
+        const contract = await db
             .select()
             .from(table.contracts)
             .where(and(or(eq(table.contracts.clientId, user.id), eq(table.contracts.freelancerId, user.id))))
 
-        if (!contract) {
+        if (!contract.length) {
             console.log(`Socket ${socket.id}: Contract not found or access denied`)
             socket.emit("error", { message: "Contract not found or access denied", code: "CONTRACT_NOT_FOUND" })
             socket.disconnect(true)

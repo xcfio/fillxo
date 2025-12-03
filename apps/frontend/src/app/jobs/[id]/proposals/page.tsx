@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import {
     FileText,
     Calendar,
@@ -230,19 +231,19 @@ export default function JobProposalsPage() {
 
                     {/* Filter */}
                     <div className="flex gap-4">
-                        <select
+                        <Select
                             value={statusFilter}
                             onChange={(e) => {
                                 setStatusFilter(e.target.value as ProposalStatus | "all")
                                 setCurrentPage(1)
                             }}
-                            className="px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
-                        >
-                            <option value="all">All Status</option>
-                            <option value="pending">Pending</option>
-                            <option value="accepted">Accepted</option>
-                            <option value="rejected">Rejected</option>
-                        </select>
+                            options={[
+                                { value: "all", label: "All Status" },
+                                { value: "pending", label: "Pending" },
+                                { value: "accepted", label: "Accepted" },
+                                { value: "rejected", label: "Rejected" }
+                            ]}
+                        />
                     </div>
                 </div>
 

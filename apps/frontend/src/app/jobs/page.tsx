@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import { Briefcase, Calendar, Plus, Search, ChevronLeft, ChevronRight } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
@@ -117,17 +118,14 @@ export default function JobsPage() {
                                 className="w-full pl-12 pr-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors"
                             />
                         </div>
-                        <select
+                        <Select
                             value={selectedCategory}
                             onChange={(e) => setSelectedCategory(e.target.value)}
-                            className="px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
-                        >
-                            {categories.map((category) => (
-                                <option key={category} value={category}>
-                                    {category === "all" ? "All Categories" : category}
-                                </option>
-                            ))}
-                        </select>
+                            options={categories.map((category) => ({
+                                value: category,
+                                label: category === "all" ? "All Categories" : category
+                            }))}
+                        />
                     </div>
                 </div>
 

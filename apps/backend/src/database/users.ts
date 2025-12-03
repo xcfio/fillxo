@@ -3,6 +3,7 @@ import { Static, Type } from "typebox"
 import { sql } from "drizzle-orm"
 import { v7 } from "uuid"
 import { UUID, Nullable } from "../typebox"
+import { date } from "drizzle-orm/pg-core"
 
 export const Role = pgEnum("role", ["freelancer", "client"])
 export const Privilege = pgEnum("privilege", ["moderator", "admin"])
@@ -18,6 +19,7 @@ export const users = pgTable(
         username: text("username").unique().notNull(),
         name: text("name").notNull(),
         gender: Gender("gender").notNull(),
+        birthday: date("birthday").notNull(),
         avatar: text("avatar"),
         phone: text("phone").notNull(),
         phoneVerified: boolean("phone_verified").notNull().default(false),
@@ -25,6 +27,7 @@ export const users = pgTable(
         role: Role("role").notNull(),
         privilege: Privilege("privilege"),
         isBanned: boolean("is_banned").notNull().default(false),
+        banReason: text("ban_reason"),
         country: text("country"),
         rating: jsonb("rating").$type<{ id: string; review: 1 | 2 | 3 | 4 | 5; comment?: string }>(),
         client: jsonb("client").$type<{ companyName?: string; industry?: string }>(),
@@ -137,14 +140,18 @@ export const User = Type.Object({
     gender: Type.Union([Type.Literal("male"), Type.Literal("female"), Type.Literal("other")], {
         description: "Gender of the user"
     }),
-    avatar: Type.Union([
+    birthday: Type.String({
+        format: "date",
+        examples: ["2000-01-01"],
+        description: "User's date of birth"
+    }),
+    avatar: Nullable(
         Type.String({
             format: "uri",
             examples: ["https://example.com/avatar.jpg"],
             description: "Avatar image URL"
-        }),
-        Type.Null()
-    ]),
+        })
+    ),
     phone: Type.String({
         pattern: "^\\+[1-9]\\d{1,14}$",
         examples: ["+8801712345678"],
@@ -164,6 +171,11 @@ export const User = Type.Object({
         default: false,
         description: "Whether user is banned"
     }),
+    banReason: Nullable(
+        Type.String({
+            description: "Reason for ban"
+        })
+    ),
     country: Nullable(
         Type.String({
             minLength: 2,
@@ -204,34 +216,32 @@ export const PublicUser = Type.Object({
         examples: ["John Doe"],
         description: "Full name"
     }),
-    avatar: Type.Union([
+    avatar: Nullable(
         Type.String({
             format: "uri",
             examples: ["https://example.com/avatar.jpg"],
             description: "Avatar image URL"
-        }),
-        Type.Null()
-    ]),
+        })
+    ),
     role: Type.Union([Type.Literal("freelancer"), Type.Literal("client")], {
         description: "User role"
     }),
-    country: Type.Union([
+    country: Nullable(
         Type.String({
             minLength: 2,
             maxLength: 2,
             pattern: "^[A-Z]{2}$",
             examples: ["BD", "US"],
             description: "Country code"
-        }),
-        Type.Null()
-    ]),
-    rating: Type.Union([RatingSchema, Type.Null()], {
+        })
+    ),
+    rating: Nullable(RatingSchema, {
         description: "User rating"
     }),
-    freelancer: Type.Union([FreelancerSchema, Type.Null()], {
+    freelancer: Nullable(FreelancerSchema, {
         description: "Freelancer profile"
     }),
-    client: Type.Union([ClientSchema, Type.Null()], {
+    client: Nullable(ClientSchema, {
         description: "Client profile"
     }),
     createdAt: Type.String({

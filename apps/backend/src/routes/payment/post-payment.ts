@@ -1,9 +1,10 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { client, CreateError, isFastifyError, ObjectString, toTypeBox } from "../../function"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { Type } from "typebox"
 import { eq } from "drizzle-orm"
+import { ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10"
 
 export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
@@ -12,7 +13,14 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         schema: {
             description: "Create a new payment for an accepted proposal",
             tags: ["Payments"],
-            body: Type.Pick(Payments, ["contractId", "paymentMethod", "transactionId"]),
+            body: Type.Pick(Payments, [
+                "contractId",
+                "rate",
+                "paymentMethod",
+                "transactionId",
+                "senderNumber",
+                "notes"
+            ]),
             response: {
                 201: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
@@ -27,34 +35,23 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { id } = request.user
-                const { paymentMethod, contractId, transactionId } = request.body
+                const { rate, contractId, paymentMethod, transactionId, senderNumber, notes = null } = request.body
 
-                const [query] = await db
-                    .select()
-                    .from(table.contracts)
-                    .where(eq(table.contracts.id, contractId))
-                    .leftJoin(table.proposals, eq(table.contracts.proposalId, table.proposals.id))
+                const [contracts] = await db.select().from(table.contracts).where(eq(table.contracts.id, contractId))
 
-                if (!query) {
+                if (!contracts) {
                     throw CreateError(404, "CONTRACT_NOT_FOUND", "Contract not found")
                 }
 
-                if (!query.proposals) {
-                    throw CreateError(404, "PROPOSAL_NOT_FOUND", "Proposal not found")
-                }
-
-                if (query.contracts.clientId !== id) {
+                if (contracts.clientId !== id) {
                     throw CreateError(403, "FORBIDDEN", "You are not authorized to make payment for this contract")
                 }
 
-                if (query.contracts.status !== "payment-required") {
+                if (contracts.status !== "payment-required") {
                     throw CreateError(400, "INVALID_STATUS", "Contract is not awaiting payment")
                 }
 
-                const exist = await db
-                    .select()
-                    .from(table.payments)
-                    .where(eq(table.payments.contractId, query.contracts.id))
+                const exist = await db.select().from(table.payments).where(eq(table.payments.contractId, contracts.id))
 
                 if (exist.filter((x) => x.status === "pending").length > 0) {
                     throw CreateError(409, "PAYMENT_EXISTS", "Payment already exists for this contract")
@@ -63,14 +60,63 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                 const [payment] = await db
                     .insert(table.payments)
                     .values({
-                        clientId: id,
-                        freelancerId: query.contracts.freelancerId,
-                        paymentMethod,
-                        contractId,
-                        transactionId,
-                        amount: query.proposals.bidAmount
+                        rate: rate,
+                        amount: contracts.amount,
+                        clientId: contracts.clientId,
+                        contractId: contracts.id,
+                        freelancerId: contracts.freelancerId,
+                        jobId: contracts.jobId,
+                        paymentMethod: paymentMethod,
+                        payoutMethod: paymentMethod,
+                        proposalId: contracts.proposalId,
+                        receiverNumber: "empty",
+                        senderNumber: senderNumber,
+                        transactionId: transactionId,
+                        status: "pending",
+                        notes: notes
                     })
                     .returning()
+
+                await client.channel.createMessage(process.env.CHANNEL, {
+                    flags: MessageFlags.IsComponentsV2,
+                    allowed_mentions: { replied_user: false },
+                    components: [
+                        {
+                            type: ComponentType.Container,
+                            components: [
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "# Payment Received"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: "### Payment Information"
+                                },
+                                {
+                                    type: ComponentType.TextDisplay,
+                                    content: ObjectString(payment, "\n")
+                                },
+                                {
+                                    type: ComponentType.ActionRow,
+                                    components: [
+                                        {
+                                            label: "Approve Payment",
+                                            custom_id: `fillxo-approve-${payment.id}`,
+                                            type: ComponentType.Button,
+                                            style: ButtonStyle.Success
+                                        },
+                                        {
+                                            label: "Reject Payment",
+                                            custom_id: `fillxo-reject-${payment.id}`,
+                                            type: ComponentType.Button,
+                                            style: ButtonStyle.Danger
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                })
 
                 return reply.status(201).send(toTypeBox(payment))
             } catch (error) {

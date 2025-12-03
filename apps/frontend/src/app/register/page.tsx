@@ -7,6 +7,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { Card } from "@/components/ui/card"
 import { FormInput } from "@/components/ui/form-input"
 import { ErrorAlert } from "@/components/ui/error-alert"
+import { Select } from "@/components/ui/select"
 import { isAuthenticated } from "@/utils/auth"
 
 const PhoneCodes = new Map([
@@ -80,6 +81,12 @@ const PhoneCodes = new Map([
     ["NZ", "+64"],
     ["FJ", "+679"]
 ])
+
+const GENDER_OPTIONS = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" }
+]
 
 const Countries = [
     { code: "BD", name: "Bangladesh" },
@@ -208,6 +215,7 @@ export default function RegisterPage() {
         username: "",
         name: "",
         gender: "",
+        birthday: "",
         phone: "",
         countryCode: "",
         country: "",
@@ -281,6 +289,19 @@ export default function RegisterPage() {
 
         if (!formData.gender || !["male", "female", "other"].includes(formData.gender)) {
             newErrors.gender = "Please select a gender"
+        }
+
+        if (!formData.birthday) {
+            newErrors.birthday = "Please enter your birthday"
+        } else {
+            const birthDate = new Date(formData.birthday)
+            const today = new Date()
+            const age = today.getFullYear() - birthDate.getFullYear()
+            if (age < 13) {
+                newErrors.birthday = "You must be at least 13 years old"
+            } else if (age > 120) {
+                newErrors.birthday = "Please enter a valid birthday"
+            }
         }
 
         if (!formData.country || formData.country.length !== 2) {
@@ -365,6 +386,7 @@ export default function RegisterPage() {
                 username: storedData.username,
                 name: storedData.name,
                 gender: storedData.gender,
+                birthday: storedData.birthday,
                 phone: fullPhone,
                 role: storedData.role,
                 country: storedData.country || "BD",
@@ -510,64 +532,53 @@ export default function RegisterPage() {
                                 placeholder="John Doe"
                             />
 
-                            <div>
-                                <label
-                                    htmlFor="gender"
-                                    className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2"
-                                >
-                                    <User className="w-4 h-4 text-blue-400" />
-                                    Gender
-                                </label>
-                                <select
-                                    id="gender"
-                                    value={formData.gender}
-                                    onChange={(e) =>
-                                        setFormData({
-                                            ...formData,
-                                            gender: e.target.value as "male" | "female" | "other"
-                                        })
-                                    }
-                                    className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-white"
-                                >
-                                    <option value="">Select Gender</option>
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                                {errors.gender && <p className="mt-2 text-sm text-red-400">{errors.gender}</p>}
-                            </div>
+                            <Select
+                                id="gender"
+                                label="Gender"
+                                labelIcon={User}
+                                value={formData.gender}
+                                onChange={(e) =>
+                                    setFormData({
+                                        ...formData,
+                                        gender: e.target.value as "male" | "female" | "other"
+                                    })
+                                }
+                                placeholder="Select Gender"
+                                options={GENDER_OPTIONS}
+                                error={errors.gender}
+                            />
 
-                            <div>
-                                <label
-                                    htmlFor="country"
-                                    className="flex items-center gap-2 text-sm font-medium text-gray-300 mb-2"
-                                >
-                                    <Globe className="w-4 h-4 text-blue-400" />
-                                    Country
-                                </label>
-                                <select
-                                    id="country"
-                                    value={formData.country}
-                                    onChange={(e) => {
-                                        const selectedCountry = e.target.value
-                                        const phoneCode = PhoneCodes.get(selectedCountry) || ""
-                                        setFormData({
-                                            ...formData,
-                                            country: selectedCountry,
-                                            countryCode: phoneCode
-                                        })
-                                    }}
-                                    className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors text-white"
-                                >
-                                    <option value="">Select Country</option>
-                                    {Countries.map((country) => (
-                                        <option key={country.code} value={country.code}>
-                                            {country.name}
-                                        </option>
-                                    ))}
-                                </select>
-                                {errors.country && <p className="mt-2 text-sm text-red-400">{errors.country}</p>}
-                            </div>
+                            <FormInput
+                                label="Birthday"
+                                type="date"
+                                icon={User}
+                                id="birthday"
+                                value={formData.birthday}
+                                onChange={(e) => setFormData({ ...formData, birthday: e.target.value })}
+                                error={errors.birthday}
+                            />
+
+                            <Select
+                                id="country"
+                                label="Country"
+                                labelIcon={Globe}
+                                value={formData.country}
+                                onChange={(e) => {
+                                    const selectedCountry = e.target.value
+                                    const phoneCode = PhoneCodes.get(selectedCountry) || ""
+                                    setFormData({
+                                        ...formData,
+                                        country: selectedCountry,
+                                        countryCode: phoneCode
+                                    })
+                                }}
+                                placeholder="Select Country"
+                                options={Countries.map((country) => ({
+                                    value: country.code,
+                                    label: country.name
+                                }))}
+                                error={errors.country}
+                            />
 
                             <PhoneInput
                                 value={formData.phone}

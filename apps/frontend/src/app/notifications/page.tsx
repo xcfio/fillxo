@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import { Bell, Check, CheckCheck, Trash2, ChevronLeft, ChevronRight, ExternalLink, Circle } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatTimeAgo } from "@/utils/time"
@@ -184,18 +185,18 @@ export default function NotificationsPage() {
 
                     {/* Filter */}
                     <div className="flex gap-4">
-                        <select
+                        <Select
                             value={readFilter}
                             onChange={(e) => {
                                 setReadFilter(e.target.value as "all" | "unread" | "read")
                                 setCurrentPage(1)
                             }}
-                            className="px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
-                        >
-                            <option value="all">All Notifications</option>
-                            <option value="unread">Unread Only</option>
-                            <option value="read">Read Only</option>
-                        </select>
+                            options={[
+                                { value: "all", label: "All Notifications" },
+                                { value: "unread", label: "Unread Only" },
+                                { value: "read", label: "Read Only" }
+                            ]}
+                        />
                     </div>
                 </div>
 

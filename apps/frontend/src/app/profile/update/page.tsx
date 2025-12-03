@@ -7,9 +7,90 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
 import { Card } from "@/components/ui/card"
-import { User, Mail, Phone, Globe, ArrowLeft, Save, ChevronDown, Briefcase, Award, Shield } from "lucide-react"
+import { Select } from "@/components/ui/select"
+import { User, Mail, Phone, Globe, ArrowLeft, Save, Briefcase, Award, Shield } from "lucide-react"
 
 import { getUser } from "@/utils/auth"
+
+const GENDER_OPTIONS = [
+    { value: "male", label: "Male" },
+    { value: "female", label: "Female" },
+    { value: "other", label: "Other" }
+]
+
+const ROLE_OPTIONS = [
+    { value: "freelancer", label: "Freelancer" },
+    { value: "client", label: "Client" }
+]
+
+const COUNTRY_OPTIONS = [
+    { value: "AR", label: "Argentina" },
+    { value: "AU", label: "Australia" },
+    { value: "AT", label: "Austria" },
+    { value: "BD", label: "Bangladesh" },
+    { value: "BE", label: "Belgium" },
+    { value: "BR", label: "Brazil" },
+    { value: "BG", label: "Bulgaria" },
+    { value: "CA", label: "Canada" },
+    { value: "CL", label: "Chile" },
+    { value: "CN", label: "China" },
+    { value: "CO", label: "Colombia" },
+    { value: "HR", label: "Croatia" },
+    { value: "CY", label: "Cyprus" },
+    { value: "CZ", label: "Czech Republic" },
+    { value: "DK", label: "Denmark" },
+    { value: "EG", label: "Egypt" },
+    { value: "EE", label: "Estonia" },
+    { value: "FI", label: "Finland" },
+    { value: "FR", label: "France" },
+    { value: "DE", label: "Germany" },
+    { value: "GR", label: "Greece" },
+    { value: "HK", label: "Hong Kong" },
+    { value: "HU", label: "Hungary" },
+    { value: "IS", label: "Iceland" },
+    { value: "IN", label: "India" },
+    { value: "ID", label: "Indonesia" },
+    { value: "IE", label: "Ireland" },
+    { value: "IT", label: "Italy" },
+    { value: "JP", label: "Japan" },
+    { value: "KE", label: "Kenya" },
+    { value: "KR", label: "South Korea" },
+    { value: "LV", label: "Latvia" },
+    { value: "LT", label: "Lithuania" },
+    { value: "LU", label: "Luxembourg" },
+    { value: "MY", label: "Malaysia" },
+    { value: "MT", label: "Malta" },
+    { value: "MX", label: "Mexico" },
+    { value: "NL", label: "Netherlands" },
+    { value: "NZ", label: "New Zealand" },
+    { value: "NG", label: "Nigeria" },
+    { value: "NO", label: "Norway" },
+    { value: "PK", label: "Pakistan" },
+    { value: "PE", label: "Peru" },
+    { value: "PH", label: "Philippines" },
+    { value: "PL", label: "Poland" },
+    { value: "PT", label: "Portugal" },
+    { value: "RO", label: "Romania" },
+    { value: "RU", label: "Russia" },
+    { value: "SA", label: "Saudi Arabia" },
+    { value: "RS", label: "Serbia" },
+    { value: "SG", label: "Singapore" },
+    { value: "SK", label: "Slovakia" },
+    { value: "SI", label: "Slovenia" },
+    { value: "ZA", label: "South Africa" },
+    { value: "ES", label: "Spain" },
+    { value: "LK", label: "Sri Lanka" },
+    { value: "SE", label: "Sweden" },
+    { value: "CH", label: "Switzerland" },
+    { value: "TW", label: "Taiwan" },
+    { value: "TH", label: "Thailand" },
+    { value: "TR", label: "Turkey" },
+    { value: "UA", label: "Ukraine" },
+    { value: "AE", label: "United Arab Emirates" },
+    { value: "GB", label: "United Kingdom" },
+    { value: "US", label: "United States" },
+    { value: "VN", label: "Vietnam" }
+]
 
 interface PortfolioItem {
     title: string
@@ -313,26 +394,15 @@ export default function UpdateProfilePage() {
                         </div>
 
                         {/* Gender */}
-                        <div>
-                            <label htmlFor="gender" className="flex items-center gap-2 text-sm font-medium mb-2">
-                                <User className="w-4 h-4 text-blue-400" />
-                                Gender
-                            </label>
-                            <div className="relative">
-                                <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                                <select
-                                    id="gender"
-                                    name="gender"
-                                    value={formData.gender}
-                                    onChange={handleChange}
-                                    className="w-full pl-12 pr-5 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors appearance-none"
-                                >
-                                    <option value="male">Male</option>
-                                    <option value="female">Female</option>
-                                    <option value="other">Other</option>
-                                </select>
-                            </div>
-                        </div>
+                        <Select
+                            id="gender"
+                            name="gender"
+                            label="Gender"
+                            labelIcon={User}
+                            value={formData.gender}
+                            onChange={handleChange}
+                            options={GENDER_OPTIONS}
+                        />
 
                         {/* Username */}
                         <div>
@@ -369,25 +439,15 @@ export default function UpdateProfilePage() {
                         </div>
 
                         {/* Role */}
-                        <div>
-                            <label htmlFor="role" className="flex items-center gap-2 text-sm font-medium mb-2">
-                                <User className="w-4 h-4 text-blue-400" />
-                                Role
-                            </label>
-                            <div className="relative">
-                                <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                                <select
-                                    id="role"
-                                    name="role"
-                                    value={formData.role}
-                                    onChange={handleChange}
-                                    className="w-full pl-12 pr-5 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors appearance-none"
-                                >
-                                    <option value="freelancer">Freelancer</option>
-                                    <option value="client">Client</option>
-                                </select>
-                            </div>
-                        </div>
+                        <Select
+                            id="role"
+                            name="role"
+                            label="Role"
+                            labelIcon={User}
+                            value={formData.role}
+                            onChange={handleChange}
+                            options={ROLE_OPTIONS}
+                        />
 
                         {/* Phone */}
                         <div>
@@ -407,90 +467,16 @@ export default function UpdateProfilePage() {
                         </div>
 
                         {/* Country */}
-                        <div>
-                            <label htmlFor="country" className="flex items-center gap-2 text-sm font-medium mb-2">
-                                <Globe className="w-4 h-4 text-blue-400" />
-                                Country
-                            </label>
-                            <div className="relative">
-                                <ChevronDown className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-gray-400 pointer-events-none" />
-                                <select
-                                    id="country"
-                                    name="country"
-                                    value={formData.country}
-                                    onChange={handleChange}
-                                    className="w-full pl-12 pr-5 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors appearance-none"
-                                >
-                                    <option value="">Select a country</option>
-                                    <option value="AR">Argentina</option>
-                                    <option value="AU">Australia</option>
-                                    <option value="AT">Austria</option>
-                                    <option value="BD">Bangladesh</option>
-                                    <option value="BE">Belgium</option>
-                                    <option value="BR">Brazil</option>
-                                    <option value="BG">Bulgaria</option>
-                                    <option value="CA">Canada</option>
-                                    <option value="CL">Chile</option>
-                                    <option value="CN">China</option>
-                                    <option value="CO">Colombia</option>
-                                    <option value="HR">Croatia</option>
-                                    <option value="CY">Cyprus</option>
-                                    <option value="CZ">Czech Republic</option>
-                                    <option value="DK">Denmark</option>
-                                    <option value="EG">Egypt</option>
-                                    <option value="EE">Estonia</option>
-                                    <option value="FI">Finland</option>
-                                    <option value="FR">France</option>
-                                    <option value="DE">Germany</option>
-                                    <option value="GR">Greece</option>
-                                    <option value="HK">Hong Kong</option>
-                                    <option value="HU">Hungary</option>
-                                    <option value="IS">Iceland</option>
-                                    <option value="IN">India</option>
-                                    <option value="ID">Indonesia</option>
-                                    <option value="IE">Ireland</option>
-                                    <option value="IT">Italy</option>
-                                    <option value="JP">Japan</option>
-                                    <option value="KE">Kenya</option>
-                                    <option value="KR">South Korea</option>
-                                    <option value="LV">Latvia</option>
-                                    <option value="LT">Lithuania</option>
-                                    <option value="LU">Luxembourg</option>
-                                    <option value="MY">Malaysia</option>
-                                    <option value="MT">Malta</option>
-                                    <option value="MX">Mexico</option>
-                                    <option value="NL">Netherlands</option>
-                                    <option value="NZ">New Zealand</option>
-                                    <option value="NG">Nigeria</option>
-                                    <option value="NO">Norway</option>
-                                    <option value="PK">Pakistan</option>
-                                    <option value="PE">Peru</option>
-                                    <option value="PH">Philippines</option>
-                                    <option value="PL">Poland</option>
-                                    <option value="PT">Portugal</option>
-                                    <option value="RO">Romania</option>
-                                    <option value="RU">Russia</option>
-                                    <option value="SA">Saudi Arabia</option>
-                                    <option value="RS">Serbia</option>
-                                    <option value="SG">Singapore</option>
-                                    <option value="SK">Slovakia</option>
-                                    <option value="SI">Slovenia</option>
-                                    <option value="ZA">South Africa</option>
-                                    <option value="ES">Spain</option>
-                                    <option value="LK">Sri Lanka</option>
-                                    <option value="SE">Sweden</option>
-                                    <option value="CH">Switzerland</option>
-                                    <option value="TW">Taiwan</option>
-                                    <option value="TH">Thailand</option>
-                                    <option value="TR">Turkey</option>
-                                    <option value="UA">Ukraine</option>
-                                    <option value="AE">United Arab Emirates</option>
-                                    <option value="GB">United Kingdom</option>
-                                    <option value="US">United States</option>
-                                    <option value="VN">Vietnam</option>
-                                </select>
-                            </div>
-                        </div>
+                        <Select
+                            id="country"
+                            name="country"
+                            label="Country"
+                            labelIcon={Globe}
+                            value={formData.country}
+                            onChange={handleChange}
+                            placeholder="Select a country"
+                            options={COUNTRY_OPTIONS}
+                        />
 
                         {/* Timezone */}
                         {/* <div>

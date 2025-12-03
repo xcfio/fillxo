@@ -13,7 +13,6 @@ export default function MarkAsRead(socket: Required<AuthenticatedSocket>) {
                 return socket.emit("error", { message: "Invalid request data", code: "INVALID_DATA" })
             }
 
-            // Fetch the specific contract to verify access and get the other user
             const [contract] = await db
                 .select()
                 .from(table.contracts)

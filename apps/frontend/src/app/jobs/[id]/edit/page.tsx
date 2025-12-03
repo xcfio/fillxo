@@ -7,6 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ErrorAlert } from "@/components/ui/error-alert"
+import { Select } from "@/components/ui/select"
 import { ArrowLeft, Briefcase, Save } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { localToISO, isoToLocal, getMinDateTime } from "@/utils/time"
@@ -277,20 +278,17 @@ export default function EditJobPage() {
                             <label className="block text-sm font-medium mb-2">
                                 Category <span className="text-red-400">*</span>
                             </label>
-                            <select
+                            <Select
                                 name="category"
                                 value={formData.category}
                                 onChange={handleChange}
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
+                                placeholder="Select a category"
+                                options={categories.map((cat) => ({
+                                    value: cat,
+                                    label: cat
+                                }))}
                                 required
-                            >
-                                <option value="">Select a category</option>
-                                {categories.map((cat) => (
-                                    <option key={cat} value={cat}>
-                                        {cat}
-                                    </option>
-                                ))}
-                            </select>
+                            />
                         </div>
 
                         {/* Description */}

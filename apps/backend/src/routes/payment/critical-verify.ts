@@ -20,16 +20,10 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Verify a payment (Critical - Protected by auth key)",
             tags: ["Payments"],
             params: Type.Object({ id: UUID }),
-            querystring: Type.Object({
+            body: Type.Object({
                 auth: UUID,
-                status: Type.Union([
-                    Type.Literal("pending"),
-                    Type.Literal("verified"),
-                    Type.Literal("rejected"),
-                    Type.Literal("refunded")
-                ]),
-                notes: Type.Optional(Type.String()),
-                rejectReason: Type.Optional(Type.String())
+                status: Type.Union([Type.Literal("verified"), Type.Literal("rejected"), Type.Literal("refunded")]),
+                rejectionReason: Type.Optional(Type.String())
             }),
             response: {
                 200: Payments,
@@ -39,11 +33,10 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
                 500: ErrorResponse(500, "Internal server error")
             }
         },
-
         handler: async (request, reply) => {
             try {
                 const { id } = request.params
-                const { auth, status, notes, rejectReason } = request.query
+                const { auth, status, rejectionReason } = request.body
 
                 if (auth !== process.env.PAYMENT_SECRET) {
                     return reply.status(404).send({
@@ -59,51 +52,90 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
                 await db.transaction(async (tx) => {
                     const [payment] = await tx
                         .update(table.payments)
-                        .set({ status, notes, rejectReason })
+                        .set({ status, rejectionReason })
                         .where(eq(table.payments.id, id))
                         .returning()
 
-                    if (status === "verified") {
-                        await SendNotification(
-                            exist.clientId,
-                            "Payment Verified",
-                            `Your payment with transaction ID "${payment.id}" has been verified. Now you can open contracts for the associated job.`,
-                            `/payments/${payment.id}`
-                        )
+                    switch (status) {
+                        case "verified": {
+                            const [contract] = await tx
+                                .update(table.contracts)
+                                .set({ status: "active", startDate: new Date() })
+                                .where(eq(table.contracts.id, exist.contractId))
+                                .returning()
 
-                        const [contract] = await tx
-                            .update(table.contracts)
-                            .set({ status: "active", startDate: new Date() })
-                            .where(eq(table.contracts.id, exist.contractId))
-                            .returning()
+                            const [{ proposals, jobs }] = await tx
+                                .select()
+                                .from(table.proposals)
+                                .leftJoin(table.jobs, eq(table.jobs.id, table.proposals.jobId))
+                                .where(eq(table.proposals.id, contract.proposalId))
 
-                        await SendNotification(
-                            payment.freelancerId,
-                            "Contract Activated",
-                            `A new contract has been activated for your job: ${contract.jobId}. You can start working on it now.`,
-                            `/contracts/${exist.contractId}`
-                        )
-                    } else if (status === "rejected") {
-                        await SendNotification(
-                            exist.clientId,
-                            "Payment Rejected",
-                            `Your payment with transaction ID "${payment.id}" has been rejected for reason: ${rejectReason ?? "No reason provided"}.`,
-                            `/payments/${payment.id}`
-                        )
-                    } else if (status === "refunded") {
-                        await SendNotification(
-                            exist.clientId,
-                            "Payment Refunded",
-                            `Your payment with transaction ID "${payment.id}" has been refunded.`,
-                            `/payments/${payment.id}`
-                        )
-                    } else if (status === "pending") {
-                        await SendNotification(
-                            exist.clientId,
-                            "Payment Pending",
-                            `Your payment with transaction ID "${payment.id}" is currently pending.`,
-                            `/payments/${payment.id}`
-                        )
+                            const [message] = await tx
+                                .insert(table.messages)
+                                .values({
+                                    contracts: contract.id,
+                                    content: [
+                                        "Contract Details:",
+                                        `> Contract ID: ${contract.id}`,
+                                        `> Freelancer ID: ${contract.freelancerId}`,
+                                        `> Client ID: ${contract.clientId}`,
+                                        `> Job ID: ${contract.jobId}`,
+                                        "",
+                                        `> Job Title: ${jobs?.title}`,
+                                        `> Job Description: ${jobs?.description}`,
+                                        `> Job Category: ${jobs?.category}`,
+                                        "",
+                                        `> Agreed Amount: $${proposals.bidAmount}`,
+                                        `> Payment Status: ${payment.status}`,
+                                        `> Start Date: ${contract.startDate?.toDateString()}`,
+                                        `> Estimated Delivery Days: ${proposals.deliveryDays} days`,
+                                        "\n",
+                                        `If you are the freelancer, you can now start working on the job. If you are the client, you can monitor the progress through this chat`
+                                    ].join("\n")
+                                })
+                                .returning()
+
+                            fastify.io.to(contract.freelancerId).emit("message_created", toTypeBox(message))
+                            fastify.io.to(contract.clientId).emit("message_created", toTypeBox(message))
+
+                            await SendNotification(
+                                exist.clientId,
+                                "Payment Verified",
+                                `Your payment with transaction ID "${payment.id}" has been verified. The contract for your job: ${contract.jobId} is now active. You can communicate with the freelancer through the contract chat.`,
+                                `/messages/${contract.id}`
+                            )
+
+                            await SendNotification(
+                                payment.freelancerId,
+                                "Contract Activated",
+                                `A new contract has been activated for your job: ${contract.jobId}. You can now start working on the job and communicate with the client through the contract chat.`,
+                                `/messages/${contract.id}`
+                            )
+                            break
+                        }
+
+                        case "rejected": {
+                            await SendNotification(
+                                exist.clientId,
+                                "Payment Rejected",
+                                `Your payment with transaction ID "${payment.id}" has been rejected for reason: ${rejectionReason ?? "No reason provided"}. If you believe this is a mistake, please contact support.`,
+                                `/payments/${payment.id}`
+                            )
+                            break
+                        }
+
+                        case "refunded": {
+                            await SendNotification(
+                                exist.clientId,
+                                "Payment Refunded",
+                                `Your payment with transaction ID "${payment.id}" has been refunded. The amount should reflect in your account within 5-7 business days.`,
+                                `/payments/${payment.id}`
+                            )
+                            break
+                        }
+
+                        default:
+                            break
                     }
 
                     return reply.status(200).send(toTypeBox(payment))

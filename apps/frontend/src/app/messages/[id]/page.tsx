@@ -24,31 +24,91 @@ import { Message, ConversationUser } from "@/types/message"
 import { Contract } from "@/types/contract"
 import { User } from "@/types/user"
 import { io, Socket } from "socket.io-client"
+import ReactMarkdown from "react-markdown"
+import remarkGfm from "remark-gfm"
+import remarkBreaks from "remark-breaks"
 
-// Function to convert URLs in text to clickable links
-function linkifyText(text: string): React.ReactNode {
-    const urlRegex = /(https?:\/\/[^\s<]+[^<.,:;"')\]\s])/g
-    const parts = text.split(urlRegex)
-
-    return parts.map((part, index) => {
-        if (urlRegex.test(part)) {
-            // Reset regex lastIndex
-            urlRegex.lastIndex = 0
-            return (
-                <a
-                    key={index}
-                    href={part}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-300 hover:text-blue-200 underline break-all"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    {part}
-                </a>
-            )
-        }
-        return part
-    })
+// Markdown components for message rendering
+// Note: react-markdown v9+ passes a `node` prop that must be destructured out
+// to avoid passing it to DOM elements
+const markdownComponents = {
+    a: ({ node, href, children, ...props }: any) => (
+        <a
+            href={href}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="text-blue-300 hover:text-blue-200 underline break-all"
+            onClick={(e: React.MouseEvent) => e.stopPropagation()}
+            {...props}
+        >
+            {children}
+        </a>
+    ),
+    p: ({ node, children, ...props }: any) => (
+        <p className="mb-3 last:mb-0" {...props}>
+            {children}
+        </p>
+    ),
+    code: ({ node, inline, className, children, ...props }: any) => {
+        // In react-markdown v9+, inline code doesn't have className
+        const isInline = inline || !className
+        return isInline ? (
+            <code className="bg-gray-900/50 px-1.5 py-0.5 rounded text-sm font-mono" {...props}>
+                {children}
+            </code>
+        ) : (
+            <code
+                className={`block bg-gray-900/50 p-2 rounded text-sm font-mono overflow-x-auto my-1 ${className || ""}`}
+                {...props}
+            >
+                {children}
+            </code>
+        )
+    },
+    pre: ({ node, children, ...props }: any) => (
+        <pre className="bg-gray-900/50 p-2 rounded overflow-x-auto my-1" {...props}>
+            {children}
+        </pre>
+    ),
+    strong: ({ node, children, ...props }: any) => (
+        <strong className="font-bold" {...props}>
+            {children}
+        </strong>
+    ),
+    em: ({ node, children, ...props }: any) => (
+        <em className="italic" {...props}>
+            {children}
+        </em>
+    ),
+    ul: ({ node, children, ...props }: any) => (
+        <ul className="list-disc list-inside my-1" {...props}>
+            {children}
+        </ul>
+    ),
+    ol: ({ node, children, ...props }: any) => (
+        <ol className="list-decimal list-inside my-1" {...props}>
+            {children}
+        </ol>
+    ),
+    li: ({ node, children, ...props }: any) => (
+        <li className="ml-2" {...props}>
+            {children}
+        </li>
+    ),
+    blockquote: ({ node, children, ...props }: any) => (
+        <blockquote
+            className="border-l-2 border-blue-400/60 pl-3 my-1.5 text-gray-200 [&>p]:mb-0.5 [&>p:last-child]:mb-0"
+            {...props}
+        >
+            {children}
+        </blockquote>
+    ),
+    hr: ({ node, ...props }: any) => <hr className="border-gray-600 my-2" {...props} />,
+    del: ({ node, children, ...props }: any) => (
+        <del className="line-through" {...props}>
+            {children}
+        </del>
+    )
 }
 
 interface ChatState {
@@ -507,9 +567,14 @@ export default function ChatPage() {
                                             </div>
                                         ) : (
                                             <>
-                                                <p className="text-sm whitespace-pre-wrap break-words">
-                                                    {linkifyText(message.content)}
-                                                </p>
+                                                <div className="text-sm break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                                                    <ReactMarkdown
+                                                        remarkPlugins={[remarkGfm, remarkBreaks]}
+                                                        components={markdownComponents}
+                                                    >
+                                                        {message.content}
+                                                    </ReactMarkdown>
+                                                </div>
                                                 <div
                                                     className={`flex items-center gap-1.5 mt-1 ${
                                                         isOwn ? "justify-end" : ""

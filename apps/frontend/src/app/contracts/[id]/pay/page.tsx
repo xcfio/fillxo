@@ -6,6 +6,7 @@ import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import { Select } from "@/components/ui/select"
 import {
     ArrowLeft,
     DollarSign,
@@ -43,6 +44,8 @@ export default function ContractPaymentPage() {
     // Form state
     const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>("bkash")
     const [transactionId, setTransactionId] = useState("")
+    const [senderNumber, setSenderNumber] = useState("")
+    const [notes, setNotes] = useState("")
     const [copied, setCopied] = useState(false)
 
     // Exchange rate
@@ -131,6 +134,16 @@ export default function ContractPaymentPage() {
             return
         }
 
+        if (!senderNumber.trim()) {
+            setError("Please enter your sender phone number")
+            return
+        }
+
+        if (!senderNumber.match(/^01[0-9]{9}$/)) {
+            setError("Sender number must be a valid Bangladesh mobile number (e.g., 01712345678)")
+            return
+        }
+
         setSubmitting(true)
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments`, {
@@ -138,9 +151,12 @@ export default function ContractPaymentPage() {
                 headers: { "Content-Type": "application/json" },
                 credentials: "include",
                 body: JSON.stringify({
+                    rate: exchangeRate,
                     contractId,
                     paymentMethod,
-                    transactionId: transactionId.trim()
+                    transactionId: transactionId.trim(),
+                    senderNumber: `+88${senderNumber.trim()}`,
+                    notes: notes.trim() || null
                 })
             })
 
@@ -266,30 +282,17 @@ export default function ContractPaymentPage() {
 
                         {/* Payment Method Selection */}
                         <div className="mb-6">
-                            <label className="block text-sm font-medium text-gray-300 mb-3">
-                                Select Payment Method
-                            </label>
-                            <div className="grid grid-cols-3 gap-4">
-                                {PAYMENT_METHODS.map((method) => (
-                                    <button
-                                        key={method.value}
-                                        type="button"
-                                        onClick={() => setPaymentMethod(method.value)}
-                                        className={`p-4 rounded-lg border-2 transition-all ${
-                                            paymentMethod === method.value
-                                                ? "border-blue-500 bg-blue-600/10"
-                                                : "border-gray-700 bg-gray-900/50 hover:border-gray-600"
-                                        }`}
-                                    >
-                                        <div
-                                            className={`w-12 h-12 ${method.color} rounded-lg mx-auto mb-2 flex items-center justify-center`}
-                                        >
-                                            <Smartphone className="w-6 h-6 text-white" />
-                                        </div>
-                                        <p className="font-medium">{method.label}</p>
-                                    </button>
-                                ))}
-                            </div>
+                            <Select
+                                id="paymentMethod"
+                                label="Payment Method"
+                                labelIcon={Smartphone}
+                                value={paymentMethod}
+                                onChange={(e) => setPaymentMethod(e.target.value as PaymentMethod)}
+                                options={PAYMENT_METHODS.map((method) => ({
+                                    value: method.value,
+                                    label: method.label
+                                }))}
+                            />
                         </div>
 
                         {/* Payment Instructions */}
@@ -360,6 +363,39 @@ export default function ContractPaymentPage() {
                             </p>
                         </div>
 
+                        {/* Sender Number Input */}
+                        <div className="mb-6">
+                            <label htmlFor="senderNumber" className="block text-sm font-medium text-gray-300 mb-2">
+                                Sender Phone Number <span className="text-red-400">*</span>
+                            </label>
+                            <input
+                                id="senderNumber"
+                                type="text"
+                                value={senderNumber}
+                                onChange={(e) => setSenderNumber(e.target.value)}
+                                placeholder="01XXXXXXXXX"
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors"
+                                maxLength={11}
+                            />
+                            <p className="text-xs text-gray-500 mt-1">The phone number you used to send the payment</p>
+                        </div>
+
+                        {/* Notes Input (Optional) */}
+                        <div className="mb-6">
+                            <label htmlFor="notes" className="block text-sm font-medium text-gray-300 mb-2">
+                                Notes <span className="text-gray-500">(optional)</span>
+                            </label>
+                            <textarea
+                                id="notes"
+                                value={notes}
+                                onChange={(e) => setNotes(e.target.value)}
+                                placeholder="Any additional information about your payment..."
+                                className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors resize-none"
+                                rows={3}
+                                maxLength={500}
+                            />
+                        </div>
+
                         {/* Error Message */}
                         {error && (
                             <div className="mb-6 p-4 bg-red-600/10 border border-red-600/30 rounded-lg flex items-start gap-3">
@@ -371,7 +407,7 @@ export default function ContractPaymentPage() {
                         {/* Submit Button */}
                         <Button
                             type="submit"
-                            disabled={submitting || !transactionId.trim()}
+                            disabled={submitting || !transactionId.trim() || !senderNumber.trim()}
                             icon={Send}
                             className="w-full"
                         >

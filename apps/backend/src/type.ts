@@ -13,7 +13,7 @@ import { v7 } from "uuid"
 
 export interface AuthenticatedSocket extends Socket<ClientToServerEvents, ServerToClientEvents> {
     user?: typeof table.users.$inferSelect
-    contract?: typeof table.contracts.$inferSelect
+    contract?: Array<typeof table.contracts.$inferSelect>
 }
 
 declare module "fastify" {
@@ -29,6 +29,7 @@ declare module "fastify" {
 export type Payload = Static<typeof Payload>
 export const Payload = Type.Object({
     id: Type.String({ pattern: "^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", examples: v7() }),
+    banned: Type.Optional(Type.Boolean({ description: "Indicates if the user is banned" })),
     iat: Type.Number(),
     exp: Type.Number()
 })
@@ -38,6 +39,10 @@ declare global {
         interface ProcessEnv {
             NODE_ENV: "development" | "production"
             DATABASE_URI: string
+
+            TOKEN: string
+            CHANNEL: string
+            ERROR_LOG_CHANNEL: string
 
             PAYMENT_SECRET: string
             HMAC_SECRET: string
