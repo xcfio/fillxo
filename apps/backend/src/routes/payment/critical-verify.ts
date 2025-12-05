@@ -52,7 +52,7 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
                 await db.transaction(async (tx) => {
                     const [payment] = await tx
                         .update(table.payments)
-                        .set({ status, rejectionReason })
+                        .set({ status, rejectionReason, verifiedAt: status === "verified" ? new Date() : null })
                         .where(eq(table.payments.id, id))
                         .returning()
 
@@ -85,7 +85,7 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
                                         `> Job Description: ${jobs?.description}`,
                                         `> Job Category: ${jobs?.category}`,
                                         "",
-                                        `> Agreed Amount: $${proposals.bidAmount}`,
+                                        `> Agreed Amount: $${Math.round(proposals.bidAmount / 100)}`,
                                         `> Payment Status: ${payment.status}`,
                                         `> Start Date: ${contract.startDate?.toDateString()}`,
                                         `> Estimated Delivery Days: ${proposals.deliveryDays} days`,

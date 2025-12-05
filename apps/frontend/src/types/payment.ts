@@ -1,5 +1,5 @@
 export type PaymentMethod = "bkash" | "mcash" | "rocket"
-export type PaymentStatus = "pending" | "verified" | "rejected" | "refunded"
+export type PaymentStatus = "pending" | "verified" | "rejected" | "paid_out" | "refunded"
 
 export interface Payment {
     id: string
@@ -8,7 +8,10 @@ export interface Payment {
     freelancerId: string
     amount: number
     paymentMethod: PaymentMethod
+    payoutMethod: PaymentMethod
     transactionId: string
+    senderNumber: string
+    receiverNumber: string
     status: PaymentStatus
     rejectReason: string | null
     notes: string | null

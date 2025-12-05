@@ -68,6 +68,13 @@ export default function PaymentsPage() {
                         Verified
                     </Badge>
                 )
+            case "paid_out":
+                return (
+                    <Badge variant="primary">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1 inline" />
+                        Paid Out
+                    </Badge>
+                )
             case "rejected":
                 return (
                     <Badge variant="danger">
@@ -135,7 +142,7 @@ export default function PaymentsPage() {
 
                 {/* Filter Tabs */}
                 <div className="flex gap-2 mb-6 flex-wrap">
-                    {(["all", "pending", "verified", "rejected", "refunded"] as const).map((status) => (
+                    {(["all", "pending", "verified", "paid_out", "rejected", "refunded"] as const).map((status) => (
                         <button
                             key={status}
                             onClick={() => setFilter(status)}
@@ -145,7 +152,11 @@ export default function PaymentsPage() {
                                     : "bg-gray-800 text-gray-300 hover:bg-gray-700"
                             }`}
                         >
-                            {status === "all" ? "All" : status.charAt(0).toUpperCase() + status.slice(1)}
+                            {status === "all"
+                                ? "All"
+                                : status === "paid_out"
+                                  ? "Paid Out"
+                                  : status.charAt(0).toUpperCase() + status.slice(1)}
                         </button>
                     ))}
                 </div>

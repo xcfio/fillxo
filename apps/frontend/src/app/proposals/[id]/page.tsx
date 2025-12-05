@@ -415,6 +415,9 @@ export default function ProposalDetailPage() {
                                                         {payment.status === "verified" && (
                                                             <span className="text-emerald-400">✓ Verified</span>
                                                         )}
+                                                        {payment.status === "paid_out" && (
+                                                            <span className="text-blue-400">💸 Paid Out</span>
+                                                        )}
                                                         {payment.status === "rejected" && (
                                                             <span className="text-red-400">✗ Rejected</span>
                                                         )}

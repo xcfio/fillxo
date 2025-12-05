@@ -2,7 +2,7 @@ import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
-import { eq, desc, and } from "drizzle-orm"
+import { eq, desc, and, or } from "drizzle-orm"
 import { Type } from "typebox"
 
 export default function GetPayment(fastify: Awaited<ReturnType<typeof main>>) {
@@ -42,7 +42,12 @@ export default function GetPayment(fastify: Awaited<ReturnType<typeof main>>) {
                 const { id } = request.user
                 const { status, limit = 10, page = 1 } = request.query
 
-                const conditions = [eq(table.payments.clientId, id)]
+                const conditions = [
+                    or(
+                        eq(table.payments.clientId, id),
+                        and(eq(table.payments.freelancerId, id), eq(table.payments.status, "paid_out"))
+                    )
+                ]
                 if (status) conditions.push(eq(table.payments.status, status))
 
                 const payment = await db

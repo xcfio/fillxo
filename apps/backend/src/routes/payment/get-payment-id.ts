@@ -3,7 +3,7 @@ import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
 import { main } from "../../"
-import { eq, and } from "drizzle-orm"
+import { eq, and, or } from "drizzle-orm"
 import { Type } from "typebox"
 
 export default function GetPaymentId(fastify: Awaited<ReturnType<typeof main>>) {
@@ -31,7 +31,15 @@ export default function GetPaymentId(fastify: Awaited<ReturnType<typeof main>>) 
                 const [payment] = await db
                     .select()
                     .from(table.payments)
-                    .where(and(eq(table.payments.id, id), eq(table.payments.clientId, clientId)))
+                    .where(
+                        and(
+                            eq(table.payments.id, id),
+                            or(
+                                eq(table.payments.clientId, clientId),
+                                and(eq(table.payments.freelancerId, clientId), eq(table.payments.status, "paid_out"))
+                            )
+                        )
+                    )
 
                 if (!payment) throw CreateError(404, "NOT_FOUND", "No payments found")
 

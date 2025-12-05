@@ -53,21 +53,21 @@ export default function Payout(fastify: Awaited<ReturnType<typeof main>>) {
 
                 const [payment] = await db
                     .update(table.payments)
-                    .set({ isPaidOut: true, paidOutAt: new Date() })
+                    .set({ status: "paid_out", isPaidOut: true, paidOutAt: new Date() })
                     .where(eq(table.payments.id, id))
                     .returning()
 
                 await SendNotification(
                     exist.freelancerId,
                     "Payment Payout Successful",
-                    `Your payment of amount ${exist.amount} has been successfully paid out.`,
+                    `Your payment of amount ${exist.amount} has been successfully paid out. Thank you for using our platform!`,
                     `/payments/${exist.id}`
                 )
 
                 await SendNotification(
                     payment.clientId,
                     "Payment Payout Successful",
-                    `Your payment of amount ${payment.amount} has been successfully paid out.`,
+                    `Your payment of amount ${payment.amount} has been successfully paid out. Thank you for using our platform!`,
                     `/payments/${payment.id}`
                 )
 

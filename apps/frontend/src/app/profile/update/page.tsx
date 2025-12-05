@@ -327,7 +327,7 @@ export default function UpdateProfilePage() {
     }
 
     return (
-        <PageContainer showFooter={false}>
+        <PageContainer>
             <div className="max-w-3xl mx-auto">
                 {/* Header */}
                 <div className="mb-8">

@@ -7,7 +7,7 @@ import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import Image from "next/image"
-import { User, Briefcase, Shield, FileText, Bell, CreditCard, Receipt } from "lucide-react"
+import { User, Briefcase, Shield, FileText, Bell, CreditCard, Receipt, Copy, Check } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDate } from "@/utils/time"
 
@@ -16,6 +16,15 @@ export default function DashboardPage() {
     const [user, setUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
     const [unreadCount, setUnreadCount] = useState(0)
+    const [copiedId, setCopiedId] = useState(false)
+
+    const copyUserId = async () => {
+        if (user?.id) {
+            await navigator.clipboard.writeText(user.id)
+            setCopiedId(true)
+            setTimeout(() => setCopiedId(false), 2000)
+        }
+    }
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -55,7 +64,7 @@ export default function DashboardPage() {
     }
 
     return (
-        <PageContainer showFooter={false}>
+        <PageContainer>
             <div className="max-w-7xl mx-auto">
                 {/* Welcome Section */}
                 <div className="mb-12">
@@ -120,6 +129,23 @@ export default function DashboardPage() {
                                     <p className="text-gray-400 text-sm mb-1">Member Since</p>
                                     <p className="font-medium">{formatDate(user.createdAt)}</p>
                                 </div>
+                            </div>
+
+                            {/* User ID */}
+                            <div className="mt-3 flex items-center gap-2 text-xs text-gray-500">
+                                <span>User ID:</span>
+                                <code className="font-mono">{user.id}</code>
+                                <button
+                                    onClick={copyUserId}
+                                    className="p-1 hover:bg-gray-800 rounded transition-colors"
+                                    title="Copy User ID"
+                                >
+                                    {copiedId ? (
+                                        <Check className="w-3 h-3 text-emerald-400" />
+                                    ) : (
+                                        <Copy className="w-3 h-3 text-gray-500" />
+                                    )}
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -219,13 +245,18 @@ export default function DashboardPage() {
                     </Card>
                 </div>
 
-                {/* Coming Soon Notice */}
-                <div className="mt-12 bg-blue-900/30 border border-blue-700/50 rounded-2xl p-8 text-center">
-                    <h2 className="text-2xl font-bold mb-3">🚀 More Features Coming Soon!</h2>
-                    <p className="text-gray-300 max-w-2xl mx-auto">
-                        We're actively building out the complete fillxo experience. Stay tuned for job posting,
-                        proposals, messaging, contracts, and much more!
+                {/* Support Section */}
+                <div className="mt-12 bg-gray-900/50 border border-blue-900/20 rounded-2xl p-8 text-center">
+                    <h2 className="text-2xl font-bold mb-3">Need Help?</h2>
+                    <p className="text-gray-400 max-w-2xl mx-auto mb-4">
+                        If you have any questions, issues, or feedback, feel free to reach out to us.
                     </p>
+                    <button
+                        onClick={() => router.push("/support")}
+                        className="inline-flex items-center gap-2 px-6 py-3 bg-blue-600 hover:bg-blue-700 text-white rounded-lg transition-colors"
+                    >
+                        Contact Support
+                    </button>
                 </div>
             </div>
         </PageContainer>

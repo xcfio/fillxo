@@ -86,6 +86,13 @@ export default function PaymentDetailPage() {
                         Verified
                     </Badge>
                 )
+            case "paid_out":
+                return (
+                    <Badge variant="primary">
+                        <CheckCircle2 className="w-3.5 h-3.5 mr-1 inline" />
+                        Paid Out
+                    </Badge>
+                )
             case "rejected":
                 return (
                     <Badge variant="danger">
@@ -181,22 +188,46 @@ export default function PaymentDetailPage() {
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
                                 <CreditCard className="w-4 h-4" />
-                                <span>Payment Method</span>
+                                <span>{isClient ? "Payment Method" : "Payout Method"}</span>
                             </div>
                             <div className="flex items-center gap-2">
-                                <div className={`w-6 h-6 ${methodInfo.color} rounded flex items-center justify-center`}>
+                                <div
+                                    className={`w-6 h-6 ${isClient ? methodInfo.color : getPaymentMethodInfo(payment.payoutMethod).color} rounded flex items-center justify-center`}
+                                >
                                     <CreditCard className="w-3 h-3 text-white" />
                                 </div>
-                                <p className="text-lg font-semibold">{methodInfo.label}</p>
+                                <p className="text-lg font-semibold">
+                                    {isClient ? methodInfo.label : getPaymentMethodInfo(payment.payoutMethod).label}
+                                </p>
                             </div>
                         </div>
-                        <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
-                            <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
-                                <FileText className="w-4 h-4" />
-                                <span>Transaction ID</span>
+                        {isClient && (
+                            <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
+                                <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+                                    <FileText className="w-4 h-4" />
+                                    <span>Transaction ID</span>
+                                </div>
+                                <p className="text-sm font-mono font-medium break-all">{payment.transactionId}</p>
                             </div>
-                            <p className="text-sm font-mono font-medium break-all">{payment.transactionId}</p>
-                        </div>
+                        )}
+                        {isClient && payment.senderNumber && (
+                            <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
+                                <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+                                    <CreditCard className="w-4 h-4" />
+                                    <span>Sender Number</span>
+                                </div>
+                                <p className="text-sm font-mono font-medium">{payment.senderNumber}</p>
+                            </div>
+                        )}
+                        {!isClient && payment.receiverNumber && payment.receiverNumber !== "empty" && (
+                            <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
+                                <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+                                    <CreditCard className="w-4 h-4" />
+                                    <span>Receiver Number</span>
+                                </div>
+                                <p className="text-sm font-mono font-medium">{payment.receiverNumber}</p>
+                            </div>
+                        )}
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-4">
                             <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
                                 <Calendar className="w-4 h-4" />
@@ -319,6 +350,21 @@ export default function PaymentDetailPage() {
                                 <h3 className="text-lg font-bold mb-2 text-blue-400">Payment Refunded</h3>
                                 <p className="text-gray-300">
                                     This payment has been refunded to the original payment method.
+                                </p>
+                            </div>
+                        </div>
+                    </Card>
+                )}
+
+                {payment.status === "paid_out" && (
+                    <Card className="bg-emerald-600/10 border-emerald-600/30">
+                        <div className="flex items-start gap-4">
+                            <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+                            <div>
+                                <h3 className="text-lg font-bold mb-2 text-emerald-400">Payment Paid Out</h3>
+                                <p className="text-gray-300">
+                                    This payment has been successfully paid out to the freelancer.
+                                    {payment.paidOutAt && ` Paid out on ${formatDateTime(payment.paidOutAt)}`}
                                 </p>
                             </div>
                         </div>

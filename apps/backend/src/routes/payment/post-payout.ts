@@ -1,26 +1,19 @@
-import { client, CreateError, isFastifyError, ObjectString, toTypeBox } from "../../function"
+import { client, CreateError, isFastifyError, ObjectString, SendNotification, toTypeBox } from "../../function"
+import { ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
-import { main } from "../../"
+import { main } from "../.."
 import { Type } from "typebox"
 import { eq } from "drizzle-orm"
-import { ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10"
 
-export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
+export default function PostPayout(fastify: Awaited<ReturnType<typeof main>>) {
     fastify.route({
         method: "POST",
-        url: "/payments",
+        url: "/payments/payout",
         schema: {
-            description: "Create a new payment for an accepted proposal",
+            description: "Create a new payout for an accepted proposal",
             tags: ["Payments"],
-            body: Type.Pick(Payments, [
-                "contractId",
-                "rate",
-                "paymentMethod",
-                "transactionId",
-                "senderNumber",
-                "notes"
-            ]),
+            body: Type.Pick(Payments, ["contractId", "receiverNumber", "payoutMethod"]),
             response: {
                 201: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),
@@ -35,7 +28,7 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { id } = request.user
-                const { rate, contractId, paymentMethod, transactionId, senderNumber, notes = null } = request.body
+                const { contractId, payoutMethod, receiverNumber } = request.body
 
                 const [contracts] = await db.select().from(table.contracts).where(eq(table.contracts.id, contractId))
 
@@ -43,38 +36,28 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                     throw CreateError(404, "CONTRACT_NOT_FOUND", "Contract not found")
                 }
 
-                if (contracts.clientId !== id) {
-                    throw CreateError(403, "FORBIDDEN", "You are not authorized to make payment for this contract")
+                if (contracts.freelancerId !== id) {
+                    throw CreateError(403, "FORBIDDEN", "You are not authorized to add payout for this contract")
                 }
 
-                if (contracts.status !== "payment-required") {
-                    throw CreateError(400, "INVALID_STATUS", "Contract is not awaiting payment")
+                if (contracts.status !== "completed") {
+                    throw CreateError(400, "INVALID_STATUS", "Contract is not completed")
                 }
 
-                const exist = await db.select().from(table.payments).where(eq(table.payments.contractId, contracts.id))
+                const PaymentToPay = (
+                    await db.select().from(table.payments).where(eq(table.payments.contractId, contracts.id))
+                )
+                    .filter((x) => x.status === "verified")
+                    .shift()
 
-                if (exist.filter((x) => x.status === "pending").length > 0) {
-                    throw CreateError(409, "PAYMENT_EXISTS", "Payment already exists for this contract")
+                if (!PaymentToPay) {
+                    throw CreateError(409, "PAYMENT_EXISTS", "Payment is not verified for this contract")
                 }
 
                 const [payment] = await db
-                    .insert(table.payments)
-                    .values({
-                        rate: rate,
-                        amount: contracts.amount,
-                        clientId: contracts.clientId,
-                        contractId: contracts.id,
-                        freelancerId: contracts.freelancerId,
-                        jobId: contracts.jobId,
-                        paymentMethod: paymentMethod,
-                        payoutMethod: paymentMethod,
-                        proposalId: contracts.proposalId,
-                        receiverNumber: "empty",
-                        senderNumber: senderNumber,
-                        transactionId: transactionId,
-                        status: "pending",
-                        notes: notes
-                    })
+                    .update(table.payments)
+                    .set({ payoutMethod, receiverNumber })
+                    .where(eq(table.payments.id, PaymentToPay.id))
                     .returning()
 
                 await client.channel.createMessage(process.env.CHANNEL, {
@@ -86,7 +69,7 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                             components: [
                                 {
                                     type: ComponentType.TextDisplay,
-                                    content: "# Payment Received"
+                                    content: "# Payout Received"
                                 },
                                 {
                                     type: ComponentType.Separator
@@ -102,16 +85,10 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
                                     type: ComponentType.ActionRow,
                                     components: [
                                         {
-                                            label: "Approve Payment",
-                                            custom_id: `fillxo-approve-${payment.id}`,
+                                            label: "Mark As Paid Out",
+                                            custom_id: `fillxo-payout-${payment.id}`,
                                             type: ComponentType.Button,
-                                            style: ButtonStyle.Success
-                                        },
-                                        {
-                                            label: "Reject Payment",
-                                            custom_id: `fillxo-reject-${payment.id}`,
-                                            type: ComponentType.Button,
-                                            style: ButtonStyle.Danger
+                                            style: ButtonStyle.Primary
                                         }
                                     ]
                                 }

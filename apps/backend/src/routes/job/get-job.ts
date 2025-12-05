@@ -2,7 +2,7 @@ import { CreateError, isFastifyError, toTypeBox } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
-import { desc, eq } from "drizzle-orm"
+import { and, desc, eq } from "drizzle-orm"
 import { Type } from "typebox"
 import { UUID } from "../../typebox"
 
@@ -32,7 +32,7 @@ export default function GetJob(fastify: Awaited<ReturnType<typeof main>>) {
                 const jobs = await db
                     .select()
                     .from(table.jobs)
-                    .where(clientId ? eq(table.jobs.clientId, clientId) : undefined)
+                    .where(and(clientId ? eq(table.jobs.clientId, clientId) : undefined, eq(table.jobs.isOpen, true)))
                     .orderBy(desc(table.jobs.createdAt))
                     .limit(limit)
                     .offset((page - 1) * limit)

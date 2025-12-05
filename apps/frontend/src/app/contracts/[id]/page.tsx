@@ -19,13 +19,15 @@ import {
     Clock,
     Briefcase,
     Copy,
-    Check
+    Check,
+    Wallet,
+    Send
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
 import { Contract, ContractStatus } from "@/types/contract"
-import { Payment } from "@/types/payment"
+import { Payment, PaymentMethod } from "@/types/payment"
 
 export default function ContractDetailPage() {
     const router = useRouter()
@@ -40,6 +42,11 @@ export default function ContractDetailPage() {
     const [isClient, setIsClient] = useState(false)
     const [isFreelancer, setIsFreelancer] = useState(false)
     const [copiedId, setCopiedId] = useState<string | null>(null)
+    const [payoutMethod, setPayoutMethod] = useState<PaymentMethod>("bkash")
+    const [receiverNumber, setReceiverNumber] = useState("")
+    const [payoutLoading, setPayoutLoading] = useState(false)
+    const [payoutSubmitted, setPayoutSubmitted] = useState(false)
+    const [payoutError, setPayoutError] = useState<string | null>(null)
 
     const copyToClipboard = async (text: string) => {
         await navigator.clipboard.writeText(text)
@@ -97,7 +104,12 @@ export default function ContractDetailPage() {
             if (response.ok) {
                 const data = await response.json()
                 // Handle both array and single payment response
-                setPayments(Array.isArray(data) ? data : [data])
+                const paymentList = Array.isArray(data) ? data : [data]
+                setPayments(paymentList)
+                // Check if payout was already submitted
+                if (paymentList.some((p: Payment) => p.receiverNumber && p.receiverNumber !== "empty")) {
+                    setPayoutSubmitted(true)
+                }
             }
         } catch (error) {
             console.error("Error fetching payments:", error)
@@ -147,6 +159,55 @@ export default function ContractDetailPage() {
             alert("An error occurred while rejecting the contract")
         } finally {
             setActionLoading(false)
+        }
+    }
+
+    const handleSubmitPayout = async () => {
+        setPayoutError(null)
+
+        if (!receiverNumber.trim()) {
+            setPayoutError("Please enter your receiver number")
+            return
+        }
+
+        if (!receiverNumber.match(/^01[0-9]{9}$/)) {
+            setPayoutError("Receiver number must be a valid Bangladesh mobile number (e.g., 01712345678)")
+            return
+        }
+
+        if (
+            !confirm("Are you sure you want to submit your payout details? You will not be able to change this later.")
+        ) {
+            return
+        }
+
+        setPayoutLoading(true)
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments/payout`, {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                credentials: "include",
+                body: JSON.stringify({
+                    contractId,
+                    payoutMethod,
+                    receiverNumber: `+88${receiverNumber.trim()}`
+                })
+            })
+
+            if (response.ok) {
+                setPayoutSubmitted(true)
+                fetchPayments()
+            } else {
+                const error = await response.json()
+                setPayoutError(error.message || "Failed to submit payout details")
+            }
+        } catch (error) {
+            console.error("Error submitting payout:", error)
+            setPayoutError("An error occurred while submitting payout details")
+        } finally {
+            setPayoutLoading(false)
         }
     }
 
@@ -343,6 +404,9 @@ export default function ContractDetailPage() {
                                                 {payment.status === "verified" && (
                                                     <span className="text-emerald-400">✓ Verified</span>
                                                 )}
+                                                {payment.status === "paid_out" && (
+                                                    <span className="text-blue-400">💸 Paid Out</span>
+                                                )}
                                                 {payment.status === "rejected" && (
                                                     <span className="text-red-400">✗ Rejected</span>
                                                 )}
@@ -444,6 +508,120 @@ export default function ContractDetailPage() {
                                 </p>
                             </div>
                         </div>
+                    </Card>
+                )}
+
+                {/* Freelancer Payout Section */}
+                {contract.status === "completed" && isFreelancer && (
+                    <Card className="mt-6">
+                        <div className="flex items-center gap-3 mb-4">
+                            <Wallet className="w-6 h-6 text-blue-400" />
+                            <h2 className="text-xl font-bold">Receive Your Payment</h2>
+                        </div>
+
+                        {payments.length > 0 && payments.some((p) => p.isPaidOut) ? (
+                            <div className="bg-emerald-600/10 border border-emerald-600/30 rounded-lg p-6 text-center">
+                                <CheckCircle2 className="w-16 h-16 text-emerald-400 mx-auto mb-4" />
+                                <h3 className="text-xl font-bold text-emerald-400 mb-2">Payment Sent!</h3>
+                                <p className="text-gray-300 mb-2">Your payout has been processed successfully.</p>
+                                <p className="text-gray-400 text-sm">
+                                    Check your {payments.find((p) => p.isPaidOut)?.payoutMethod} account ending in{" "}
+                                    <span className="font-mono">
+                                        {payments.find((p) => p.isPaidOut)?.receiverNumber?.slice(-4)}
+                                    </span>
+                                </p>
+                                {payments.find((p) => p.isPaidOut)?.paidOutAt && (
+                                    <p className="text-gray-500 text-xs mt-2">
+                                        Paid out on {formatDateTime(payments.find((p) => p.isPaidOut)!.paidOutAt!)}
+                                    </p>
+                                )}
+                            </div>
+                        ) : payoutSubmitted ||
+                          (payments.length > 0 &&
+                              payments.some((p) => p.receiverNumber && p.receiverNumber !== "empty")) ? (
+                            <div className="bg-blue-600/10 border border-blue-600/30 rounded-lg p-6 text-center">
+                                <Clock className="w-16 h-16 text-blue-400 mx-auto mb-4" />
+                                <h3 className="text-xl font-bold text-blue-400 mb-2">Payout Processing</h3>
+                                <p className="text-gray-300 mb-2">
+                                    Your payout details have been submitted successfully.
+                                </p>
+                                <p className="text-gray-400 text-sm">
+                                    You will receive your payment within 24-48 hours.
+                                </p>
+                            </div>
+                        ) : (
+                            <div>
+                                {/* Amount Summary */}
+                                <div className="bg-gray-900/50 border border-emerald-900/20 rounded-lg p-4 mb-6">
+                                    <div className="flex items-center gap-2 text-gray-400 text-sm mb-1">
+                                        <DollarSign className="w-4 h-4" />
+                                        <span>Payout Amount</span>
+                                    </div>
+                                    <p className="text-2xl font-bold text-emerald-400">
+                                        {formatBudget(contract.amount)}
+                                    </p>
+                                </div>
+
+                                {/* Payout Method Selection */}
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Payout Method <span className="text-red-400">*</span>
+                                    </label>
+                                    <select
+                                        value={payoutMethod}
+                                        onChange={(e) => setPayoutMethod(e.target.value as PaymentMethod)}
+                                        className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
+                                    >
+                                        <option value="bkash">bKash</option>
+                                        <option value="mcash">mCash</option>
+                                        <option value="rocket">Rocket</option>
+                                    </select>
+                                </div>
+
+                                {/* Receiver Number Input */}
+                                <div className="mb-6">
+                                    <label className="block text-sm font-medium text-gray-300 mb-2">
+                                        Receiver Phone Number <span className="text-red-400">*</span>
+                                    </label>
+                                    <input
+                                        type="text"
+                                        value={receiverNumber}
+                                        onChange={(e) => setReceiverNumber(e.target.value)}
+                                        placeholder="01XXXXXXXXX"
+                                        className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors"
+                                        maxLength={11}
+                                    />
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        The phone number where you want to receive your payment
+                                    </p>
+                                </div>
+
+                                {/* Error Message */}
+                                {payoutError && (
+                                    <div className="mb-6 p-4 bg-red-600/10 border border-red-600/30 rounded-lg flex items-start gap-3">
+                                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <p className="text-red-400">{payoutError}</p>
+                                    </div>
+                                )}
+
+                                {/* Submit Button */}
+                                <Button
+                                    variant="primary"
+                                    icon={Send}
+                                    onClick={handleSubmitPayout}
+                                    disabled={payoutLoading || !receiverNumber.trim()}
+                                    className="w-full"
+                                >
+                                    {payoutLoading ? "Submitting..." : "Submit Payout Details"}
+                                </Button>
+
+                                {/* Notice */}
+                                <p className="text-center text-xs text-gray-500 mt-4">
+                                    Make sure to enter the correct phone number. You will not be able to change this
+                                    later.
+                                </p>
+                            </div>
+                        )}
                     </Card>
                 )}
 
