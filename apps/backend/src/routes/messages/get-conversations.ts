@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Contract, Message } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -138,12 +138,7 @@ export default function GetConversations(fastify: Awaited<ReturnType<typeof main
                     limit
                 })
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

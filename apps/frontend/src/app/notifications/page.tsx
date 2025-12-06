@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useRef } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
@@ -12,6 +12,7 @@ import { Bell, Check, CheckCheck, Trash2, ChevronLeft, ChevronRight, ExternalLin
 import { getUser } from "@/utils/auth"
 import { formatTimeAgo } from "@/utils/time"
 import { Notification } from "@/types/notification"
+import { io, Socket } from "socket.io-client"
 
 export default function NotificationsPage() {
     const router = useRouter()
@@ -22,6 +23,7 @@ export default function NotificationsPage() {
     const [user, setUser] = useState<any>(null)
     const [actionLoading, setActionLoading] = useState<string | null>(null)
     const itemsPerPage = 20
+    const socketRef = useRef<Socket | null>(null)
 
     useEffect(() => {
         const fetchUser = async () => {
@@ -31,6 +33,29 @@ export default function NotificationsPage() {
         }
         fetchUser()
     }, [router])
+
+    // Socket connection for real-time notifications
+    useEffect(() => {
+        if (!user) return
+
+        const socket = io(process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:7200", {
+            withCredentials: true,
+            transports: ["websocket", "polling"]
+        })
+
+        socket.on("notification_created", (notification: Notification) => {
+            // Only add to list if on first page and filter allows
+            if (currentPage === 1 && (readFilter === "all" || readFilter === "unread")) {
+                setNotifications((prev) => [notification, ...prev])
+            }
+        })
+
+        socketRef.current = socket
+
+        return () => {
+            socket.disconnect()
+        }
+    }, [user, currentPage, readFilter])
 
     useEffect(() => {
         const fetchNotifications = async () => {

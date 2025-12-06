@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, PublicUser } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -31,12 +31,7 @@ export default function Profile(fastify: Awaited<ReturnType<typeof main>>) {
                 if (!user) throw CreateError(404, "USER_NOT_FOUND", "User not found")
                 return reply.send(toTypeBox(user))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

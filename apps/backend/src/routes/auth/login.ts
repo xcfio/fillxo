@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, HmacPassword, toTypeBox } from "../../function"
+import { CreateError, HmacPassword, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Payload, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -62,12 +62,7 @@ export default function Login(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(200).send(toTypeBox(user))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

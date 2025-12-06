@@ -1,4 +1,4 @@
-import { client, CreateError, isFastifyError, ObjectString, SendNotification, toTypeBox } from "../../function"
+import { client, CreateError, ObjectString, toTypeBox, xcf } from "../../function"
 import { ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
@@ -99,12 +99,7 @@ export default function PostPayout(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(201).send(toTypeBox(payment))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

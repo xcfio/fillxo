@@ -1,4 +1,8 @@
 import create_error, { FastifyError } from "@fastify/error"
+import { ComponentType, MessageFlags, SeparatorSpacingSize } from "discord-api-types/v10"
+import { inspect } from "node:util"
+import { DiscordAPIError } from "snowtransfer"
+import { client } from "./discord"
 
 /**
  * Type guard to check if a given error is a FastifyError.
@@ -71,4 +75,67 @@ export function CreateError(
     }
 
     return error
+}
+
+export async function xcf<Throw extends boolean = true>(
+    error: NonNullable<Error>,
+    type = "Uncaught Exception",
+    origin?: any,
+    ShouldThrow = true as Throw
+): Promise<Throw extends true ? never : null> {
+    if (isFastifyError(error)) throw error
+
+    if (!(error instanceof DiscordAPIError)) {
+        console.trace(error, origin)
+
+        reply(type, "```js\n" + error.stack + "\n```")
+        if (ShouldThrow) throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
+        return null as Throw extends true ? never : null
+    }
+
+    console.log(inspect(error, { depth: 10, colors: true }))
+    console.log(error.stack)
+
+    let text
+    for (let depth = 10; !text || text.length > 4096; depth--) {
+        if (depth > 0) {
+            text = `\`\`\`js\n${inspect(error, false, 10)}\n${inspect(error, false, depth)}`.concat(`\n\`\`\``)
+            text = text + "```js\n" + (error.stack ?? "null") + "\n```"
+        } else {
+            text = "Error is too large to send"
+        }
+    }
+
+    reply(`Discord API Error (${error.code})`, text)
+    if (ShouldThrow) throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
+    return null as Throw extends true ? never : null
+}
+
+async function reply(type: string, text: string) {
+    client.channel.createMessage(process.env.ERROR_LOG_CHANNEL, {
+        flags: MessageFlags.IsComponentsV2,
+        components: [
+            {
+                type: ComponentType.Container,
+                components: [
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `# ${type}`
+                    },
+                    {
+                        type: ComponentType.Separator,
+                        spacing: SeparatorSpacingSize.Large
+                    },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: text
+                    },
+                    {
+                        type: ComponentType.TextDisplay,
+                        content: `- # ${new Date().toISOString()}`
+                    }
+                ]
+            }
+        ]
+    })
 }

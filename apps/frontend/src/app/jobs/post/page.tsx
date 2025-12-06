@@ -81,6 +81,12 @@ export default function PostJobPage() {
                 return
             }
 
+            if (parseFloat(formData.budget) > 200) {
+                setError("As a startup, we currently limit budgets to $200 maximum")
+                setSubmitting(false)
+                return
+            }
+
             if (!formData.closedAt) {
                 setError("Please select a closing date")
                 setSubmitting(false)
@@ -287,13 +293,17 @@ export default function PostJobPage() {
                                     name="budget"
                                     value={formData.budget}
                                     onChange={handleChange}
-                                    placeholder="1000"
+                                    placeholder="100"
                                     min="1"
+                                    max="200"
                                     step="0.01"
                                     className="w-full pl-8 pr-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors"
                                     required
                                 />
                             </div>
+                            <p className="text-sm text-gray-400 mt-2">
+                                As a startup, we currently limit budgets to $200 maximum
+                            </p>
                         </div>
 
                         {/* Closing Date */}

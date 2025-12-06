@@ -19,6 +19,7 @@ import {
 import { getUser } from "@/utils/auth"
 import { Notification } from "@/types/notification"
 import { Conversation, ConversationsResponse } from "@/types/message"
+import { io, Socket } from "socket.io-client"
 
 export default function Navbar() {
     const router = useRouter()
@@ -36,6 +37,7 @@ export default function Navbar() {
     const dropdownRef = useRef<HTMLDivElement>(null)
     const notificationRef = useRef<HTMLDivElement>(null)
     const messagesRef = useRef<HTMLDivElement>(null)
+    const socketRef = useRef<Socket | null>(null)
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -44,21 +46,25 @@ export default function Navbar() {
                 if (user) {
                     setUserData(user)
                     setIsLoggedIn(true)
-                    // Fetch unread notification count
+                    // Fetch initial notifications
                     fetchUnreadCount()
                     // Fetch conversations
                     fetchConversations()
+                    // Connect to socket for real-time notifications
+                    connectSocket()
                 } else {
                     setIsLoggedIn(false)
                     setUserData(null)
                     setUnreadCount(0)
                     setUnreadMessages(0)
+                    disconnectSocket()
                 }
             } catch (error) {
                 setIsLoggedIn(false)
                 setUserData(null)
                 setUnreadCount(0)
                 setUnreadMessages(0)
+                disconnectSocket()
             } finally {
                 setAuthCheckDone(true)
             }
@@ -79,8 +85,36 @@ export default function Navbar() {
         return () => {
             window.removeEventListener("focus", handleFocus)
             window.removeEventListener("messages-read", handleMessagesRead)
+            disconnectSocket()
         }
     }, [])
+
+    const connectSocket = () => {
+        if (socketRef.current?.connected) return
+
+        const socket = io(process.env.NEXT_PUBLIC_API_ENDPOINT || "http://localhost:7200", {
+            withCredentials: true,
+            transports: ["websocket", "polling"]
+        })
+
+        socket.on("notification_created", (notification: Notification) => {
+            setNotifications((prev) => [notification, ...prev].slice(0, 5))
+            setUnreadCount((prev) => prev + 1)
+        })
+
+        socket.on("connect_error", (error) => {
+            console.error("Socket connection error:", error)
+        })
+
+        socketRef.current = socket
+    }
+
+    const disconnectSocket = () => {
+        if (socketRef.current) {
+            socketRef.current.disconnect()
+            socketRef.current = null
+        }
+    }
 
     const fetchUnreadCount = async () => {
         try {

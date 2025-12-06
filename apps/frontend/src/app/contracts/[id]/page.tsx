@@ -27,7 +27,7 @@ import { getUser } from "@/utils/auth"
 import { formatDateTime } from "@/utils/time"
 import { formatBudget } from "@/utils/format"
 import { Contract, ContractStatus } from "@/types/contract"
-import { Payment, PaymentMethod } from "@/types/payment"
+import { Payment } from "@/types/payment"
 
 export default function ContractDetailPage() {
     const router = useRouter()
@@ -42,7 +42,6 @@ export default function ContractDetailPage() {
     const [isClient, setIsClient] = useState(false)
     const [isFreelancer, setIsFreelancer] = useState(false)
     const [copiedId, setCopiedId] = useState<string | null>(null)
-    const [payoutMethod, setPayoutMethod] = useState<PaymentMethod>("bkash")
     const [receiverNumber, setReceiverNumber] = useState("")
     const [payoutLoading, setPayoutLoading] = useState(false)
     const [payoutSubmitted, setPayoutSubmitted] = useState(false)
@@ -183,6 +182,9 @@ export default function ContractDetailPage() {
 
         setPayoutLoading(true)
         try {
+            // Use the client's payment method as the payout method
+            const clientPaymentMethod = payments.length > 0 ? payments[0].paymentMethod : "Unknown"
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_API_ENDPOINT}/payments/payout`, {
                 method: "POST",
                 headers: {
@@ -191,7 +193,7 @@ export default function ContractDetailPage() {
                 credentials: "include",
                 body: JSON.stringify({
                     contractId,
-                    payoutMethod,
+                    payoutMethod: clientPaymentMethod,
                     receiverNumber: `+88${receiverNumber.trim()}`
                 })
             })
@@ -562,20 +564,17 @@ export default function ContractDetailPage() {
                                     </p>
                                 </div>
 
-                                {/* Payout Method Selection */}
+                                {/* Payout Method Display (must match client's payment method) */}
                                 <div className="mb-6">
                                     <label className="block text-sm font-medium text-gray-300 mb-2">
-                                        Payout Method <span className="text-red-400">*</span>
+                                        Payout Method
                                     </label>
-                                    <select
-                                        value={payoutMethod}
-                                        onChange={(e) => setPayoutMethod(e.target.value as PaymentMethod)}
-                                        className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white focus:outline-none focus:border-blue-600/50 transition-colors"
-                                    >
-                                        <option value="bkash">bKash</option>
-                                        <option value="mcash">mCash</option>
-                                        <option value="rocket">Rocket</option>
-                                    </select>
+                                    <div className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white capitalize">
+                                        {payments.length > 0 ? payments[0].paymentMethod : "Unknown"}
+                                    </div>
+                                    <p className="text-xs text-gray-500 mt-1">
+                                        Payout method must match the client's payment method
+                                    </p>
                                 </div>
 
                                 {/* Receiver Number Input */}

@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -42,12 +42,7 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
 
                 return reply.status(200).send(payments.map(toTypeBox))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -47,12 +47,7 @@ export default function UpdateJob(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(200).send(toTypeBox(job))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

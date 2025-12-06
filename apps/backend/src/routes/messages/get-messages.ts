@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Message } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -52,12 +52,7 @@ export default function GetMessages(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(200).send(messages.map((x) => toTypeBox(x.message)))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

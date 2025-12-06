@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Proposal } from "../../type"
 import { db, table } from "../../database"
 import { amount, UUID } from "../../typebox"
@@ -65,12 +65,7 @@ export default function EditProposal(fastify: Awaited<ReturnType<typeof main>>) 
 
                 return reply.status(200).send(toTypeBox(proposal))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

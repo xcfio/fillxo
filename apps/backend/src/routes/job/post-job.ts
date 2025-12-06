@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Job } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -23,7 +23,15 @@ export default function PostJob(fastify: Awaited<ReturnType<typeof main>>) {
         handler: async (request, reply) => {
             try {
                 const { id } = request.user
-                const { closedAt } = request.body
+                const { closedAt, budget } = request.body
+
+                if (budget > 20000) {
+                    throw CreateError(
+                        400,
+                        "BUDGET_LIMIT_EXCEEDED",
+                        "As a startup, we currently limit budgets to $200 maximum"
+                    )
+                }
 
                 const [job] = await db
                     .insert(table.jobs)
@@ -32,12 +40,7 @@ export default function PostJob(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(201).send(toTypeBox(job))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

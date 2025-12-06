@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError } from "../../function"
+import { CreateError, xcf } from "../../function"
 import { ErrorResponse } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -39,12 +39,7 @@ export default function DeleteNotifications(fastify: Awaited<ReturnType<typeof m
                 await db.delete(table.notifications).where(eq(table.notifications.id, id))
                 return reply.status(200).send({ success: true })
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

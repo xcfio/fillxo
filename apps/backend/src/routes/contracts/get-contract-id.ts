@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Contract } from "../../type"
 import { db, table } from "../../database"
 import { UUID } from "../../typebox"
@@ -41,12 +41,7 @@ export default function GetContractId(fastify: Awaited<ReturnType<typeof main>>)
                 if (!contract) throw CreateError(404, "NOT_FOUND", "No contracts found")
                 return reply.status(200).send(toTypeBox(contract))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

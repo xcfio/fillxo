@@ -1,4 +1,4 @@
-import { client, CreateError, isFastifyError, ObjectString, toTypeBox } from "../../function"
+import { client, CreateError, ObjectString, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -122,12 +122,7 @@ export default function PostPayment(fastify: Awaited<ReturnType<typeof main>>) {
 
                 return reply.status(201).send(toTypeBox(payment))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

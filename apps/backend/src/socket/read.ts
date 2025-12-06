@@ -30,14 +30,13 @@ export default function MarkAsRead(socket: Required<AuthenticatedSocket>) {
                 })
             }
 
-            const x = await db
+            await db
                 .update(table.messages)
                 .set({ status: "read" })
                 .where(
                     and(
                         inArray(table.messages.id, messageIds),
                         eq(table.messages.contracts, contractId),
-                        // Mark as read if status is "sent" or "delivered" (not already "read" or "deleted")
                         or(eq(table.messages.status, "sent"), eq(table.messages.status, "delivered"))
                     )
                 )

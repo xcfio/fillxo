@@ -13,7 +13,6 @@ import { v7 } from "uuid"
 
 export interface AuthenticatedSocket extends Socket<ClientToServerEvents, ServerToClientEvents> {
     user?: typeof table.users.$inferSelect
-    contract?: Array<typeof table.contracts.$inferSelect>
 }
 
 declare module "fastify" {

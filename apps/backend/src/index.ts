@@ -1,13 +1,14 @@
-import { CreateError, isFastifyError, license, ValidationErrorHandler } from "./function"
+import { CreateError, isFastifyError, license, ValidationErrorHandler, xcf } from "./function"
 import { TypeBoxTypeProvider } from "@fastify/type-provider-typebox"
 import { FastifyReply, FastifyRequest } from "fastify"
+import { AuthenticatedSocket, Payload } from "./type"
 import { Value } from "typebox/value"
-import { Payload } from "./type"
 import Fastify from "fastify"
 import Plugin from "./plugin"
 import Socket from "./socket"
 import Routes from "./routes"
 
+export let io: AuthenticatedSocket
 export async function main() {
     const isDevelopment = process.env.NODE_ENV === "development"
     const fastify = Fastify({
@@ -76,7 +77,11 @@ export async function main() {
 
     // @ts-ignore
     fastify.io.on("connection", Socket(fastify))
+    io = fastify.io
     return fastify
 }
 
+process.on("uncaughtException", (err: Error, origin: string) => xcf(err, "Uncaught Exception", origin, false))
+process.on("unhandledRejection", (reason: Error, origin: string) => xcf(reason, "Unhandled Rejection", origin, false))
+process.on("uncaughtExceptionMonitor", (err: Error, origin: string) => xcf(err, "Uncaught Exception", origin, false))
 main()

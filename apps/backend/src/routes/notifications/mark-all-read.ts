@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError, toTypeBox } from "../../function"
+import { toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Notifications } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
@@ -32,12 +32,7 @@ export default function MarkAllReadNotifications(fastify: Awaited<ReturnType<typ
 
                 return reply.status(200).send(notification.map((data) => toTypeBox(data)))
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })

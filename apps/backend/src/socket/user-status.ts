@@ -1,8 +1,21 @@
+import { and, or, eq } from "drizzle-orm"
+import { db, table } from "../database"
 import { AuthenticatedSocket } from "../type"
 
 export default async function UserStatusChanged(socket: Required<AuthenticatedSocket>) {
     try {
-        const { user, contract: contracts } = socket
+        const { user } = socket
+
+        const contracts = await db
+            .select()
+            .from(table.contracts)
+            .where(
+                and(
+                    or(eq(table.contracts.clientId, user.id), eq(table.contracts.freelancerId, user.id)),
+                    eq(table.contracts.status, "active")
+                )
+            )
+
         const relatedUserIds = [
             ...new Set(contracts.map((c) => (user.id === c.clientId ? c.freelancerId : c.clientId)))
         ]

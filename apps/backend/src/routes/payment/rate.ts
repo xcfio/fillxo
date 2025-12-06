@@ -1,4 +1,4 @@
-import { CreateError, isFastifyError } from "../../function"
+import { xcf } from "../../function"
 import { ErrorResponse } from "../../type"
 import { amount } from "../../typebox"
 import { main } from "../../"
@@ -31,17 +31,12 @@ export default function Rate(fastify: Awaited<ReturnType<typeof main>>) {
                 const query = (await (await fetch("https://open.er-api.com/v6/latest/USD")).json()) as Rate
                 const rate = query.rates.BDT
 
-                const rateInt = Math.round(rate * 100)
+                const rateInt = Math.ceil(rate * 100)
                 const bdt = Math.round((usdCents * rateInt) / 10000)
 
                 return reply.status(200).send({ rate, usdCents, bdt })
             } catch (error) {
-                if (isFastifyError(error)) {
-                    throw error
-                } else {
-                    console.trace(error)
-                    throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-                }
+                await xcf(error as any)
             }
         }
     })
