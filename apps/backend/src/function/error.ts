@@ -120,11 +120,11 @@ async function reply(type: string, text: string) {
                 components: [
                     {
                         type: ComponentType.TextDisplay,
-                        content: `# ${type}`
+                        content: `### ${type}`
                     },
                     {
                         type: ComponentType.Separator,
-                        spacing: SeparatorSpacingSize.Large
+                        spacing: SeparatorSpacingSize.Small
                     },
                     {
                         type: ComponentType.TextDisplay,
@@ -132,7 +132,7 @@ async function reply(type: string, text: string) {
                     },
                     {
                         type: ComponentType.TextDisplay,
-                        content: `- # ${new Date().toISOString()}`
+                        content: `-# Time: ${new Date().toUTCString()}`
                     }
                 ]
             }

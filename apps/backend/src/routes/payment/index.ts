@@ -5,12 +5,12 @@ import PostPayment from "./post-payment"
 import GetPayment from "./get-payment"
 import Verify from "./critical-verify"
 import Payout from "./critical-payout"
-import Rate from "./rate"
 import PostPayout from "./post-payout"
+import Rate from "./rate"
 
 export default function Payment(fastify: Awaited<ReturnType<typeof main>>) {
-    GetPaymentId(fastify)
     GetPaymentByProposal(fastify)
+    GetPaymentId(fastify)
     PostPayment(fastify)
     PostPayout(fastify)
     GetPayment(fastify)

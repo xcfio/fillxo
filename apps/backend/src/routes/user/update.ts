@@ -13,7 +13,18 @@ export default function Update(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Update user profile information",
             tags: ["User"],
             body: Type.Partial(
-                Type.Pick(User, ["name", "gender", "avatar", "phone", "country", "timezone", "client", "freelancer"])
+                Type.Pick(User, [
+                    "name",
+                    "gender",
+                    "avatar",
+                    "phone",
+                    "country",
+                    "role",
+                    "birthday",
+                    "timezone",
+                    "client",
+                    "freelancer"
+                ])
             ),
             response: {
                 200: User,

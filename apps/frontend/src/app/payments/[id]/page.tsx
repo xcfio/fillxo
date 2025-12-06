@@ -304,8 +304,8 @@ export default function PaymentDetailPage() {
                             <XCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-red-400">Payment Rejected</h3>
-                                {payment.rejectReason && (
-                                    <p className="text-gray-300 mb-3">Reason: {payment.rejectReason}</p>
+                                {payment.rejectionReason && (
+                                    <p className="text-gray-300 mb-3">Reason: {payment.rejectionReason}</p>
                                 )}
                                 <div className="bg-red-900/20 border border-red-800/30 rounded-lg p-4 mt-2">
                                     <p className="text-gray-300 mb-2">

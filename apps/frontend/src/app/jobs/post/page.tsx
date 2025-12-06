@@ -34,7 +34,7 @@ export default function PostJobPage() {
                 const user = await getUser()
                 if (!user) return router.push("/login")
 
-                if (user.role !== "client" && user.role !== "both") {
+                if (user.role !== "client") {
                     router.push("/jobs")
                     return
                 }

@@ -40,7 +40,7 @@ function SubmitProposalContent() {
                 const user = await getUser()
                 if (!user) return router.push("/login")
 
-                if (user.role !== "freelancer" && user.role !== "both") {
+                if (user.role !== "freelancer") {
                     router.push("/jobs")
                     return
                 }

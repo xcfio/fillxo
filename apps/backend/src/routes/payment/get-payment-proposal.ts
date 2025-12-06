@@ -26,7 +26,7 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
         preHandler: fastify.auth,
         handler: async (request, reply) => {
             try {
-                const { id: userId } = request.user
+                const { id } = request.user
                 const { contractId } = request.params
 
                 const payments = await db
@@ -35,12 +35,23 @@ export default function GetPaymentByProposal(fastify: Awaited<ReturnType<typeof 
                     .where(
                         and(
                             eq(table.payments.contractId, contractId),
-                            or(eq(table.payments.clientId, userId), eq(table.payments.freelancerId, userId))
+                            or(eq(table.payments.clientId, id), eq(table.payments.freelancerId, id))
                         )
                     )
                     .orderBy(table.payments.createdAt)
 
-                return reply.status(200).send(payments.map(toTypeBox))
+                const filtered = payments.map((payment) => {
+                    if (id === payment.clientId) payment.receiverNumber = "Not shown"
+                    if (id === payment.freelancerId) {
+                        payment.senderNumber = "Not shown"
+                        payment.transactionId = "Not shown"
+                        payment.rejectionReason = "Not shown"
+                    }
+
+                    return toTypeBox(payment)
+                })
+
+                return reply.status(200).send(filtered)
             } catch (error) {
                 await xcf(error as any)
             }

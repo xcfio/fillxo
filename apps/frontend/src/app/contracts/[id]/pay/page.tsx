@@ -57,7 +57,7 @@ export default function ContractPaymentPage() {
         const fetchUser = async () => {
             const userData = await getUser()
             if (!userData) return router.push("/login")
-            if (userData.role !== "client" && userData.role !== "both") {
+            if (userData.role !== "client") {
                 router.push("/dashboard")
                 return
             }

@@ -29,7 +29,6 @@ export const users = pgTable(
         isBanned: boolean("is_banned").notNull().default(false),
         banReason: text("ban_reason"),
         country: text("country"),
-        rating: jsonb("rating").$type<{ id: string; review: 1 | 2 | 3 | 4 | 5; comment?: string }>(),
         client: jsonb("client").$type<{ companyName?: string; industry?: string }>(),
         freelancer: jsonb("freelancer").$type<{
             title?: string
@@ -46,18 +45,6 @@ export const users = pgTable(
     },
     (table) => [check("password_length_check", sql`length(${table.password}) = 64`)]
 )
-
-const RatingSchema = Type.Object({
-    id: UUID,
-    review: Type.Union([Type.Literal(1), Type.Literal(2), Type.Literal(3), Type.Literal(4), Type.Literal(5)], {
-        description: "Rating value from 1 to 5"
-    }),
-    comment: Type.Optional(
-        Type.String({
-            description: "Optional review comment"
-        })
-    )
-})
 
 const ClientSchema = Type.Object({
     companyName: Type.Optional(
@@ -185,9 +172,6 @@ export const User = Type.Object({
             description: "Country code (ISO 3166-1 alpha-2)"
         })
     ),
-    rating: Nullable(RatingSchema, {
-        description: "User rating information"
-    }),
     client: Nullable(ClientSchema, {
         description: "Client-specific profile data"
     }),
@@ -235,9 +219,6 @@ export const PublicUser = Type.Object({
             description: "Country code"
         })
     ),
-    rating: Nullable(RatingSchema, {
-        description: "User rating"
-    }),
     freelancer: Nullable(FreelancerSchema, {
         description: "Freelancer profile"
     }),

@@ -14,7 +14,8 @@ import {
     Briefcase,
     LayoutDashboard,
     ChevronDown,
-    Check
+    Check,
+    Search
 } from "lucide-react"
 import { getUser } from "@/utils/auth"
 import { Notification } from "@/types/notification"
@@ -38,6 +39,7 @@ export default function Navbar() {
     const notificationRef = useRef<HTMLDivElement>(null)
     const messagesRef = useRef<HTMLDivElement>(null)
     const socketRef = useRef<Socket | null>(null)
+    const [searchQuery, setSearchQuery] = useState("")
 
     useEffect(() => {
         const checkAuth = async () => {
@@ -242,6 +244,7 @@ export default function Navbar() {
                     >
                         Privacy Policy
                     </button>
+
                     {!authCheckDone && process.env.NODE_ENV !== "production" ? (
                         <div className="px-4 py-2 text-sm bg-gray-700 rounded-lg flex items-center gap-2">
                             <div className="w-3 h-3 border-2 border-blue-400 border-t-transparent rounded-full animate-spin" />
@@ -249,6 +252,15 @@ export default function Navbar() {
                         </div>
                     ) : isLoggedIn && userData ? (
                         <>
+                            {/* Search Icon */}
+                            <button
+                                onClick={() => router.push("/search")}
+                                className="p-2 text-gray-400 hover:text-white transition-colors"
+                                title="Search"
+                            >
+                                <Search className="w-5 h-5" />
+                            </button>
+
                             {/* Notifications Dropdown */}
                             <div className="relative" ref={notificationRef}>
                                 <button
@@ -552,6 +564,28 @@ export default function Navbar() {
             {isMobileMenuOpen && (
                 <div className="md:hidden bg-gray-900/95 backdrop-blur-md border-t border-blue-900/20">
                     <div className="px-4 py-4 space-y-3">
+                        {/* Mobile Search */}
+                        <form
+                            onSubmit={(e) => {
+                                e.preventDefault()
+                                if (searchQuery.trim()) {
+                                    router.push(`/search?q=${encodeURIComponent(searchQuery.trim())}`)
+                                    setSearchQuery("")
+                                    setIsMobileMenuOpen(false)
+                                }
+                            }}
+                            className="relative"
+                        >
+                            <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                            <input
+                                type="text"
+                                value={searchQuery}
+                                onChange={(e) => setSearchQuery(e.target.value)}
+                                placeholder="Search jobs, users..."
+                                className="w-full pl-9 pr-3 py-3 text-sm bg-gray-800/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors placeholder-gray-500"
+                            />
+                        </form>
+
                         <button
                             onClick={() => {
                                 router.push("/jobs")

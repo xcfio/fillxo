@@ -15,8 +15,8 @@ export default function Footer() {
             { href: "https://www.facebook.com/groups/fillxo", label: "Community", external: true }
         ],
         legal: [
-            { href: "/terms", label: "Terms" },
-            { href: "/privacy", label: "Privacy" }
+            { href: "/terms", label: "Terms of Service" },
+            { href: "/privacy", label: "Privacy Policy" }
         ]
     }
 

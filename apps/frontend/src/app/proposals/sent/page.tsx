@@ -38,7 +38,7 @@ export default function SentProposalsPage() {
         const fetchUser = async () => {
             const user = await getUser()
             if (!user) return router.push("/login")
-            if (user.role !== "freelancer" && user.role !== "both") {
+            if (user.role !== "freelancer") {
                 return router.push("/proposals")
             }
             setUser(user)

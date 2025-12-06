@@ -43,7 +43,7 @@ function ReceivedProposalsContent() {
         const fetchUser = async () => {
             const user = await getUser()
             if (!user) return router.push("/login")
-            if (user.role !== "client" && user.role !== "both") {
+            if (user.role !== "client") {
                 return router.push("/proposals")
             }
             setUser(user)

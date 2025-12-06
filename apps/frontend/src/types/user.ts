@@ -1,4 +1,4 @@
-export type Role = "freelancer" | "client" | "both"
+export type Role = "freelancer" | "client"
 export type Privilege = "moderator" | "admin"
 export type Gender = "male" | "female" | "other"
 
@@ -31,6 +31,7 @@ export type User = {
     username: string
     name: string
     gender: Gender
+    birthday: string
     avatar: string | null
     phone: string
     phoneVerified: boolean

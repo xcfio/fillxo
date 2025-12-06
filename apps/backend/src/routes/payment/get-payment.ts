@@ -58,7 +58,18 @@ export default function GetPayment(fastify: Awaited<ReturnType<typeof main>>) {
                     .limit(limit)
                     .offset((page - 1) * limit)
 
-                return reply.status(200).send(payment.map((data) => toTypeBox(data)))
+                const filtered = payment.map((payment) => {
+                    if (id === payment.clientId) payment.receiverNumber = "Not shown"
+                    if (id === payment.freelancerId) {
+                        payment.senderNumber = "Not shown"
+                        payment.transactionId = "Not shown"
+                        payment.rejectionReason = "Not shown"
+                    }
+
+                    return toTypeBox(payment)
+                })
+
+                return reply.status(200).send(filtered)
             } catch (error) {
                 await xcf(error as any)
             }

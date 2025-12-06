@@ -430,10 +430,10 @@ export default function ContractDetailPage() {
                                             <p className="font-semibold">{formatBudget(payment.amount)}</p>
                                         </div>
                                     </div>
-                                    {payment.rejectReason && (
+                                    {payment.rejectionReason && (
                                         <div className="mt-4 p-3 bg-red-600/10 border border-red-600/30 rounded-lg">
                                             <p className="text-sm text-red-400">
-                                                <strong>Rejection Reason:</strong> {payment.rejectReason}
+                                                <strong>Rejection Reason:</strong> {payment.rejectionReason}
                                             </p>
                                             <p className="text-xs text-gray-400 mt-2">
                                                 Contact us at{" "}

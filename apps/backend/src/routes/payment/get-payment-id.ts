@@ -42,6 +42,12 @@ export default function GetPaymentId(fastify: Awaited<ReturnType<typeof main>>) 
                     )
 
                 if (!payment) throw CreateError(404, "NOT_FOUND", "No payments found")
+                if (id === payment.clientId) payment.receiverNumber = "Not shown"
+                if (id === payment.freelancerId) {
+                    payment.senderNumber = "Not shown"
+                    payment.transactionId = "Not shown"
+                    payment.rejectionReason = "Not shown"
+                }
 
                 return reply.status(200).send(toTypeBox(payment))
             } catch (error) {

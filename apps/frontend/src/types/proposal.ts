@@ -9,5 +9,4 @@ export interface Proposal {
     deliveryDays: number
     status: ProposalStatus
     createdAt: string
-    updatedAt: string
 }

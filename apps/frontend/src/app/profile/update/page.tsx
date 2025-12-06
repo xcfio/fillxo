@@ -113,11 +113,10 @@ interface FreelancerProfile {
 
 interface UpdateFormData {
     avatar?: string
-    email?: string
-    username?: string
     name?: string
     gender?: "male" | "female" | "other"
-    role?: "freelancer" | "client" | "both"
+    role?: "freelancer" | "client"
+    birthday?: string
     phone?: string
     country?: string
     timezone?: string
@@ -152,11 +151,10 @@ export default function UpdateProfilePage() {
                 // Initialize form data with current user data
                 setFormData({
                     avatar: user.avatar || "",
-                    email: user.email || "",
-                    username: user.username || "",
                     name: user.name || "",
                     gender: user.gender || "other",
-                    role: user.role || "freelancer",
+                    role: (user.role as "freelancer" | "client") || "freelancer",
+                    birthday: user.birthday || "",
                     phone: user.phone || "",
                     country: user.country || "",
                     client: user.client || {},
@@ -188,11 +186,10 @@ export default function UpdateProfilePage() {
             const updatedFields: UpdateFormData = {}
 
             if (formData.avatar !== user.avatar) updatedFields.avatar = formData.avatar
-            if (formData.email !== user.email) updatedFields.email = formData.email
-            if (formData.username !== user.username) updatedFields.username = formData.username
             if (formData.name !== user.name) updatedFields.name = formData.name
             if (formData.gender !== user.gender) updatedFields.gender = formData.gender
             if (formData.role !== user.role) updatedFields.role = formData.role
+            if (formData.birthday !== user.birthday) updatedFields.birthday = formData.birthday
             if (formData.phone !== user.phone) updatedFields.phone = formData.phone
             if (formData.country !== user.country) updatedFields.country = formData.country
             if (formData.timezone !== user.timezone) updatedFields.timezone = formData.timezone
@@ -404,38 +401,44 @@ export default function UpdateProfilePage() {
                             options={GENDER_OPTIONS}
                         />
 
-                        {/* Username */}
+                        {/* Birthday */}
                         <div>
-                            <label htmlFor="username" className="flex items-center gap-2 text-sm font-medium mb-2">
+                            <label htmlFor="birthday" className="flex items-center gap-2 text-sm font-medium mb-2">
                                 <User className="w-4 h-4 text-blue-400" />
-                                Username
+                                Birthday
                             </label>
                             <input
-                                type="text"
-                                id="username"
-                                name="username"
-                                value={formData.username}
+                                type="date"
+                                id="birthday"
+                                name="birthday"
+                                value={formData.birthday}
                                 onChange={handleChange}
-                                placeholder="johndoe"
                                 className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
                             />
                         </div>
 
-                        {/* Email */}
+                        {/* Username (Read-only) */}
                         <div>
-                            <label htmlFor="email" className="flex items-center gap-2 text-sm font-medium mb-2">
+                            <label className="flex items-center gap-2 text-sm font-medium mb-2">
+                                <User className="w-4 h-4 text-blue-400" />
+                                Username
+                            </label>
+                            <div className="w-full px-4 py-3 bg-gray-800/50 border border-blue-900/30 rounded-lg text-gray-400">
+                                {user?.username || "Not set"}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Username cannot be changed</p>
+                        </div>
+
+                        {/* Email (Read-only) */}
+                        <div>
+                            <label className="flex items-center gap-2 text-sm font-medium mb-2">
                                 <Mail className="w-4 h-4 text-blue-400" />
                                 Email Address
                             </label>
-                            <input
-                                type="email"
-                                id="email"
-                                name="email"
-                                value={formData.email}
-                                onChange={handleChange}
-                                placeholder="john@example.com"
-                                className="w-full px-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg focus:outline-none focus:border-blue-600 transition-colors"
-                            />
+                            <div className="w-full px-4 py-3 bg-gray-800/50 border border-blue-900/30 rounded-lg text-gray-400">
+                                {user?.email || "Not set"}
+                            </div>
+                            <p className="text-xs text-gray-500 mt-1">Email cannot be changed</p>
                         </div>
 
                         {/* Role */}

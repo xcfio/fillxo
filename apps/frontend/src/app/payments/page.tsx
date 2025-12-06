@@ -207,10 +207,10 @@ export default function PaymentsPage() {
                                                     {formatDateTime(payment.createdAt)}
                                                 </span>
                                             </div>
-                                            {payment.rejectReason && (
+                                            {payment.rejectionReason && (
                                                 <p className="mt-2 text-sm text-red-400">
                                                     <AlertCircle className="w-4 h-4 inline mr-1" />
-                                                    {payment.rejectReason}
+                                                    {payment.rejectionReason}
                                                 </p>
                                             )}
                                         </div>

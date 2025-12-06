@@ -1,7 +1,7 @@
 "use client"
 
 import { useRouter } from "next/navigation"
-import { useEffect, useState } from "react"
+import { useEffect, useState, useCallback } from "react"
 import { PageContainer } from "@/components/ui/page-container"
 import { LoadingSpinner } from "@/components/ui/loading-spinner"
 import { Card } from "@/components/ui/card"
@@ -32,8 +32,10 @@ export default function JobsPage() {
     const [loading, setLoading] = useState(true)
     const [currentPage, setCurrentPage] = useState(1)
     const [searchTerm, setSearchTerm] = useState("")
+    const [searchInput, setSearchInput] = useState("")
     const [selectedCategory, setSelectedCategory] = useState<string>("all")
     const [user, setUser] = useState<any>(null)
+    const [isSearching, setIsSearching] = useState(false)
     const itemsPerPage = 20
 
     useEffect(() => {
@@ -41,45 +43,69 @@ export default function JobsPage() {
         fetchUser()
     }, [])
 
-    useEffect(() => {
-        const fetchJobs = async () => {
-            setLoading(true)
-            try {
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_ENDPOINT}/job?page=${currentPage}&limit=${itemsPerPage}`,
-                    {
-                        credentials: "include"
-                    }
-                )
-
-                if (response.ok) {
-                    const jobsData = await response.json()
-                    setJobs(jobsData)
-                } else {
-                    console.error("Failed to fetch jobs")
+    const fetchJobs = useCallback(async () => {
+        setLoading(true)
+        try {
+            let url: string
+            if (searchTerm.trim()) {
+                // Use search API when there's a search term
+                const params = new URLSearchParams({
+                    q: searchTerm,
+                    page: currentPage.toString(),
+                    limit: itemsPerPage.toString()
+                })
+                if (selectedCategory !== "all") {
+                    params.set("category", selectedCategory)
                 }
-            } catch (error) {
-                console.error("Error fetching jobs:", error)
-            } finally {
-                setLoading(false)
+                url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/search/jobs?${params}`
+                setIsSearching(true)
+            } else {
+                // Use regular jobs endpoint for browsing
+                url = `${process.env.NEXT_PUBLIC_API_ENDPOINT}/job?page=${currentPage}&limit=${itemsPerPage}`
+                setIsSearching(false)
             }
-        }
 
+            const response = await fetch(url, { credentials: "include" })
+
+            if (response.ok) {
+                const jobsData = await response.json()
+                setJobs(jobsData)
+            } else {
+                console.error("Failed to fetch jobs")
+            }
+        } catch (error) {
+            console.error("Error fetching jobs:", error)
+        } finally {
+            setLoading(false)
+        }
+    }, [currentPage, searchTerm, selectedCategory])
+
+    useEffect(() => {
         fetchJobs()
-    }, [currentPage])
+    }, [fetchJobs])
+
+    const handleSearch = (e: React.FormEvent) => {
+        e.preventDefault()
+        setSearchTerm(searchInput)
+        setCurrentPage(1)
+    }
+
+    const clearSearch = () => {
+        setSearchInput("")
+        setSearchTerm("")
+        setSelectedCategory("all")
+        setCurrentPage(1)
+    }
 
     const categories = ["all", ...Array.from(new Set(jobs.map((job) => job.category)))]
 
-    const filteredJobs = jobs.filter((job) => {
-        const matchesSearch =
-            job.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.description.toLowerCase().includes(searchTerm.toLowerCase()) ||
-            job.skills.some((skill) => skill.toLowerCase().includes(searchTerm.toLowerCase()))
-
-        const matchesCategory = selectedCategory === "all" || job.category === selectedCategory
-
-        return matchesSearch && matchesCategory
-    })
+    // Only apply client-side filtering when not using search API
+    const filteredJobs = isSearching
+        ? jobs
+        : jobs.filter((job) => {
+              const matchesCategory = selectedCategory === "all" || job.category === selectedCategory
+              return matchesCategory
+          })
 
     if (loading) {
         return <LoadingSpinner />
@@ -107,26 +133,37 @@ export default function JobsPage() {
                     </div>
 
                     {/* Search and Filter */}
-                    <div className="flex flex-col md:flex-row gap-4 mb-6">
+                    <form onSubmit={handleSearch} className="flex flex-col md:flex-row gap-4 mb-6">
                         <div className="flex-1 relative">
                             <Search className="absolute left-4 top-1/2 -translate-y-1/2 text-gray-400 w-5 h-5" />
                             <input
                                 type="text"
                                 placeholder="Search jobs by title, description, or skills..."
-                                value={searchTerm}
-                                onChange={(e) => setSearchTerm(e.target.value)}
+                                value={searchInput}
+                                onChange={(e) => setSearchInput(e.target.value)}
                                 className="w-full pl-12 pr-4 py-3 bg-gray-900/50 border border-blue-900/30 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-600/50 transition-colors"
                             />
                         </div>
                         <Select
                             value={selectedCategory}
-                            onChange={(e) => setSelectedCategory(e.target.value)}
+                            onChange={(e) => {
+                                setSelectedCategory(e.target.value)
+                                setCurrentPage(1)
+                            }}
                             options={categories.map((category) => ({
                                 value: category,
                                 label: category === "all" ? "All Categories" : category
                             }))}
                         />
-                    </div>
+                        <Button type="submit" icon={Search} iconPosition="left">
+                            Search
+                        </Button>
+                        {(searchTerm || selectedCategory !== "all") && (
+                            <Button type="button" variant="secondary" onClick={clearSearch}>
+                                Clear
+                            </Button>
+                        )}
+                    </form>
                 </div>
 
                 {/* Jobs Grid */}

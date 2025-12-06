@@ -43,7 +43,7 @@ export default function MyJobsPage() {
                     router.push("/login")
                     return
                 }
-                if (userData.role !== "client" && userData.role !== "both") {
+                if (userData.role !== "client") {
                     router.push("/dashboard")
                     return
                 }
