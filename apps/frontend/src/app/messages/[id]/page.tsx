@@ -478,8 +478,8 @@ export default function ChatPage() {
     }
 
     return (
-        <PageContainer>
-            <div className="max-w-4xl mx-auto h-[calc(100vh-140px)] flex flex-col">
+        <PageContainer showFooter={false}>
+            <div className="max-w-4xl mx-auto h-[calc(100vh-160px)] flex flex-col">
                 {/* Header */}
                 <Card className="p-4 mb-4 flex items-center gap-4">
                     <button

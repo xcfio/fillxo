@@ -20,7 +20,7 @@ export default function Payout(fastify: Awaited<ReturnType<typeof main>>) {
             description: "Payout a payment (Critical - Protected by auth key)",
             tags: ["Payments"],
             params: Type.Object({ id: UUID }),
-            querystring: Type.Object({ auth: UUID }),
+            querystring: Type.Object({ auth: Type.String() }),
             response: {
                 200: Payments,
                 400: ErrorResponse(400, "Bad Request - Validation error"),

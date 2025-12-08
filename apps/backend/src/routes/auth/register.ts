@@ -1,5 +1,5 @@
 import { CreateError, HmacPassword, VerifyOTP, toTypeBox, xcf } from "../../function"
-import { ErrorResponse, User } from "../../type"
+import { ErrorResponse, Payload, User } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../../"
 import { eq, or } from "drizzle-orm"
@@ -74,6 +74,23 @@ export default function Register(fastify: Awaited<ReturnType<typeof main>>) {
                 if (!user) {
                     throw CreateError(500, "USER_CREATION_FAILED", "Failed to create user account")
                 }
+
+                const exp = 24 * 60 * 60
+                const payload: Payload = {
+                    id: user.id,
+                    iat: Math.floor(Date.now() / 1000),
+                    exp: Math.floor(Date.now() / 1000) + exp
+                }
+
+                const jwt = fastify.jwt.sign(payload)
+                reply.setCookie("auth", jwt, {
+                    signed: true,
+                    httpOnly: true,
+                    secure: true,
+                    sameSite: "none",
+                    maxAge: exp,
+                    path: "/"
+                })
 
                 return reply.status(201).send(toTypeBox(user))
             } catch (error) {

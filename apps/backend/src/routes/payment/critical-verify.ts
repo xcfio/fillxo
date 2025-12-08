@@ -21,7 +21,7 @@ export default function Verify(fastify: Awaited<ReturnType<typeof main>>) {
             tags: ["Payments"],
             params: Type.Object({ id: UUID }),
             body: Type.Object({
-                auth: UUID,
+                auth: Type.String(),
                 status: Type.Union([Type.Literal("verified"), Type.Literal("rejected"), Type.Literal("refunded")]),
                 rejectionReason: Type.Optional(Type.String())
             }),
