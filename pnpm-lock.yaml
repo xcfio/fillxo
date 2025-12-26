@@ -48,8 +48,8 @@ importers:
         specifier: ^2.0.20
         version: 2.0.20
       discord-api-types:
-        specifier: ^0.38.34
-        version: 0.38.34
+        specifier: ^0.38.37
+        version: 0.38.37
       drizzle-orm:
         specifier: ^0.45.0
         version: 0.45.0(postgres@3.4.7)
@@ -1060,8 +1060,8 @@ packages:
   devlop@1.1.0:
     resolution: {integrity: sha512-RWmIqhcFf1lRYBvNmr7qTNuyCt/7/ns2jbpp1+PalgE/rDQcBT0fioSMUpJ93irlUhC5hrg4cYqe6U+0ImW0rA==}
 
-  discord-api-types@0.38.34:
-    resolution: {integrity: sha512-muq7xKGznj5MSFCzuIm/2TO7DpttuomUTemVM82fRqgnMl70YRzEyY24jlbiV6R9tzOTq6A6UnZ0bsfZeKD38Q==}
+  discord-api-types@0.38.37:
+    resolution: {integrity: sha512-Cv47jzY1jkGkh5sv0bfHYqGgKOWO1peOrGMkDFM4UmaGMOTgOW8QSexhvixa9sVOiz8MnVOBryWYyw/CEVhj7w==}
 
   drizzle-kit@0.31.8:
     resolution: {integrity: sha512-O9EC/miwdnRDY10qRxM8P3Pg8hXe3LyU4ZipReKOgTwn4OqANmftj8XJz1UPUAS6NMHf0E2htjsbQujUTkncCg==}
@@ -2767,7 +2767,7 @@ snapshots:
     dependencies:
       dequal: 2.0.3
 
-  discord-api-types@0.38.34: {}
+  discord-api-types@0.38.37: {}
 
   drizzle-kit@0.31.8:
     dependencies:
@@ -3776,7 +3776,7 @@ snapshots:
 
   snowtransfer@0.15.0:
     dependencies:
-      discord-api-types: 0.38.34
+      discord-api-types: 0.38.37
 
   socket.io-adapter@2.5.5:
     dependencies:
