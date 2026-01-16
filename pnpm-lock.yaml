@@ -66,8 +66,8 @@ importers:
         specifier: ^6.7.0
         version: 6.7.0
       snowtransfer:
-        specifier: ^0.15.0
-        version: 0.15.0
+        specifier: ^0.16.1
+        version: 0.16.1
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1742,9 +1742,9 @@ packages:
     resolution: {integrity: sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
-  snowtransfer@0.15.0:
-    resolution: {integrity: sha512-kEDGKtFiH5nSkHsDZonEUuDx99lUasJoZ7AGrgvE8HzVG59vjvqc//C+pjWj4DuJqTj4Q+Z1L/M/MYNim8F2VA==}
-    engines: {node: '>=16.15.0'}
+  snowtransfer@0.16.1:
+    resolution: {integrity: sha512-nMaTDCpAUWeBXY/Et0kvjb63rMYNK3hQbV5xfrzfT89gviUjCVAU0zkw0blIA4wAltNYncjzIxSJ663sEueG1A==}
+    engines: {node: '>=22.0.0'}
 
   socket.io-adapter@2.5.6:
     resolution: {integrity: sha512-DkkO/dz7MGln0dHn5bmN3pPy+JmywNICWrJqVWiVOyvXjWQFIv9c2h24JrQLLFJ2aQVQf/Cvl1vblnd4r2apLQ==}
@@ -3574,7 +3574,7 @@ snapshots:
       '@img/sharp-win32-x64': 0.34.5
     optional: true
 
-  snowtransfer@0.15.0:
+  snowtransfer@0.16.1:
     dependencies:
       discord-api-types: 0.38.37
 
