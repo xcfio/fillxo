@@ -54,11 +54,11 @@ importers:
         specifier: ^0.45.1
         version: 0.45.1(postgres@3.4.7)
       fastify:
-        specifier: ^5.7.2
-        version: 5.7.2
+        specifier: ^5.7.3
+        version: 5.7.3
       fastify-socket.io:
         specifier: ^5.1.0
-        version: 5.1.0(fastify@5.7.2)(socket.io@4.8.3)
+        version: 5.1.0(fastify@5.7.3)(socket.io@4.8.3)
       postgres:
         specifier: ^3.4.7
         version: 3.4.7
@@ -1214,8 +1214,8 @@ packages:
       fastify: 4.x.x
       socket.io: '>=4'
 
-  fastify@5.7.2:
-    resolution: {integrity: sha512-dBJolW+hm6N/yJVf6J5E1BxOBNkuXNl405nrfeR8SpvGWG3aCC2XDHyiFBdow8Win1kj7sjawQc257JlYY6M/A==}
+  fastify@5.7.3:
+    resolution: {integrity: sha512-QHzWSmTNUg9Ba8tNXzb92FTH77K+c8yeQPH80EeSIc9wyZj85jbPisMP0rwmyKv8oJwUFPe1UpN8HkNIXwCnUQ==}
 
   fastparallel@2.4.1:
     resolution: {integrity: sha512-qUmhxPgNHmvRjZKBFUNI0oZuuH9OlSIOXmJ98lhKPxMZZ7zS/Fi0wRHOihDSz0R1YiIOjxzOY4bq65YTcdBi2Q==}
@@ -2775,14 +2775,14 @@ snapshots:
 
   fastify-plugin@5.1.0: {}
 
-  fastify-socket.io@5.1.0(fastify@5.7.2)(socket.io@4.8.3):
+  fastify-socket.io@5.1.0(fastify@5.7.3)(socket.io@4.8.3):
     dependencies:
-      fastify: 5.7.2
+      fastify: 5.7.3
       fastify-plugin: 4.5.1
       socket.io: 4.8.3
       tslib: 2.8.1
 
-  fastify@5.7.2:
+  fastify@5.7.3:
     dependencies:
       '@fastify/ajv-compiler': 4.0.5
       '@fastify/error': 4.2.0
