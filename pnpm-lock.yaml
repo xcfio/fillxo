@@ -43,7 +43,7 @@ importers:
         version: 5.2.4
       '@fastify/type-provider-typebox':
         specifier: ^6.1.0
-        version: 6.1.0(typebox@1.0.71)
+        version: 6.1.0(typebox@1.0.81)
       colorette:
         specifier: ^2.0.20
         version: 2.0.20
@@ -72,8 +72,8 @@ importers:
         specifier: ^4.8.3
         version: 4.8.3
       typebox:
-        specifier: ^1.0.71
-        version: 1.0.71
+        specifier: ^1.0.81
+        version: 1.0.81
       typescript:
         specifier: ^5.9.3
         version: 5.9.3
@@ -1979,8 +1979,8 @@ packages:
     resolution: {integrity: sha512-bkO4AddmDishzJB2ze7aYYPaejMoJVfS0XnaR6RCdXFOY8JGJfQE+l9fKiV7uDPa5Ut44gmOWJL3894CIMeH9g==}
     hasBin: true
 
-  typebox@1.0.71:
-    resolution: {integrity: sha512-hdMrMqeQUm3Kxkie9dP9sJa2if7KKSnE/D3mogrYCfupYUDP2KLf8wAhMXvyR8oeiduSkXTJCSnugv8iS/Mqiw==}
+  typebox@1.0.81:
+    resolution: {integrity: sha512-bCslZUmZESHhBn4kHDghzH2oo3qu8m2W89xDLxQHv/aPvY4i81Nd1jvijlBp9wSpsVytDSfSoosbiBAjgsNb2Q==}
 
   typescript@5.9.3:
     resolution: {integrity: sha512-jl1vZzPDinLr9eUt3J/t7V6FgNEw9QjvBPdysz9KfQDD41fQrC2Y4vKQdiaUpFT4bXlb1RHhLpp8wtm6M5TgSw==}
@@ -2317,9 +2317,9 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  '@fastify/type-provider-typebox@6.1.0(typebox@1.0.71)':
+  '@fastify/type-provider-typebox@6.1.0(typebox@1.0.81)':
     dependencies:
-      typebox: 1.0.71
+      typebox: 1.0.81
 
   '@img/colour@1.0.0':
     optional: true
@@ -3937,7 +3937,7 @@ snapshots:
       turbo-windows-64: 2.7.4
       turbo-windows-arm64: 2.7.4
 
-  typebox@1.0.71: {}
+  typebox@1.0.81: {}
 
   typescript@5.9.3: {}
 
