@@ -66,8 +66,8 @@ importers:
         specifier: ^6.9.1
         version: 6.9.1
       snowtransfer:
-        specifier: ^0.17.1
-        version: 0.17.1
+        specifier: ^0.17.3
+        version: 0.17.3
       socket.io:
         specifier: ^4.8.3
         version: 4.8.3
@@ -1038,6 +1038,9 @@ packages:
   discord-api-types@0.38.37:
     resolution: {integrity: sha512-Cv47jzY1jkGkh5sv0bfHYqGgKOWO1peOrGMkDFM4UmaGMOTgOW8QSexhvixa9sVOiz8MnVOBryWYyw/CEVhj7w==}
 
+  discord-api-types@0.38.38:
+    resolution: {integrity: sha512-7qcM5IeZrfb+LXW07HvoI5L+j4PQeMZXEkSm1htHAHh4Y9JSMXBWjy/r7zmUCOj4F7zNjMcm7IMWr131MT2h0Q==}
+
   dom-serializer@2.0.0:
     resolution: {integrity: sha512-wIkAryiqt/nV5EQKqQpo3SToSOV9J0DnbJqwK7Wv/Trc92zIAYZ4FlMu+JPFW1DfGFt81ZTCGgDEabffXeLyJg==}
 
@@ -1835,8 +1838,8 @@ packages:
     resolution: {integrity: sha512-Ou9I5Ft9WNcCbXrU9cMgPBcCK8LiwLqcbywW3t4oDV37n1pzpuNLsYiAV8eODnjbtQlSDwZ2cUEeQz4E54Hltg==}
     engines: {node: ^18.17.0 || ^20.3.0 || >=21.0.0}
 
-  snowtransfer@0.17.1:
-    resolution: {integrity: sha512-WSXj055EJhzzfD7B3oHVyRTxkqFCaxcVhwKY6B3NkBSHRyM6wHxZLq6VbFYhopUg+lMtd7S1ZO8JM+Ut+js2iA==}
+  snowtransfer@0.17.3:
+    resolution: {integrity: sha512-6JWjsSVULoyf1no4luid4dfLLsmQhvocvU8zXq2/IEKQ7NSXKkY8fYIm/oVNxZjIS3yVa/uUuBegtxOI3fjBxA==}
     engines: {node: '>=22.0.0'}
 
   socket.io-adapter@2.5.6:
@@ -2722,6 +2725,8 @@ snapshots:
       dequal: 2.0.3
 
   discord-api-types@0.38.37: {}
+
+  discord-api-types@0.38.38: {}
 
   dom-serializer@2.0.0:
     dependencies:
@@ -3785,9 +3790,9 @@ snapshots:
       '@img/sharp-win32-x64': 0.34.5
     optional: true
 
-  snowtransfer@0.17.1:
+  snowtransfer@0.17.3:
     dependencies:
-      discord-api-types: 0.38.37
+      discord-api-types: 0.38.38
 
   socket.io-adapter@2.5.6:
     dependencies:
