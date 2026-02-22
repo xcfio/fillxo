@@ -24,7 +24,7 @@
         "drizzle-orm": "^0.45.1",
         "fastify": "^5.7.4",
         "fastify-socket.io": "^5.1.0",
-        "postgres": "^3.4.7",
+        "postgres": "^3.4.8",
         "resend": "^6.9.1",
         "snowtransfer": "^0.17.3",
         "socket.io": "^4.8.3",
