@@ -29,7 +29,7 @@
         "snowtransfer": "^0.17.3",
         "socket.io": "^4.8.3",
         "typebox": "^1.1.4",
-        "typescript": "^5.9.3",
+        "typescript": "^6.0.2",
         "uuid": "^13.0.0"
     },
     "devDependencies": {
