@@ -20,7 +20,7 @@
         "@fastify/swagger-ui": "^5.2.5",
         "@fastify/type-provider-typebox": "^6.1.0",
         "colorette": "^2.0.20",
-        "discord-api-types": "^0.38.40",
+        "discord-api-types": "^0.38.44",
         "drizzle-orm": "^0.45.1",
         "fastify": "^5.8.4",
         "fastify-socket.io": "^5.1.0",
