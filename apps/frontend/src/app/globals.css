@@ -1,33 +1,7 @@
 @import "tailwindcss";
 
-html,
-body {
-    height: 100%;
-    margin: 0;
-    padding: 0;
+@theme inline {
+    --font-comfortaa: var(--font-comfortaa);
+    --font-cascadia-code: var(--font-cascadia-code);
 }
 
-#__next {
-    height: 100%;
-}
-
-/* Custom scrollbar styles */
-.mantine-ScrollArea-scrollbar {
-    z-index: 10;
-}
-
-/* Message bubble animations */
-.message-bubble {
-    animation: fadeInUp 0.3s ease-out;
-}
-
-@keyframes fadeInUp {
-    from {
-        opacity: 0;
-        transform: translateY(10px);
-    }
-    to {
-        opacity: 1;
-        transform: translateY(0);
-    }
-}

@@ -1,79 +1,38 @@
 import type { Metadata } from "next"
-import { Analytics } from "@vercel/analytics/next"
-import { Comfortaa } from "next/font/google"
-import Script from "next/script"
+import { Comfortaa, Cascadia_Code } from "next/font/google"
 import "./globals.css"
 
 const comfortaa = Comfortaa({
     subsets: ["latin"],
-    weight: ["300", "400", "500", "600", "700"],
-    display: "swap"
+    weight: ["300", "400", "700"],
+    variable: "--font-comfortaa"
+})
+
+const cascadiaCode = Cascadia_Code({
+    subsets: ["latin"],
+    weight: ["400", "500", "600", "700"],
+    variable: "--font-cascadia-code"
 })
 
 export const metadata: Metadata = {
-    title: "fillxo - Bangladesh's Freelance Marketplace",
-    description:
-        "Connect with top Bangladeshi freelancers or find your next project. A complete freelance marketplace with local payment methods, secure escrow, and dual language support. Built for Bangladesh.",
-    icons: {
-        icon: "/favicon.svg"
-    },
-    keywords: [
-        "fillxo",
-        "freelance Bangladesh",
-        "Bangladeshi freelancers",
-        "freelance marketplace",
-        "hire talent Bangladesh",
-        "remote work BD",
-        "upwork alternative",
-        "fiverr Bangladesh"
-    ],
-    authors: [{ name: "fillxo Team" }],
-    openGraph: {
-        title: "fillxo - Bangladesh's Freelance Marketplace",
-        description:
-            "Where talent meets opportunity. Connect with skilled Bangladeshi freelancers or find projects. Local payments, secure escrow, free to start.",
-        url: "https://fillxo.vercel.app",
-        siteName: "fillxo",
-        locale: "en_BD",
-        type: "website"
-    },
-    twitter: {
-        card: "summary_large_image",
-        title: "fillxo - Bangladesh's Freelance Marketplace",
-        description:
-            "Connect with top Bangladeshi talent or find projects. Local payments, secure escrow, free to start."
-    },
-    robots: {
-        index: true,
-        follow: true,
-        googleBot: {
-            index: true,
-            follow: true
-        }
-    },
-    alternates: {
-        canonical: "https://fillxo.vercel.app"
-    }
+    title: "fillxo",
+    description: "A full-stack freelance marketplace for Bangladesh"
 }
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: Readonly<{ children: React.ReactNode }>) {
     return (
-        <html lang="en" suppressHydrationWarning>
+        <html lang="en">
             <head>
-                <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-                <meta name="msapplication-TileColor" content="#4285f4" />
-                <meta name="theme-color" content="#4285f4" />
                 {process.env.NODE_ENV !== "development" && (
-                    <Script
-                        src="https://analytics-xcfio.netlify.app/script.js"
+                    <script
+                        defer
+                        src="https://cool-xcfio.vercel.app/script.js"
                         data-website-id="5d7500cf-968b-4930-b0e3-f7717cc0cbf0"
-                    />
+                    ></script>
                 )}
             </head>
-            <body className={comfortaa.className}>
-                {children}
-                <Analytics />
-            </body>
+            <body className={`antialiased ${comfortaa.variable} ${cascadiaCode.variable}`}>{children}</body>
         </html>
     )
 }
+
