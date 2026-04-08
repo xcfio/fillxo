@@ -159,7 +159,7 @@ export default function HowItWorksPage() {
                             return (
                                 <Card key={index} hover className="relative">
                                     <div className="flex gap-4">
-                                        <div className="flex-shrink-0">
+                                        <div className="shrink-0">
                                             <div className="w-12 h-12 bg-blue-600/20 border border-blue-700/50 rounded-xl flex items-center justify-center">
                                                 <Icon className="w-6 h-6 text-blue-400" />
                                             </div>
@@ -210,7 +210,7 @@ export default function HowItWorksPage() {
                             return (
                                 <Card key={index} hover className="relative">
                                     <div className="flex gap-4">
-                                        <div className="flex-shrink-0">
+                                        <div className="shrink-0">
                                             <div className="w-12 h-12 bg-emerald-600/20 border border-emerald-700/50 rounded-xl flex items-center justify-center">
                                                 <Icon className="w-6 h-6 text-emerald-400" />
                                             </div>

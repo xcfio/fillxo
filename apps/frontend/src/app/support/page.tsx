@@ -6,7 +6,7 @@ import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { ArrowLeft, Mail, MessageCircle, HelpCircle, FileText } from "lucide-react"
 
-const SUPPORT_EMAIL = "omarfaruksxp@gmail.com"
+const SUPPORT_EMAIL = "cool@example.com"
 
 export default function SupportPage() {
     const router = useRouter()
@@ -58,7 +58,7 @@ export default function SupportPage() {
                     <h2 className="text-xl font-bold mb-6">Common Topics</h2>
                     <div className="space-y-4">
                         <div className="flex items-start gap-4 p-4 bg-gray-900/50 border border-blue-900/20 rounded-lg">
-                            <MessageCircle className="w-6 h-6 text-blue-400 flex-shrink-0 mt-0.5" />
+                            <MessageCircle className="w-6 h-6 text-blue-400 shrink-0 mt-0.5" />
                             <div>
                                 <h3 className="font-semibold mb-1">Payment Issues</h3>
                                 <p className="text-gray-400 text-sm">
@@ -68,7 +68,7 @@ export default function SupportPage() {
                             </div>
                         </div>
                         <div className="flex items-start gap-4 p-4 bg-gray-900/50 border border-blue-900/20 rounded-lg">
-                            <FileText className="w-6 h-6 text-emerald-400 flex-shrink-0 mt-0.5" />
+                            <FileText className="w-6 h-6 text-emerald-400 shrink-0 mt-0.5" />
                             <div>
                                 <h3 className="font-semibold mb-1">Contract Disputes</h3>
                                 <p className="text-gray-400 text-sm">
@@ -78,7 +78,7 @@ export default function SupportPage() {
                             </div>
                         </div>
                         <div className="flex items-start gap-4 p-4 bg-gray-900/50 border border-blue-900/20 rounded-lg">
-                            <HelpCircle className="w-6 h-6 text-yellow-400 flex-shrink-0 mt-0.5" />
+                            <HelpCircle className="w-6 h-6 text-yellow-400 shrink-0 mt-0.5" />
                             <div>
                                 <h3 className="font-semibold mb-1">Account Help</h3>
                                 <p className="text-gray-400 text-sm">

@@ -88,7 +88,7 @@ export default function ProposalsPage() {
                 {/* Info Card */}
                 <Card className="bg-blue-600/10 border-blue-600/30">
                     <div className="flex items-start gap-4">
-                        <FileText className="w-8 h-8 text-blue-400 flex-shrink-0" />
+                        <FileText className="w-8 h-8 text-blue-400 shrink-0" />
                         <div>
                             <h3 className="text-lg font-bold mb-2">About Proposals</h3>
                             <p className="text-gray-300">

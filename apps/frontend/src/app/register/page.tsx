@@ -247,7 +247,7 @@ export default function RegisterPage() {
                 setFormData((prev) => ({
                     ...prev,
                     countryCode: detectedCode,
-                    country: country || "BD" // Store country code (ISO 3166-1 alpha-2)
+                    country: country
                 }))
             } catch (err) {
                 // Default to Bangladesh if detection fails

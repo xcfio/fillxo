@@ -161,7 +161,7 @@ export default function ContractsPage() {
                             >
                                 <div className="flex items-start justify-between gap-4">
                                     <div className="flex items-start gap-4 flex-1">
-                                        <div className="w-12 h-12 bg-blue-600/20 border border-blue-700/50 rounded-lg flex items-center justify-center flex-shrink-0">
+                                        <div className="w-12 h-12 bg-blue-600/20 border border-blue-700/50 rounded-lg flex items-center justify-center shrink-0">
                                             <FileText className="w-6 h-6 text-blue-400" />
                                         </div>
                                         <div className="flex-1 min-w-0">

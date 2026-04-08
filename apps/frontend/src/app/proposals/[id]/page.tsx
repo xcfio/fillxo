@@ -376,7 +376,7 @@ export default function ProposalDetailPage() {
                     <div className="mb-6">
                         <h2 className="text-xl font-bold mb-3">Cover Letter</h2>
                         <div className="bg-gray-900/50 border border-blue-900/20 rounded-lg p-6 overflow-hidden">
-                            <p className="text-gray-300 whitespace-pre-wrap leading-relaxed break-words">
+                            <p className="text-gray-300 whitespace-pre-wrap leading-relaxed wrap-break-word">
                                 {proposal.coverLetter}
                             </p>
                         </div>
@@ -392,7 +392,7 @@ export default function ProposalDetailPage() {
                 {proposal.status === "accepted" && (
                     <Card className="bg-emerald-600/10 border-emerald-600/30">
                         <div className="flex items-start gap-4">
-                            <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0" />
                             <div className="flex-1">
                                 <h3 className="text-lg font-bold mb-2 text-emerald-400">Proposal Accepted!</h3>
                                 {payment ? (
@@ -476,7 +476,7 @@ export default function ProposalDetailPage() {
                 {proposal.status === "rejected" && (
                     <Card className="bg-red-600/10 border-red-600/30">
                         <div className="flex items-start gap-4">
-                            <XCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
+                            <XCircle className="w-8 h-8 text-red-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-red-400">Proposal Rejected</h3>
                                 <p className="text-gray-300">

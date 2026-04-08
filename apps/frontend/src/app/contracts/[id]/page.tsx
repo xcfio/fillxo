@@ -438,10 +438,10 @@ export default function ContractDetailPage() {
                                             <p className="text-xs text-gray-400 mt-2">
                                                 Contact us at{" "}
                                                 <a
-                                                    href={`mailto:omarfaruksxp@gmail.com?subject=Payment Issue - ${payment.id}`}
+                                                    href={`mailto:cool@example.com?subject=Payment Issue - ${payment.id}`}
                                                     className="text-blue-400 hover:underline"
                                                 >
-                                                    omarfaruksxp@gmail.com
+                                                    cool@example.com
                                                 </a>{" "}
                                                 with payment ID: {payment.id}
                                             </p>
@@ -457,7 +457,7 @@ export default function ContractDetailPage() {
                 {contract.status === "payment-required" && isClient && (
                     <Card className="bg-yellow-600/10 border-yellow-600/30">
                         <div className="flex items-start gap-4">
-                            <AlertCircle className="w-8 h-8 text-yellow-400 flex-shrink-0" />
+                            <AlertCircle className="w-8 h-8 text-yellow-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-yellow-400">Payment Required</h3>
                                 <p className="text-gray-300">
@@ -471,7 +471,7 @@ export default function ContractDetailPage() {
                 {contract.status === "payment-required" && isFreelancer && (
                     <Card className="bg-yellow-600/10 border-yellow-600/30">
                         <div className="flex items-start gap-4">
-                            <AlertCircle className="w-8 h-8 text-yellow-400 flex-shrink-0" />
+                            <AlertCircle className="w-8 h-8 text-yellow-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-yellow-400">Awaiting Payment</h3>
                                 <p className="text-gray-300">
@@ -485,7 +485,7 @@ export default function ContractDetailPage() {
                 {contract.status === "active" && (
                     <Card className="bg-blue-600/10 border-blue-600/30">
                         <div className="flex items-start gap-4">
-                            <Clock className="w-8 h-8 text-blue-400 flex-shrink-0" />
+                            <Clock className="w-8 h-8 text-blue-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-blue-400">Contract Active</h3>
                                 <p className="text-gray-300">
@@ -501,7 +501,7 @@ export default function ContractDetailPage() {
                 {contract.status === "completed" && (
                     <Card className="bg-emerald-600/10 border-emerald-600/30">
                         <div className="flex items-start gap-4">
-                            <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-emerald-400">Contract Completed</h3>
                                 <p className="text-gray-300">
@@ -598,7 +598,7 @@ export default function ContractDetailPage() {
                                 {/* Error Message */}
                                 {payoutError && (
                                     <div className="mb-6 p-4 bg-red-600/10 border border-red-600/30 rounded-lg flex items-start gap-3">
-                                        <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                        <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                                         <p className="text-red-400">{payoutError}</p>
                                     </div>
                                 )}
@@ -627,7 +627,7 @@ export default function ContractDetailPage() {
                 {contract.status === "cancelled" && (
                     <Card className="bg-red-600/10 border-red-600/30">
                         <div className="flex items-start gap-4">
-                            <XCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
+                            <XCircle className="w-8 h-8 text-red-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-red-400">Contract Cancelled</h3>
                                 <p className="text-gray-300">This contract has been cancelled.</p>

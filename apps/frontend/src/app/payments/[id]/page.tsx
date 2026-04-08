@@ -273,7 +273,7 @@ export default function PaymentDetailPage() {
                 {payment.status === "pending" && (
                     <Card className="bg-yellow-600/10 border-yellow-600/30">
                         <div className="flex items-start gap-4">
-                            <Clock className="w-8 h-8 text-yellow-400 flex-shrink-0" />
+                            <Clock className="w-8 h-8 text-yellow-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-yellow-400">Payment Pending</h3>
                                 <p className="text-gray-300">
@@ -287,7 +287,7 @@ export default function PaymentDetailPage() {
                 {payment.status === "verified" && (
                     <Card className="bg-emerald-600/10 border-emerald-600/30">
                         <div className="flex items-start gap-4">
-                            <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-emerald-400">Payment Verified</h3>
                                 <p className="text-gray-300">
@@ -301,7 +301,7 @@ export default function PaymentDetailPage() {
                 {payment.status === "rejected" && (
                     <Card className="bg-red-600/10 border-red-600/30">
                         <div className="flex items-start gap-4">
-                            <XCircle className="w-8 h-8 text-red-400 flex-shrink-0" />
+                            <XCircle className="w-8 h-8 text-red-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-red-400">Payment Rejected</h3>
                                 {payment.rejectionReason && (
@@ -330,10 +330,10 @@ export default function PaymentDetailPage() {
                                     <p className="text-gray-300">
                                         Email us at:{" "}
                                         <a
-                                            href={`mailto:omarfaruksxp@gmail.com?subject=Payment Issue - ${payment.id}&body=Payment ID: ${payment.id}%0A%0APlease describe your issue:`}
+                                            href={`mailto:cool@example.com?subject=Payment Issue - ${payment.id}&body=Payment ID: ${payment.id}%0A%0APlease describe your issue:`}
                                             className="text-blue-400 hover:text-blue-300 underline"
                                         >
-                                            omarfaruksxp@gmail.com
+                                            cool@example.com
                                         </a>
                                     </p>
                                 </div>
@@ -345,7 +345,7 @@ export default function PaymentDetailPage() {
                 {payment.status === "refunded" && (
                     <Card className="bg-blue-600/10 border-blue-600/30">
                         <div className="flex items-start gap-4">
-                            <AlertCircle className="w-8 h-8 text-blue-400 flex-shrink-0" />
+                            <AlertCircle className="w-8 h-8 text-blue-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-blue-400">Payment Refunded</h3>
                                 <p className="text-gray-300">
@@ -359,7 +359,7 @@ export default function PaymentDetailPage() {
                 {payment.status === "paid_out" && (
                     <Card className="bg-emerald-600/10 border-emerald-600/30">
                         <div className="flex items-start gap-4">
-                            <CheckCircle2 className="w-8 h-8 text-emerald-400 flex-shrink-0" />
+                            <CheckCircle2 className="w-8 h-8 text-emerald-400 shrink-0" />
                             <div>
                                 <h3 className="text-lg font-bold mb-2 text-emerald-400">Payment Paid Out</h3>
                                 <p className="text-gray-300">

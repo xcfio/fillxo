@@ -24,9 +24,9 @@ import { Contract } from "@/types/contract"
 import { PaymentMethod } from "@/types/payment"
 
 const PAYMENT_METHODS: { value: PaymentMethod; label: string; color: string; merchantNumber: string }[] = [
-    { value: "bkash", label: "bKash", color: "bg-pink-600", merchantNumber: "01857224363" },
-    { value: "mcash", label: "mCash", color: "bg-green-600", merchantNumber: "018572243638" },
-    { value: "rocket", label: "Rocket", color: "bg-purple-600", merchantNumber: "018572243639" }
+    { value: "bkash", label: "bKash", color: "bg-pink-600", merchantNumber: "01234567890" },
+    { value: "mcash", label: "mCash", color: "bg-green-600", merchantNumber: "01234567890" },
+    { value: "rocket", label: "Rocket", color: "bg-purple-600", merchantNumber: "01234567890" }
 ]
 
 export default function ContractPaymentPage() {
@@ -399,7 +399,7 @@ export default function ContractPaymentPage() {
                         {/* Error Message */}
                         {error && (
                             <div className="mb-6 p-4 bg-red-600/10 border border-red-600/30 rounded-lg flex items-start gap-3">
-                                <AlertCircle className="w-5 h-5 text-red-400 flex-shrink-0 mt-0.5" />
+                                <AlertCircle className="w-5 h-5 text-red-400 shrink-0 mt-0.5" />
                                 <p className="text-red-400">{error}</p>
                             </div>
                         )}

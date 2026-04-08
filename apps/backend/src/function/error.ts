@@ -1,8 +1,5 @@
 import create_error, { FastifyError } from "@fastify/error"
-import { ComponentType, MessageFlags, SeparatorSpacingSize } from "discord-api-types/v10"
 import { inspect } from "node:util"
-import { DiscordAPIError } from "snowtransfer"
-import { client } from "./discord"
 
 /**
  * Type guard to check if a given error is a FastifyError.
@@ -85,14 +82,6 @@ export async function xcf<Throw extends boolean = true>(
 ): Promise<Throw extends true ? never : null> {
     if (isFastifyError(error)) throw error
 
-    if (!(error instanceof DiscordAPIError)) {
-        console.trace(error, origin)
-
-        reply(type, "```js\n" + error.stack + "\n```")
-        if (ShouldThrow) throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
-        return null as Throw extends true ? never : null
-    }
-
     console.log(inspect(error, { depth: 10, colors: true }))
     console.log(error.stack)
 
@@ -106,36 +95,6 @@ export async function xcf<Throw extends boolean = true>(
         }
     }
 
-    reply(`Discord API Error (${error.code})`, text)
     if (ShouldThrow) throw CreateError(500, "INTERNAL_SERVER_ERROR", "Internal Server Error")
     return null as Throw extends true ? never : null
-}
-
-async function reply(type: string, text: string) {
-    client.channel.createMessage(process.env.ERROR_LOG_CHANNEL, {
-        flags: MessageFlags.IsComponentsV2,
-        components: [
-            {
-                type: ComponentType.Container,
-                components: [
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `### ${type}`
-                    },
-                    {
-                        type: ComponentType.Separator,
-                        spacing: SeparatorSpacingSize.Small
-                    },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: text
-                    },
-                    {
-                        type: ComponentType.TextDisplay,
-                        content: `-# Time: ${new Date().toUTCString()}`
-                    }
-                ]
-            }
-        ]
-    })
 }

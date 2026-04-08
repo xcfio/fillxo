@@ -320,7 +320,7 @@ export default function JobProposalsPage() {
                                                     icon={Check}
                                                     onClick={(e) => handleAccept(proposal.id, e)}
                                                     disabled={actionLoading === proposal.id}
-                                                    className="!px-4 !py-2"
+                                                    className="px-4! py-2!"
                                                 >
                                                     Accept
                                                 </Button>
@@ -329,7 +329,7 @@ export default function JobProposalsPage() {
                                                     icon={X}
                                                     onClick={(e) => handleReject(proposal.id, e)}
                                                     disabled={actionLoading === proposal.id}
-                                                    className="!px-4 !py-2"
+                                                    className="px-4! py-2!"
                                                 >
                                                     Reject
                                                 </Button>

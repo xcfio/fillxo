@@ -11,7 +11,7 @@ export default function Footer() {
         ],
         support: [
             { href: "/support", label: "Help Center" },
-            { href: "mailto:omarfaruksxp@gmail.com", label: "Contact Us" },
+            { href: "mailto:cool@example.com", label: "Contact Us" },
             { href: "https://www.facebook.com/groups/fillxo", label: "Community", external: true }
         ],
         legal: [
@@ -44,7 +44,7 @@ export default function Footer() {
                                 <Facebook size={18} />
                             </a>
                             <a
-                                href="mailto:omarfaruksxp@gmail.com"
+                                href="mailto:cool@example.com"
                                 className="w-9 h-9 flex items-center justify-center rounded-lg bg-gray-800/50 text-gray-400 hover:bg-blue-600 hover:text-white transition-all"
                                 aria-label="Email"
                             >

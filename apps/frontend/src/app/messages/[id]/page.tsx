@@ -567,7 +567,7 @@ export default function ChatPage() {
                                             </div>
                                         ) : (
                                             <>
-                                                <div className="text-sm break-words [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
+                                                <div className="text-sm wrap-break-word [&>*:first-child]:mt-0 [&>*:last-child]:mb-0">
                                                     <ReactMarkdown
                                                         remarkPlugins={[remarkGfm, remarkBreaks]}
                                                         components={markdownComponents}

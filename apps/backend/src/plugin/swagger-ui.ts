@@ -9,11 +9,11 @@ export default async function swagger_ui(fastify: Awaited<ReturnType<typeof main
     try {
         logo = {
             type: "image/svg+xml",
-            href: "https://github.com/xcfio/chat-app",
+            href: "https://github.com/xcfio/fillxo",
             target: "_blank",
             content: await (
                 await fetch(
-                    "https://raw.githubusercontent.com/xcfio/chat-app/refs/heads/main/apps/frontend/public/favicon.svg"
+                    "https://raw.githubusercontent.com/xcfio/fillxo/refs/heads/main/apps/frontend/public/favicon.svg"
                 )
             ).text()
         }

@@ -1,8 +1,8 @@
 {
     "name": "fillxo",
     "author": "Omar Faruk (Aka. xcfio)",
-    "homepage": "https://github.com/xcfio/chat-app#readme",
-    "license": "ISC",
+    "homepage": "https://github.com/xcfio/fillxo#readme",
+    "license": "MIT",
     "scripts": {
         "build": "turbo run build",
         "dev": "turbo run dev",
@@ -12,10 +12,10 @@
     },
     "repository": {
         "type": "git",
-        "url": "https://github.com/xcfio/chat-app"
+        "url": "https://github.com/xcfio/fillxo"
     },
     "bugs": {
-        "url": "https://github.com/xcfio/chat-app/issues",
+        "url": "https://github.com/xcfio/fillxo/issues",
         "email": "omarfaruksxp@gmail.com"
     },
     "devDependencies": {

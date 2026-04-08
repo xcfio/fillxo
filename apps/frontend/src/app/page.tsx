@@ -43,7 +43,7 @@ export default function LandingPage() {
                         className="flex items-center gap-2 hover:opacity-80 transition-opacity"
                     >
                         <Image src="/favicon.svg" alt="fillxo" width={32} height={32} className="w-8 h-8" />
-                        <span className="text-xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                        <span className="text-xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                             fillxo
                         </span>
                     </button>
@@ -92,19 +92,19 @@ export default function LandingPage() {
             {/* Hero Section */}
             <section className="relative pt-32 pb-24 px-6 overflow-hidden">
                 {/* Background Effects */}
-                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-gradient-to-b from-blue-600/20 via-cyan-600/10 to-transparent blur-3xl pointer-events-none" />
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 w-200 h-150 bg-linear-to-b from-blue-600/20 via-cyan-600/10 to-transparent blur-3xl pointer-events-none" />
                 <div className="absolute top-40 left-20 w-72 h-72 bg-blue-600/10 rounded-full blur-3xl pointer-events-none" />
                 <div className="absolute top-60 right-20 w-96 h-96 bg-cyan-600/10 rounded-full blur-3xl pointer-events-none" />
 
                 <div className="max-w-6xl mx-auto text-center relative">
-                    <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-full">
+                    <div className="inline-flex items-center gap-2 mb-8 px-4 py-2 bg-linear-to-r from-blue-600/20 to-cyan-600/20 border border-blue-500/30 rounded-full">
                         <span className="text-sm text-gray-300">Now Open for Early Access</span>
                     </div>
 
                     <h1 className="text-5xl md:text-7xl lg:text-8xl font-bold mb-8 leading-[1.1] tracking-tight">
                         Work Without
                         <br />
-                        <span className="bg-gradient-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
+                        <span className="bg-linear-to-r from-blue-400 via-cyan-400 to-blue-500 bg-clip-text text-transparent">
                             Boundaries
                         </span>
                     </h1>
@@ -165,28 +165,28 @@ export default function LandingPage() {
             {/* Floating Stats Bar */}
             <section className="px-6 -mt-4 relative z-10">
                 <div className="max-w-5xl mx-auto">
-                    <div className="bg-gradient-to-r from-gray-900 to-gray-900/80 border border-gray-800/50 rounded-3xl p-8 backdrop-blur-sm">
+                    <div className="bg-linear-to-r from-gray-900 to-gray-900/80 border border-gray-800/50 rounded-3xl p-8 backdrop-blur-sm">
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-8">
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
+                                <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-blue-400 to-cyan-400 bg-clip-text text-transparent">
                                     Free
                                 </div>
                                 <div className="text-sm text-gray-500 mt-1">To Join</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
+                                <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-green-400 to-emerald-400 bg-clip-text text-transparent">
                                     1%
                                 </div>
                                 <div className="text-sm text-gray-500 mt-1">Low Fees</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
+                                <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-purple-400 to-pink-400 bg-clip-text text-transparent">
                                     Fast
                                 </div>
                                 <div className="text-sm text-gray-500 mt-1">Withdrawals</div>
                             </div>
                             <div className="text-center">
-                                <div className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
+                                <div className="text-3xl md:text-4xl font-bold bg-linear-to-r from-orange-400 to-yellow-400 bg-clip-text text-transparent">
                                     100%
                                 </div>
                                 <div className="text-sm text-gray-500 mt-1">Secure</div>
@@ -265,7 +265,7 @@ export default function LandingPage() {
             </section>
 
             {/* How It Works */}
-            <section className="py-24 px-6 bg-gradient-to-b from-gray-900/50 to-transparent">
+            <section className="py-24 px-6 bg-linear-to-b from-gray-900/50 to-transparent">
                 <div className="max-w-6xl mx-auto">
                     <div className="text-center mb-16">
                         <h2 className="text-3xl md:text-5xl font-bold mb-4">
@@ -300,7 +300,7 @@ export default function LandingPage() {
                                     {item.step}
                                 </div>
                                 <div className="relative bg-gray-900/80 border border-gray-800/50 rounded-2xl p-8 h-full">
-                                    <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-blue-600/20 to-cyan-600/20 flex items-center justify-center text-blue-400 mb-6">
+                                    <div className="w-14 h-14 rounded-2xl bg-linear-to-br from-blue-600/20 to-cyan-600/20 flex items-center justify-center text-blue-400 mb-6">
                                         {item.icon}
                                     </div>
                                     <h3 className="text-xl font-semibold mb-3">{item.title}</h3>
@@ -350,12 +350,12 @@ export default function LandingPage() {
             </section>
 
             {/* For Who Section */}
-            <section className="py-24 px-6 bg-gradient-to-b from-transparent via-gray-900/50 to-transparent">
+            <section className="py-24 px-6 bg-linear-to-b from-transparent via-gray-900/50 to-transparent">
                 <div className="max-w-6xl mx-auto">
                     <div className="grid lg:grid-cols-2 gap-8">
                         {/* Freelancers */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-blue-600/20 to-cyan-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-r from-blue-600/20 to-cyan-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="relative bg-gray-900/80 border border-gray-800/50 rounded-3xl p-8 h-full">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-14 h-14 bg-blue-600/20 rounded-2xl flex items-center justify-center">
@@ -392,7 +392,7 @@ export default function LandingPage() {
 
                         {/* Clients */}
                         <div className="relative group">
-                            <div className="absolute inset-0 bg-gradient-to-r from-green-600/20 to-emerald-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
+                            <div className="absolute inset-0 bg-linear-to-r from-green-600/20 to-emerald-600/20 rounded-3xl blur-xl opacity-0 group-hover:opacity-100 transition-opacity" />
                             <div className="relative bg-gray-900/80 border border-gray-800/50 rounded-3xl p-8 h-full">
                                 <div className="flex items-center gap-4 mb-6">
                                     <div className="w-14 h-14 bg-green-600/20 rounded-2xl flex items-center justify-center">
@@ -478,7 +478,7 @@ export default function LandingPage() {
             {/* Final CTA */}
             <section className="py-24 px-6">
                 <div className="max-w-4xl mx-auto">
-                    <div className="relative overflow-hidden bg-gradient-to-r from-blue-600 to-cyan-600 rounded-3xl p-12 text-center">
+                    <div className="relative overflow-hidden bg-linear-to-r from-blue-600 to-cyan-600 rounded-3xl p-12 text-center">
                         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4xIj48cGF0aCBkPSJNMzYgMzRjMC0yIDItNCAyLTRzLTItMi00LTJjLTIgMC00IDItNCAyczIgNCA0IDRjMiAwIDQtMiA0LTR6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
                         <div className="relative">
                             <h2 className="text-3xl md:text-5xl font-bold mb-4">Ready to Get Started?</h2>

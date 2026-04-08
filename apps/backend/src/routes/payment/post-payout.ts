@@ -1,5 +1,4 @@
-import { client, CreateError, ObjectString, toTypeBox, xcf } from "../../function"
-import { ButtonStyle, ComponentType, MessageFlags } from "discord-api-types/v10"
+import { CreateError, toTypeBox, xcf } from "../../function"
 import { ErrorResponse, Payments } from "../../type"
 import { db, table } from "../../database"
 import { main } from "../.."
@@ -59,43 +58,6 @@ export default function PostPayout(fastify: Awaited<ReturnType<typeof main>>) {
                     .set({ payoutMethod, receiverNumber })
                     .where(eq(table.payments.id, PaymentToPay.id))
                     .returning()
-
-                await client.channel.createMessage(process.env.CHANNEL, {
-                    flags: MessageFlags.IsComponentsV2,
-                    allowed_mentions: { replied_user: false },
-                    components: [
-                        {
-                            type: ComponentType.Container,
-                            components: [
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: "# Payout Received"
-                                },
-                                {
-                                    type: ComponentType.Separator
-                                },
-                                {
-                                    type: ComponentType.TextDisplay,
-                                    content: ObjectString(payment, "\n")
-                                },
-                                {
-                                    type: ComponentType.Separator
-                                },
-                                {
-                                    type: ComponentType.ActionRow,
-                                    components: [
-                                        {
-                                            label: "Mark As Paid Out",
-                                            custom_id: `fillxo-payout-${payment.id}`,
-                                            type: ComponentType.Button,
-                                            style: ButtonStyle.Primary
-                                        }
-                                    ]
-                                }
-                            ]
-                        }
-                    ]
-                })
 
                 return reply.status(201).send(toTypeBox(payment))
             } catch (error) {
