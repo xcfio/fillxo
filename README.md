@@ -103,7 +103,7 @@ fillxo/
     **Frontend** (`apps/frontend/.env.local`):
 
     ```env
-    NEXT_PUBLIC_API_URL=http://localhost:3000
+    NEXT_PUBLIC_API_URL=http://localhost:7200
     # Add other frontend configuration
     ```
 
@@ -162,7 +162,7 @@ Once development servers are running:
 
 - **Frontend**: http://localhost:7700
 - **Backend API**: http://localhost:7200
-- **API Documentation**: http://localhost:3000/documentation
+- **API Documentation**: http://localhost:7200/documentation
 - **Drizzle Studio**: http://localhost:4000 (when running `node --run db`)
 
 ## Tech Stack
